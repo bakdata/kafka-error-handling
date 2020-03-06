@@ -1,4 +1,4 @@
-description = "TODO"
+description = "A library for error handling in Kafka Streams."
 
 plugins {
     `java-library`
