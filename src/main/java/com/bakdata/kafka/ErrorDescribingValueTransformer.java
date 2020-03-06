@@ -54,7 +54,7 @@ public final class ErrorDescribingValueTransformer<V, VR> extends DecoratorValue
      * @param <VR> type of output values
      * @return {@code ValueTransformer}
      */
-    public static <V, VR> DecoratorValueTransformer<V, VR> describeErrors(final ValueTransformer<V, VR> transformer) {
+    public static <V, VR> ValueTransformer<V, VR> describeErrors(final ValueTransformer<V, VR> transformer) {
         return new ErrorDescribingValueTransformer<>(transformer);
     }
 
