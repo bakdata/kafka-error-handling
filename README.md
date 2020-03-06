@@ -64,7 +64,7 @@ mapped.to(OUTPUT_TOPIC, Produced.with(Serdes.Double(), Serdes.Long()));
 ```
 
 Successfully processed messages are sent to the output topic as before.
-However, errors are send to a specific error topic.
+However, errors are sent to a specific error topic.
 This error topic contains dead letters describing the input value, error message and stack trace of any error that is raised in that part of your topology.
 
 ## Development

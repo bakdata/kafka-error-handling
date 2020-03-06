@@ -73,6 +73,3 @@ configure<org.hildan.github.changelog.plugin.GitHubChangelogExtension> {
     futureVersionTag = findProperty("changelog.releaseVersion")?.toString()
     sinceTag = findProperty("changelog.sinceTag")?.toString()
 }
-
-subprojects {
-}
