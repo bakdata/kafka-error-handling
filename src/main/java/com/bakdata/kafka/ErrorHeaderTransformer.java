@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.streams.kstream.ValueTransformer;
+import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 
 /**
@@ -51,7 +52,7 @@ import org.apache.kafka.streams.processor.ProcessorContext;
  * @param <V> type of value
  */
 @RequiredArgsConstructor
-public class ErrorTransformer<V> implements ValueTransformer<ProcessingError<V>, V> {
+public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingError<V>, V> {
     /**
      * Prefix of all headers added by this ValueTransformer
      */
@@ -93,6 +94,18 @@ public class ErrorTransformer<V> implements ValueTransformer<ProcessingError<V>,
      */
     private final @NonNull String description;
     private ProcessorContext context = null;
+
+    /**
+     * Create a new {@code ErrorHeaderTransformer} with the provided description
+     *
+     * @param description description of the context in which an exception has been thrown
+     * @param <V> type of value
+     * @return {@code ValueTransformerSupplier} that produces a message with the original value and headers detailing
+     * the error that has been captured.
+     */
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, V> withErrorHeaders(final String description) {
+        return () -> new ErrorHeaderTransformer<>(description);
+    }
 
     @Override
     public void init(final ProcessorContext context) {

@@ -53,7 +53,7 @@ import org.mockito.quality.Strictness;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 @ExtendWith(SoftAssertionsExtension.class)
-class ErrorTransformerTopologyTest extends ErrorCaptureTopologyTest {
+class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
 
     private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
@@ -76,7 +76,7 @@ class ErrorTransformerTopologyTest extends ErrorCaptureTopologyTest {
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
-                .transformValues(() -> new ErrorTransformer<>("Description"))
+                .transformValues(ErrorHeaderTransformer.withErrorHeaders("Description"))
                 .to(ERROR_TOPIC, Produced.with(null, STRING_SERDE));
     }
 
@@ -114,15 +114,15 @@ class ErrorTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 })
                 .extracting(ProducerRecord::headers)
                 .satisfies(headers -> {
-                    softly.assertThat(getHeader(headers, ErrorTransformer.OFFSET)).isEqualTo("1");
-                    softly.assertThat(getHeader(headers, ErrorTransformer.PARTITION)).isEqualTo("0");
-                    softly.assertThat(getHeader(headers, ErrorTransformer.TOPIC)).isEqualTo(INPUT_TOPIC);
-                    softly.assertThat(getHeader(headers, ErrorTransformer.DESCRIPTION)).isEqualTo("Description");
-                    softly.assertThat(getHeader(headers, ErrorTransformer.EXCEPTION_MESSAGE))
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.OFFSET)).isEqualTo("1");
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.PARTITION)).isEqualTo("0");
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.TOPIC)).isEqualTo(INPUT_TOPIC);
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.DESCRIPTION)).isEqualTo("Description");
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.EXCEPTION_MESSAGE))
                             .isEqualTo("Cannot process");
-                    softly.assertThat(getHeader(headers, ErrorTransformer.EXCEPTION_CLASS_NAME))
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.EXCEPTION_CLASS_NAME))
                             .isEqualTo(RuntimeException.class.getName());
-                    softly.assertThat(getHeader(headers, ErrorTransformer.EXCEPTION_STACK_TRACE)).isNotNull();
+                    softly.assertThat(getHeader(headers, ErrorHeaderTransformer.EXCEPTION_STACK_TRACE)).isNotNull();
                 });
     }
 
