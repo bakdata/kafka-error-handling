@@ -89,9 +89,6 @@ public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingErr
      * Header indicating the stack trace of the exception that was captured
      */
     public static final String EXCEPTION_STACK_TRACE = EXCEPTION_PREFIX + "stack_trace";
-    /**
-     * Description of the context in which an exception has been thrown
-     */
     private final @NonNull String description;
     private ProcessorContext context = null;
 
