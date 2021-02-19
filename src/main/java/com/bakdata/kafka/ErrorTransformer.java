@@ -43,9 +43,9 @@ import org.apache.kafka.streams.processor.ProcessorContext;
  *     <li>{@code __streams.errors.offset}: original offset in the partition of the input topic of the erroneous
  *     record</li>
  *     <li>{@code __streams.errors.description}: description of the context in which an exception has been thrown</li>
- *     <li>{@code __streams.errors.class.name}: class of the exception that was captured</li>
- *     <li>{@code __streams.errors.message}: message of the exception that was captured</li>
- *     <li>{@code __streams.errors.stack_trace}: stack trace of the exception that was captured</li>
+ *     <li>{@code __streams.errors.exception.class.name}: class of the exception that was captured</li>
+ *     <li>{@code __streams.errors.exception.message}: message of the exception that was captured</li>
+ *     <li>{@code __streams.errors.exception.stack_trace}: stack trace of the exception that was captured</li>
  * </ul>
  *
  * @param <V> type of value
