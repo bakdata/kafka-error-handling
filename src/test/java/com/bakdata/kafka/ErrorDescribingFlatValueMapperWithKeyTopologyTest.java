@@ -81,8 +81,8 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
         when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -92,12 +92,15 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
         doReturn(List.of(2L, 1L, 18L)).when(this.mapper).apply(2, "bar");
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(2, "bar")
-                .add(1, "foo"))
-                .hasMessage("Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')");
+                        .withValueSerde(STRING_SERDE)
+                        .add(2, "bar")
+                        .add(1, "foo"))
+                .satisfies(e -> softly.assertThat(e.getCause())
+                        .hasMessage(
+                                "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
+                );
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
@@ -114,7 +117,7 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
@@ -128,11 +131,14 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
         when(this.mapper.apply(null, null)).thenThrow(new RuntimeException("Cannot process"));
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(null, null))
-                .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null) + "')");
+                        .withValueSerde(STRING_SERDE)
+                        .add(null, null))
+                .satisfies(e -> softly.assertThat(e.getCause())
+                        .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
+                                + "')")
+                );
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -146,7 +152,7 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
