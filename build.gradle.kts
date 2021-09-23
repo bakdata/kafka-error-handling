@@ -35,12 +35,6 @@ sourceSets {
     }
 }
 
-avro {
-    setGettersReturnOptional(true)
-    setOptionalGettersForNullableFieldsOnly(true)
-    setFieldVisibility("PRIVATE")
-}
-
 dependencies {
     val kafkaVersion: String by project
     api(group = "org.apache.kafka", name = "kafka-streams", version = kafkaVersion)
