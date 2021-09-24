@@ -27,6 +27,7 @@ configure<JavaPluginConvention> {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+// add .avsc files to jar allowing us to use them in other projects as a schema dependency
 sourceSets {
     main {
         resources {
