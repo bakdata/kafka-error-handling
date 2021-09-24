@@ -2,12 +2,12 @@ description = "A library for error handling in Kafka Streams."
 
 plugins {
     `java-library`
-    id("net.researchgate.release") version "2.8.0"
-    id("com.bakdata.sonar") version "1.1.6"
-    id("com.bakdata.sonatype") version "1.1.6"
+    id("net.researchgate.release") version "2.8.1"
+    id("com.bakdata.sonar") version "1.1.7"
+    id("com.bakdata.sonatype") version "1.1.7"
     id("org.hildan.github.changelog") version "0.8.0"
-    id("io.freefair.lombok") version "3.8.0"
-    id("com.commercehub.gradle.plugin.avro") version "0.16.0"
+    id("io.freefair.lombok") version "5.3.3.3"
+    id("com.github.davidmc24.gradle.plugin.avro") version "1.2.1"
 }
 
 group = "com.bakdata.kafka"
@@ -19,12 +19,21 @@ tasks.withType<Test> {
 
 repositories {
     mavenCentral()
-    maven(url = "http://packages.confluent.io/maven/")
+    maven(url = "https://packages.confluent.io/maven/")
 }
 
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+// add .avsc files to jar allowing us to use them in other projects as a schema dependency
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/avro")
+        }
+    }
 }
 
 dependencies {
@@ -33,19 +42,23 @@ dependencies {
     val avroVersion: String by project
     api(group = "org.apache.avro", name = "avro", version = avroVersion)
     implementation(group = "org.jooq", name = "jool", version = "0.9.14")
-    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
 
     val junitVersion: String by project
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params", version = junitVersion)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)
-    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.13.2")
-    val mockitoVersion = "2.28.2"
+    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.20.2")
+    val mockitoVersion = "3.12.4"
     testImplementation(group = "org.mockito", name = "mockito-core", version = mockitoVersion)
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
-    testImplementation(group = "log4j", name = "log4j", version = "1.2.17")
-    testImplementation(group = "org.slf4j", name = "slf4j-log4j12", version = "1.7.26")
-    testImplementation(group = "com.bakdata.fluent-kafka-streams-tests", name = "fluent-kafka-streams-tests-junit5", version = "2.1.0")
+    val log4jVersion = "2.14.1"
+    testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
+    testImplementation(
+        group = "com.bakdata.fluent-kafka-streams-tests",
+        name = "fluent-kafka-streams-tests-junit5",
+        version = "2.4.2"
+    )
     val confluentVersion: String by project
     testImplementation(group = "io.confluent", name = "kafka-streams-avro-serde", version = confluentVersion)
 }

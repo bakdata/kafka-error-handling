@@ -82,8 +82,8 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
         when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -94,13 +94,16 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                 .apply(2, "bar");
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(2, "bar")
-                .add(1, "foo"))
-                .hasMessage("Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')");
+                        .withValueSerde(STRING_SERDE)
+                        .add(2, "bar")
+                        .add(1, "foo"))
+                .satisfies(e -> softly.assertThat(e.getCause())
+                        .hasMessage(
+                                "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
+                );
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -119,8 +122,8 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -135,12 +138,15 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
         when(this.mapper.apply(null, null)).thenThrow(new RuntimeException("Cannot process"));
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(null, null))
-                .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null) + "')");
+                        .withValueSerde(STRING_SERDE)
+                        .add(null, null))
+                .satisfies(e -> softly.assertThat(e.getCause())
+                        .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
+                                + "')")
+                );
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -154,8 +160,8 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)

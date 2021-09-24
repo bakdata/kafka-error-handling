@@ -34,6 +34,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
+import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.io.JsonEncoder;
@@ -95,13 +97,20 @@ public class ErrorUtil {
 
     /**
      * Convert an object to {@code String}. {@code SpecificRecord} will be serialized using {@link
-     * #toString(SpecificRecord)}.
+     * #toString(SpecificRecord)}. {@code GenericRecord} will be serialized using {@link #toString(GenericRecord)}.
      *
      * @param o object to be serialized
      * @return {@code String} representation of record
      */
     public static String toString(final Object o) {
-        final Object o1 = o instanceof SpecificRecord ? toString((SpecificRecord) o) : o;
+        final Object o1;
+        if (o instanceof SpecificRecord) {
+            o1 = toString((SpecificRecord) o);
+        } else if (o instanceof GenericRecord) {
+            o1 = toString((GenericRecord) o);
+        } else {
+            o1 = o;
+        }
         return Objects.toString(o1);
     }
 
@@ -109,7 +118,7 @@ public class ErrorUtil {
      * Convert a {@code SpecificRecord} to {@code String} using JSON serialization.
      *
      * @param record record to be serialized
-     * @return JSON representation of record or record if an error occured
+     * @return JSON representation of record or record if an error occurred
      */
     private static Object toString(final SpecificRecord record) {
         try {
@@ -123,9 +132,35 @@ public class ErrorUtil {
     private static String writeAsJson(final SpecificRecord itemRecord) throws IOException {
         final Schema targetSchema = itemRecord.getSchema();
         final DatumWriter<SpecificRecord> writer = new SpecificDatumWriter<>(targetSchema);
+        return writeJson(itemRecord, writer);
+    }
+
+    /**
+     * Convert a {@code GenericRecord} to {@code String} using JSON serialization.
+     *
+     * @param record record to be serialized
+     * @return JSON representation of record or record if an error occurred
+     */
+    private static Object toString(final GenericRecord record) {
+        try {
+            return writeAsJson(record);
+        } catch (final IOException ex) {
+            log.warn("Failed to write to json", ex);
+            return record;
+        }
+    }
+
+    private static String writeAsJson(final GenericRecord itemRecord) throws IOException {
+        final Schema targetSchema = itemRecord.getSchema();
+        final DatumWriter<GenericRecord> writer = new GenericDatumWriter<>(targetSchema);
+        return writeJson(itemRecord, writer);
+    }
+
+    private static <T extends GenericContainer> String writeJson(final T itemRecord, final DatumWriter<T> writer)
+            throws IOException {
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             writeJson(itemRecord, writer, out);
-            return new String(out.toByteArray(), StandardCharsets.ISO_8859_1);
+            return out.toString(StandardCharsets.ISO_8859_1);
         }
     }
 
