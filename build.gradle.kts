@@ -52,7 +52,7 @@ dependencies {
     val mockitoVersion = "3.12.4"
     testImplementation(group = "org.mockito", name = "mockito-core", version = mockitoVersion)
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
-    val log4jVersion = "2.14.1"
+    val log4jVersion = "2.15.0"
     testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
     testImplementation(
         group = "com.bakdata.fluent-kafka-streams-tests",
