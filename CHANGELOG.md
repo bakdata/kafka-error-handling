@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.2](https://github.com/bakdata/kafka-error-handling/tree/1.1.2) (2021-12-10)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.1.1...1.1.2)
+
+**Merged pull requests:**
+
+- Update avro to 1.10 [\#4](https://github.com/bakdata/kafka-error-handling/pull/4) ([@philipp94831](https://github.com/philipp94831))
+
 ## [1.1.1](https://github.com/bakdata/kafka-error-handling/tree/1.1.1) (2021-12-10)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.1.0...1.1.1)
 
