@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.0](https://github.com/bakdata/kafka-error-handling/tree/1.2.0) (2022-02-15)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.1.2...1.2.0)
+
+**Merged pull requests:**
+
+- Add processing context to dead letters [\#6](https://github.com/bakdata/kafka-error-handling/pull/6) ([@philipp94831](https://github.com/philipp94831))
+
 ## [1.1.2](https://github.com/bakdata/kafka-error-handling/tree/1.1.2) (2021-12-10)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.1.1...1.1.2)
 
