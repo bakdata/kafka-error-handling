@@ -53,6 +53,7 @@ public final class ProcessingError<V> {
      *
      * @param description description of the context in which an exception has been thrown
      * @return {@code DeadLetter}
+     * @since 1.2.0
      * @deprecated Use {@link DeadLetterTransformer#createDeadLetter(String)}
      */
     @Deprecated
