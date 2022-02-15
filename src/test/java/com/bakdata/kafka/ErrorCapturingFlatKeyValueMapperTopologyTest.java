@@ -72,7 +72,7 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
-                .mapValues(error -> error.createDeadLetter("Description"))
+                .transformValues(DeadLetterTransformer.createDeadLetter("Description"))
                 .to(ERROR_TOPIC);
     }
 
@@ -87,18 +87,18 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         when(this.mapper.apply(1, "foo")).thenThrow(createSchemaRegistryTimeoutException());
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -110,8 +110,8 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -126,8 +126,8 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -137,7 +137,7 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .containsExactlyInAnyOrder(2L, 1L, 18L);
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -147,10 +147,13 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetter.class)
                 .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isEqualTo("foo");
+                    softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isNotNull();
+                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
+                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                    softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 });
     }
 
@@ -163,8 +166,8 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -173,7 +176,7 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 3l);
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -187,13 +190,13 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -203,10 +206,13 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetter.class)
                 .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isNull();
+                    softly.assertThat(deadLetter.getInputValue()).isNotPresent();
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isNotNull();
+                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
+                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                    softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 });
     }
 
@@ -218,8 +224,8 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -229,7 +235,7 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .extracting(ProducerRecord::value)
                 .satisfies(value -> softly.assertThat(value).isNull());
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();

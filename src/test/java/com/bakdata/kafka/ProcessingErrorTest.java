@@ -31,7 +31,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import java.io.PrintWriter;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -61,11 +60,14 @@ class ProcessingErrorTest {
         assertThat(error.createDeadLetter("bar"))
                 .isNotNull()
                 .satisfies(deadLetter -> {
-                    assertThat(deadLetter.getInputValue()).isEqualTo("foo");
+                    assertThat(deadLetter.getInputValue()).hasValue("foo");
                     assertThat(deadLetter.getDescription()).isEqualTo("bar");
-                    Assertions.assertThat(deadLetter.getCause()).satisfies(cause -> {
-                        Assertions.assertThat(cause.getMessage()).isEqualTo("baz");
-                        Assertions.assertThat(cause.getStackTrace()).isEqualTo("qux");
+                    assertThat(deadLetter.getCause()).satisfies(cause -> {
+                        assertThat(cause.getMessage()).hasValue("baz");
+                        assertThat(cause.getStackTrace()).hasValue("qux");
+                        assertThat(deadLetter.getTopic()).isNotPresent();
+                        assertThat(deadLetter.getPartition()).isNotPresent();
+                        assertThat(deadLetter.getOffset()).isNotPresent();
                     });
                 });
     }

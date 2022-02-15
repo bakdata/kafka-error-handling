@@ -53,15 +53,20 @@ public final class ProcessingError<V> {
      *
      * @param description description of the context in which an exception has been thrown
      * @return {@code DeadLetter}
+     * @deprecated Use {@link DeadLetterTransformer#createDeadLetter(String)}
      */
+    @Deprecated
     public DeadLetter createDeadLetter(final @NonNull String description) {
+        return this.newDeadLetterBuilder(description).build();
+    }
+
+    DeadLetter.Builder newDeadLetterBuilder(final String description) {
         return DeadLetter.newBuilder()
                 .setInputValue(Optional.ofNullable(this.value).map(ErrorUtil::toString).orElse(null))
                 .setCause(ErrorDescription.newBuilder()
                         .setMessage(this.throwable.getMessage())
                         .setStackTrace(ExceptionUtils.getStackTrace(this.throwable))
                         .build())
-                .setDescription(description)
-                .build();
+                .setDescription(description);
     }
 }
