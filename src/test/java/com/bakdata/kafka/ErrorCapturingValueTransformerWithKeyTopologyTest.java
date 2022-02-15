@@ -62,7 +62,7 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
-                .mapValues(error -> error.createDeadLetter("Description"))
+                .transformValues(DeadLetterTransformer.createDeadLetter("Description"))
                 .to(ERROR_TOPIC);
     }
 
@@ -98,17 +98,17 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
         };
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -140,8 +140,8 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
         };
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -177,8 +177,8 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -190,7 +190,7 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
                 );
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -200,10 +200,13 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetter.class)
                 .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isEqualTo("foo");
+                    softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isNotNull();
+                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
+                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                    softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 });
     }
 
@@ -233,8 +236,8 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -246,7 +249,7 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
                 );
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -278,13 +281,13 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -294,10 +297,13 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetter.class)
                 .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isNull();
+                    softly.assertThat(deadLetter.getInputValue()).isNotPresent();
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isNotNull();
+                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
+                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                    softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 });
     }
 
@@ -313,7 +319,7 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
 
             @Override
             public Long transform(final Integer key, final String value) {
-                if ( "bar".equals(value)) {
+                if ("bar".equals(value)) {
                     return null;
                 }
                 throw new UnsupportedOperationException();
@@ -329,8 +335,8 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -341,7 +347,7 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();

@@ -62,7 +62,7 @@ class ErrorCapturingValueTransformerTopologyTest extends ErrorCaptureTopologyTes
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
-                .mapValues(error -> error.createDeadLetter("Description"))
+                .transformValues(DeadLetterTransformer.createDeadLetter("Description"))
                 .to(ERROR_TOPIC);
     }
 
@@ -200,10 +200,13 @@ class ErrorCapturingValueTransformerTopologyTest extends ErrorCaptureTopologyTes
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetter.class)
                 .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isEqualTo("foo");
+                    softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isNotNull();
+                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
+                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                    softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 });
     }
 
@@ -294,10 +297,13 @@ class ErrorCapturingValueTransformerTopologyTest extends ErrorCaptureTopologyTes
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetter.class)
                 .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isNull();
+                    softly.assertThat(deadLetter.getInputValue()).isNotPresent();
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isNotNull();
+                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
+                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                    softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 });
     }
 

@@ -56,7 +56,7 @@ final KStream<Integer, String> input =
 final KStream<Double, ProcessedKeyValue<Integer, String, Long>> mappedWithErrors =
        input.map(captureErrors(mapper));
 mappedWithErrors.flatMap(ProcessedKeyValue::getErrors)
-       .mapValues(error -> error.createDeadLetter("A good description where the pipeline broke"))
+       .transformValues(DeadLetterTransformer.createDeadLetter("A good description where the pipeline broke"))
        .to(ERROR_TOPIC);
 
 final KStream<Double, Long> mapped = mappedWithErrors.flatMapValues(ProcessedKeyValue::getValues);

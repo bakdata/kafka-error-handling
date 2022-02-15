@@ -11,6 +11,30 @@
       ]
     },
     {
+      "name": "topic",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "partition",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "offset",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
       "name": "description",
       "type": "string"
     },
