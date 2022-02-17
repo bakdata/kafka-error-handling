@@ -67,6 +67,7 @@ public final class ProcessingError<V> {
                 .setCause(ErrorDescription.newBuilder()
                         .setMessage(this.throwable.getMessage())
                         .setStackTrace(ExceptionUtils.getStackTrace(this.throwable))
+                        .setErrorClass(this.throwable.getClass().getName())
                         .build())
                 .setDescription(description);
     }

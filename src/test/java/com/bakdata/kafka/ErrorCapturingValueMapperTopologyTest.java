@@ -145,8 +145,10 @@ class ErrorCapturingValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .satisfies(deadLetter -> {
                     softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    final ErrorDescription cause = deadLetter.getCause();
+                    softly.assertThat(cause.getMessage()).hasValue("Cannot process");
+                    softly.assertThat(cause.getStackTrace()).isPresent();
+                    softly.assertThat(cause.getErrorClass()).hasValue("java.lang.RuntimeException");
                     softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
                     softly.assertThat(deadLetter.getPartition()).hasValue(0);
                     softly.assertThat(deadLetter.getOffset()).hasValue(0L);
@@ -203,8 +205,10 @@ class ErrorCapturingValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .satisfies(deadLetter -> {
                     softly.assertThat(deadLetter.getInputValue()).isNotPresent();
                     softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    softly.assertThat(deadLetter.getCause().getMessage()).hasValue("Cannot process");
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).isPresent();
+                    final ErrorDescription cause = deadLetter.getCause();
+                    softly.assertThat(cause.getMessage()).hasValue("Cannot process");
+                    softly.assertThat(cause.getStackTrace()).isPresent();
+                    softly.assertThat(cause.getErrorClass()).hasValue("java.lang.RuntimeException");
                     softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
                     softly.assertThat(deadLetter.getPartition()).hasValue(0);
                     softly.assertThat(deadLetter.getOffset()).hasValue(0L);

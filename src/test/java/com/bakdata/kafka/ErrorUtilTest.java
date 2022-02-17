@@ -41,7 +41,7 @@ class ErrorUtilTest {
                 Arguments.of(1, "1"),
                 Arguments.of(null, "null"),
                 Arguments.of(ErrorDescription.newBuilder().setMessage("foo").setStackTrace("bar").build(),
-                        "{\"message\":{\"string\":\"foo\"},\"stack_trace\":{\"string\":\"bar\"}}")
+                        "{\"error_class\":null,\"message\":{\"string\":\"foo\"},\"stack_trace\":{\"string\":\"bar\"}}")
         );
     }
 
