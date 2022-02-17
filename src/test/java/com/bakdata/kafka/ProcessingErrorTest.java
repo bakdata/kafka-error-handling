@@ -43,7 +43,7 @@ import org.mockito.quality.Strictness;
 class ProcessingErrorTest {
 
     @Mock
-    Throwable throwable;
+    private Throwable throwable;
 
     @Test
     void shouldCreateDeadLetter() {
@@ -65,6 +65,7 @@ class ProcessingErrorTest {
                     assertThat(deadLetter.getCause()).satisfies(cause -> {
                         assertThat(cause.getMessage()).hasValue("baz");
                         assertThat(cause.getStackTrace()).hasValue("qux");
+                        assertThat(cause.getErrorClass()).hasValue(this.throwable.getClass().getName());
                         assertThat(deadLetter.getTopic()).isNotPresent();
                         assertThat(deadLetter.getPartition()).isNotPresent();
                         assertThat(deadLetter.getOffset()).isNotPresent();

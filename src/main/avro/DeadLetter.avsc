@@ -45,6 +45,14 @@
         "name": "ErrorDescription",
         "fields": [
           {
+            "name": "error_class",
+            "type": [
+              "null",
+              "string"
+            ],
+            "default": null
+          },
+          {
             "name": "message",
             "type": [
               "null",
