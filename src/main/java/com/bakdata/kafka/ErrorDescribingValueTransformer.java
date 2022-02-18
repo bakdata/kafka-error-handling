@@ -46,9 +46,8 @@ public final class ErrorDescribingValueTransformer<V, VR> extends DecoratorValue
     /**
      * Wrap a {@code ValueTransformer} and describe thrown exceptions with input key and value.
      * <pre>{@code
-     * final ValueTransformerSupplier<V, VR> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, VR> output = input.transformValues(() -> describeErrors(transformer.get()));
+     * final KStream<K, VR> output = input.transformValues(() -> describeErrors(new ValueTransformer<V, VR>() {...}));
      * }
      * </pre>
      *

@@ -72,9 +72,8 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
     /**
      * Wrap a {@code ValueTransformer} and capture thrown exceptions.
      * <pre>{@code
-     * final ValueTransformerSupplier<V, Iterable<VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, ProcessedValue<V, VR>> processed = input.flatTransformValues(() -> captureErrors(transformer.get()));
+     * final KStream<K, ProcessedValue<V, VR>> processed = input.flatTransformValues(() -> captureErrors(new ValueTransformer<V, Iterable<VR>>() {...}));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
      * }
@@ -109,7 +108,7 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
     }
 
     /**
-     * Wrap a {@code ValueTransformer} and capture thrown exceptions.
+     * Wrap a {@code ValueTransformerSupplier} and capture thrown exceptions.
      * <pre>{@code
      * final ValueTransformerSupplier<V, Iterable<VR>> transformer = ...;
      * final KStream<K, V> input = ...;

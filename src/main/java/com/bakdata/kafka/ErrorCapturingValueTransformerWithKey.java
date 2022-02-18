@@ -69,9 +69,8 @@ public final class ErrorCapturingValueTransformerWithKey<K, V, VR>
     /**
      * Wrap a {@code ValueTransformerWithKey} and capture thrown exceptions.
      * <pre>{@code
-     * final ValueTransformerWithKeySupplier<K, V, VR> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(() -> captureErrors(transformer.get()));
+     * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(() -> captureErrors(new ValueTransformerWithKey<K, V, VR>() {...}));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
      * }

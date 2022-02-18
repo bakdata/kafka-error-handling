@@ -47,9 +47,8 @@ public final class ErrorDescribingTransformer<K, V, R> extends DecoratorTransfor
     /**
      * Wrap a {@code Transformer} and describe thrown exceptions with input key and value.
      * <pre>{@code
-     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, VR> output = input.transform(() -> describeErrors(transformer.get()));
+     * final KStream<KR, VR> output = input.transform(() -> describeErrors(new Transformer<K, V, KeyValue<KR, VR>>() {...}));
      * }
      * </pre>
      *

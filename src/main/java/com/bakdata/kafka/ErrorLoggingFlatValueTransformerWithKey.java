@@ -73,9 +73,8 @@ public final class ErrorLoggingFlatValueTransformerWithKey<K, V, VR>
     /**
      * Wrap a {@code ValueTransformerWithKey} and log thrown exceptions with input key and value.
      * <pre>{@code
-     * final ValueTransformerWithKeySupplier<K, V, Iterable<VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, VR> output = input.transformValues(() -> logErrors(transformer.get()));
+     * final KStream<K, VR> output = input.transformValues(() -> logErrors(new ValueTransformerWithKey<K, V, Iterable<VR>>() {...}));
      * }
      * </pre>
      *

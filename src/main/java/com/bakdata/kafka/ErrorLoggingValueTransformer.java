@@ -71,9 +71,8 @@ public final class ErrorLoggingValueTransformer<V, VR> implements ValueTransform
     /**
      * Wrap a {@code ValueTransformer} and log thrown exceptions with input key and value.
      * <pre>{@code
-     * final ValueTransformerSupplier<V, VR> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, VR> output = input.transformValues(() -> logErrors(transformer.get()));
+     * final KStream<K, VR> output = input.transformValues(() -> logErrors(new ValueTransformer<V, VR>() {...}));
      * }
      * </pre>
      *

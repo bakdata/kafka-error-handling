@@ -70,9 +70,8 @@ public final class ErrorLoggingFlatValueTransformer<V, VR> implements ValueTrans
     /**
      * Wrap a {@code ValueTransformer} and log thrown exceptions with input key and value.
      * <pre>{@code
-     * final ValueTransformerSupplier<V, Iterable<VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, VR> output = input.transformValues(() -> logErrors(transformer.get()));
+     * final KStream<K, VR> output = input.transformValues(() -> logErrors(new ValueTransformer<V, Iterable<VR>>() {...}));
      * }
      * </pre>
      *
@@ -95,7 +94,7 @@ public final class ErrorLoggingFlatValueTransformer<V, VR> implements ValueTrans
      * @param supplier {@code ValueTransformerSupplier} whose exceptions should be logged
      * @param <V> type of input values
      * @param <VR> type of output values
-     * @return {@code ValueTransformer}
+     * @return {@code ValueTransformerSupplier}
      * @see #logErrors(ValueTransformerSupplier, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */

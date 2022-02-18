@@ -70,9 +70,8 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
     /**
      * Wrap a {@code Transformer} and log thrown exceptions with input key and value.
      * <pre>{@code
-     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, VR> output = input.transform(() -> logErrors(transformer.get()));
+     * final KStream<KR, VR> output = input.transform(() -> logErrors(new Transformer<K, V, KeyValue<KR, VR>>() {...}));
      * }
      * </pre>
      *

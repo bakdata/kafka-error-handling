@@ -47,9 +47,8 @@ public final class ErrorDescribingValueTransformerWithKey<K, V, VR> extends Deco
     /**
      * Wrap a {@code ValueTransformerWithKey} and describe thrown exceptions with input key and value.
      * <pre>{@code
-     * final ValueTransformerWithKeySupplier<K, V, VR> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, VR> output = input.transformValues(() -> describeErrors(transformer.get()));
+     * final KStream<K, VR> output = input.transformValues(() -> describeErrors(new ValueTransformerWithKey<K, V, VR>() {...}));
      * }
      * </pre>
      *
