@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.2](https://github.com/bakdata/kafka-error-handling/tree/1.2.2) (2022-02-18)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.1...1.2.2)
+
+**Merged pull requests:**
+
+- Add factory methods for TransformerSuppliers [\#8](https://github.com/bakdata/kafka-error-handling/pull/8) ([@philipp94831](https://github.com/philipp94831))
+
 ## [1.2.1](https://github.com/bakdata/kafka-error-handling/tree/1.2.1) (2022-02-17)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.0...1.2.1)
 
