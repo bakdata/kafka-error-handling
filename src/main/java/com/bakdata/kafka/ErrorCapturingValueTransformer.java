@@ -24,13 +24,16 @@
 
 package com.bakdata.kafka;
 
+import java.util.Set;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.kstream.ValueTransformer;
+import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
  * Wrap a {@code ValueTransformer} and capture thrown exceptions.
@@ -83,6 +86,55 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
             final ValueTransformer<? super V, ? extends VR> transformer,
             final Predicate<Exception> errorFilter) {
         return new ErrorCapturingValueTransformer<>(transformer, errorFilter);
+    }
+
+    /**
+     * Wrap a {@code ValueTransformerSupplier} and capture thrown exceptions. Recoverable Kafka exceptions such as a
+     * schema registry timeout are forwarded and not captured.
+     *
+     * @param supplier {@code ValueTransformerSupplier} whose exceptions should be captured
+     * @param <V> type of input values
+     * @param <VR> type of output values
+     * @return {@code ValueTransformerSupplier}
+     * @see #captureErrors(ValueTransformerSupplier, Predicate)
+     * @see ErrorUtil#isRecoverable(Exception)
+     */
+    public static <V, VR> ValueTransformerSupplier<V, ProcessedValue<V, VR>> captureErrors(
+            final ValueTransformerSupplier<? super V, ? extends VR> supplier) {
+        return captureErrors(supplier, ErrorUtil::isRecoverable);
+    }
+
+    /**
+     * Wrap a {@code ValueTransformerSupplier} and capture thrown exceptions.
+     * <pre>{@code
+     * final ValueTransformerSupplier<V, VR> transformer = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(captureErrors(transformer));
+     * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
+     * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
+     * }
+     * </pre>
+     *
+     * @param supplier {@code ValueTransformerSupplier} whose exceptions should be captured
+     * @param errorFilter expression that filters errors which should be thrown and not captured
+     * @param <V> type of input values
+     * @param <VR> type of output values
+     * @return {@code ValueTransformerSupplier}
+     */
+    public static <V, VR> ValueTransformerSupplier<V, ProcessedValue<V, VR>> captureErrors(
+            final @NonNull ValueTransformerSupplier<? super V, ? extends VR> supplier,
+            final Predicate<Exception> errorFilter) {
+        return new ValueTransformerSupplier<>() {
+            @Override
+            public Set<StoreBuilder<?>> stores() {
+                return supplier.stores();
+            }
+
+            @Override
+            public ValueTransformer<V, ProcessedValue<V, VR>> get() {
+                return captureErrors(supplier.get(), errorFilter);
+            }
+        };
     }
 
     @Override

@@ -36,6 +36,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
+import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -58,7 +59,7 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
         final KStream<Integer, ProcessedValue<String, Long>> mapped =
-                input.flatTransformValues(() -> ErrorCapturingFlatValueTransformerWithKey.captureErrors(this.mapper));
+                input.flatTransformValues(ErrorCapturingFlatValueTransformerWithKey.captureErrors(() -> this.mapper));
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
@@ -68,7 +69,11 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
     @Test
     void shouldNotAllowNullTransformer(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformerWithKey.captureErrors(null))
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformerWithKey.captureErrors(
+                        (ValueTransformerWithKey<? super Object, ? super Object, ? extends Iterable<Object>>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformerWithKey.captureErrors(
+                        (ValueTransformerWithKeySupplier<? super Object, ? super Object, ? extends Iterable<Object>>) null))
                 .isInstanceOf(NullPointerException.class);
     }
 

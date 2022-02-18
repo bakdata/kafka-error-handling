@@ -36,6 +36,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.ValueTransformer;
+import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -57,13 +58,17 @@ class ErrorLoggingFlatValueTransformerTopologyTest extends ErrorCaptureTopologyT
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
         final KStream<Integer, Long> mapped =
-                input.flatTransformValues(() -> ErrorLoggingFlatValueTransformer.logErrors(this.mapper));
+                input.flatTransformValues(ErrorLoggingFlatValueTransformer.logErrors(() -> this.mapper));
         mapped.to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
     }
 
     @Test
     void shouldNotAllowNullTransformer(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorLoggingFlatValueTransformer.logErrors(null))
+        softly.assertThatThrownBy(() -> ErrorLoggingFlatValueTransformer.logErrors(
+                        (ValueTransformer<? super Object, ? extends Iterable<Object>>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingFlatValueTransformer.logErrors(
+                        (ValueTransformerSupplier<? super Object, ? extends Iterable<Object>>) null))
                 .isInstanceOf(NullPointerException.class);
     }
 

@@ -37,6 +37,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.Transformer;
+import org.apache.kafka.streams.kstream.TransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -59,7 +60,7 @@ class ErrorCapturingTransformerTopologyTest extends ErrorCaptureTopologyTest {
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
         final KStream<Double, ProcessedKeyValue<Integer, String, Long>> mapped =
-                input.transform(() -> ErrorCapturingTransformer.captureErrors(this.mapper));
+                input.transform(ErrorCapturingTransformer.captureErrors(() -> this.mapper));
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
@@ -69,7 +70,11 @@ class ErrorCapturingTransformerTopologyTest extends ErrorCaptureTopologyTest {
 
     @Test
     void shouldNotAllowNullTransformer(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorCapturingTransformer.captureErrors(null))
+        softly.assertThatThrownBy(() -> ErrorCapturingTransformer.captureErrors(
+                        (Transformer<? super Object, ? super Object, ? extends KeyValue<Object, Object>>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingTransformer.captureErrors(
+                        (TransformerSupplier<? super Object, ? super Object, ? extends KeyValue<Object, Object>>) null))
                 .isInstanceOf(NullPointerException.class);
     }
 

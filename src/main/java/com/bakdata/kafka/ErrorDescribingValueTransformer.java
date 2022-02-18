@@ -24,8 +24,11 @@
 
 package com.bakdata.kafka;
 
+import java.util.Set;
 import lombok.NonNull;
 import org.apache.kafka.streams.kstream.ValueTransformer;
+import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
+import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
  * Wrap a {@code ValueTransformer} and describe thrown exceptions with input key and value.
@@ -56,6 +59,35 @@ public final class ErrorDescribingValueTransformer<V, VR> extends DecoratorValue
      */
     public static <V, VR> ValueTransformer<V, VR> describeErrors(final ValueTransformer<V, VR> transformer) {
         return new ErrorDescribingValueTransformer<>(transformer);
+    }
+
+    /**
+     * Wrap a {@code ValueTransformerSupplier} and describe thrown exceptions with input key and value.
+     * <pre>{@code
+     * final ValueTransformerSupplier<V, VR> transformer = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<K, VR> output = input.transformValues(describeErrors(transformer));
+     * }
+     * </pre>
+     *
+     * @param supplier {@code ValueTransformerSupplier} whose exceptions should be described
+     * @param <V> type of input values
+     * @param <VR> type of output values
+     * @return {@code ValueTransformerSupplier}
+     */
+    public static <V, VR> ValueTransformerSupplier<V, VR> describeErrors(
+            final @NonNull ValueTransformerSupplier<V, VR> supplier) {
+        return new ValueTransformerSupplier<>() {
+            @Override
+            public Set<StoreBuilder<?>> stores() {
+                return supplier.stores();
+            }
+
+            @Override
+            public ValueTransformer<V, VR> get() {
+                return describeErrors(supplier.get());
+            }
+        };
     }
 
     @Override

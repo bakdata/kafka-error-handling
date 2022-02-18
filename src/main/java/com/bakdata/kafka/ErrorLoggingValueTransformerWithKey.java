@@ -27,13 +27,16 @@ package com.bakdata.kafka;
 import static java.util.Collections.emptyList;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
+import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
  * Wrap a {@code ValueTransformerWithKey} and log thrown exceptions with input key and value.
@@ -88,6 +91,55 @@ public final class ErrorLoggingValueTransformerWithKey<K, V, VR>
             final ValueTransformerWithKey<? super K, ? super V, ? extends VR> transformer,
             final Predicate<Exception> errorFilter) {
         return new ErrorLoggingValueTransformerWithKey<>(transformer, errorFilter);
+    }
+
+    /**
+     * Wrap a {@code ValueTransformerWithKeySupplier} and log thrown exceptions with input key and value. Recoverable
+     * Kafka exceptions such as a schema registry timeout are forwarded and not captured.
+     *
+     * @param supplier {@code ValueTransformerWithKeySupplier} whose exceptions should be logged
+     * @param <K> type of input keys
+     * @param <V> type of input values
+     * @param <VR> type of output values
+     * @return {@code ValueTransformerWithKeySupplier}
+     * @see #logErrors(ValueTransformerWithKeySupplier, Predicate)
+     * @see ErrorUtil#isRecoverable(Exception)
+     */
+    public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, Iterable<VR>> logErrors(
+            final ValueTransformerWithKeySupplier<? super K, ? super V, ? extends VR> supplier) {
+        return logErrors(supplier, ErrorUtil::isRecoverable);
+    }
+
+    /**
+     * Wrap a {@code ValueTransformerWithKeySupplier} and log thrown exceptions with input key and value.
+     * <pre>{@code
+     * final ValueTransformerWithKeySupplier<K, V, VR> transformer = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<K, VR> output = input.transformValues(logErrors(transformer));
+     * }
+     * </pre>
+     *
+     * @param supplier {@code ValueTransformerWithKeySupplier} whose exceptions should be logged
+     * @param errorFilter expression that filters errors which should be thrown and not logged
+     * @param <K> type of input keys
+     * @param <V> type of input values
+     * @param <VR> type of output values
+     * @return {@code ValueTransformerWithKeySupplier}
+     */
+    public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, Iterable<VR>> logErrors(
+            final @NonNull ValueTransformerWithKeySupplier<? super K, ? super V, ? extends VR> supplier,
+            final Predicate<Exception> errorFilter) {
+        return new ValueTransformerWithKeySupplier<>() {
+            @Override
+            public Set<StoreBuilder<?>> stores() {
+                return supplier.stores();
+            }
+
+            @Override
+            public ValueTransformerWithKey<K, V, Iterable<VR>> get() {
+                return logErrors(supplier.get(), errorFilter);
+            }
+        };
     }
 
     @Override

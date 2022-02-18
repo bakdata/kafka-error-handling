@@ -35,6 +35,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
+import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -56,13 +57,17 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
         final KStream<Integer, Long> mapped =
-                input.transformValues(() -> ErrorDescribingValueTransformerWithKey.describeErrors(this.mapper));
+                input.transformValues(ErrorDescribingValueTransformerWithKey.describeErrors(() -> this.mapper));
         mapped.to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
     }
 
     @Test
     void shouldNotAllowNullTransformer(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorDescribingValueTransformerWithKey.describeErrors(null))
+        softly.assertThatThrownBy(() -> ErrorDescribingValueTransformerWithKey.describeErrors(
+                        (ValueTransformerWithKey<Object, Object, Object>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorDescribingValueTransformerWithKey.describeErrors(
+                        (ValueTransformerWithKeySupplier<Object, Object, Object>) null))
                 .isInstanceOf(NullPointerException.class);
     }
 
