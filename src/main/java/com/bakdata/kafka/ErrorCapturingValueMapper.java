@@ -55,7 +55,7 @@ public final class ErrorCapturingValueMapper<V, VR> implements ValueMapper<V, Pr
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueMapper<V, ProcessedValue<V, VR>> captureErrors(
-            final ValueMapper<? super V, ? extends VR> mapper) {
+            final @NonNull ValueMapper<? super V, ? extends VR> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -77,7 +77,8 @@ public final class ErrorCapturingValueMapper<V, VR> implements ValueMapper<V, Pr
      * @return {@code ValueMapper}
      */
     public static <V, VR> ValueMapper<V, ProcessedValue<V, VR>> captureErrors(
-            final ValueMapper<? super V, ? extends VR> mapper, final Predicate<Exception> errorFilter) {
+            final @NonNull ValueMapper<? super V, ? extends VR> mapper,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingValueMapper<>(mapper, errorFilter);
     }
 

@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -74,6 +75,14 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
     void shouldNotAllowNullMapper(final SoftAssertions softly) {
         softly.assertThatThrownBy(() -> ErrorLoggingKeyValueMapper.logErrors(null))
                 .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingKeyValueMapper.logErrors(null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorLoggingKeyValueMapper.logErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -81,12 +90,12 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
         when(this.mapper.apply(1, "foo")).thenThrow(createSchemaRegistryTimeoutException());
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -98,8 +107,8 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
         when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -113,8 +122,8 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -134,8 +143,8 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -155,8 +164,8 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -170,8 +179,8 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)

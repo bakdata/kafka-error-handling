@@ -56,7 +56,7 @@ public final class ErrorDescribingValueMapperWithKey<K, V, VR> implements ValueM
      * @return {@code ValueMapperWithKey}
      */
     public static <K, V, VR> ValueMapperWithKey<K, V, VR> describeErrors(
-            final ValueMapperWithKey<? super K, ? super V, ? extends VR> mapper) {
+            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends VR> mapper) {
         return new ErrorDescribingValueMapperWithKey<>(mapper);
     }
 

@@ -36,6 +36,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.Transformer;
+import org.apache.kafka.streams.kstream.TransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -57,13 +58,17 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
         final KStream<Double, Long> mapped =
-                input.transform(() -> ErrorDescribingTransformer.describeErrors(this.mapper));
+                input.transform(ErrorDescribingTransformer.describeErrors(() -> this.mapper));
         mapped.to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
     }
 
     @Test
     void shouldNotAllowNullTransformer(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorDescribingTransformer.describeErrors(null))
+        softly.assertThatThrownBy(() -> ErrorDescribingTransformer.describeErrors(
+                        (Transformer<Object, Object, Object>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorDescribingTransformer.describeErrors(
+                        (TransformerSupplier<Object, Object, Object>) null))
                 .isInstanceOf(NullPointerException.class);
     }
 

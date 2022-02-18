@@ -54,7 +54,8 @@ public final class ErrorDescribingValueMapper<V, VR> implements ValueMapper<V, V
      * @param <VR> type of output values
      * @return {@code ValueMapper}
      */
-    public static <V, VR> ValueMapper<V, VR> describeErrors(final ValueMapper<? super V, ? extends VR> mapper) {
+    public static <V, VR> ValueMapper<V, VR> describeErrors(
+            final @NonNull ValueMapper<? super V, ? extends VR> mapper) {
         return new ErrorDescribingValueMapper<>(mapper);
     }
 

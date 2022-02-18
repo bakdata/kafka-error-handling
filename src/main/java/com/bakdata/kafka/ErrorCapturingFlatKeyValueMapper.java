@@ -63,7 +63,7 @@ public final class ErrorCapturingFlatKeyValueMapper<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>>
-    captureErrors(final KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> mapper) {
+    captureErrors(final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -87,8 +87,8 @@ public final class ErrorCapturingFlatKeyValueMapper<K, V, KR, VR>
      * @return {@code KeyValueMapper}
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>>
-    captureErrors(final KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> mapper,
-            final Predicate<Exception> errorFilter) {
+    captureErrors(final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> mapper,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingFlatKeyValueMapper<>(mapper, errorFilter);
     }
 

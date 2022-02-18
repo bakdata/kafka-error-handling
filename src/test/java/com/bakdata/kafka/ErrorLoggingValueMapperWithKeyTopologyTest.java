@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -73,6 +74,14 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
     void shouldNotAllowNullMapper(final SoftAssertions softly) {
         softly.assertThatThrownBy(() -> ErrorLoggingValueMapperWithKey.logErrors(null))
                 .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingValueMapperWithKey.logErrors(null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorLoggingValueMapperWithKey.logErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -80,11 +89,11 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
         when(this.mapper.apply(1, "foo")).thenThrow(createSchemaRegistryTimeoutException());
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -96,8 +105,8 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
         when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -111,7 +120,7 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -131,7 +140,7 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -151,7 +160,7 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -165,7 +174,7 @@ class ErrorLoggingValueMapperWithKeyTopologyTest extends ErrorCaptureTopologyTes
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)

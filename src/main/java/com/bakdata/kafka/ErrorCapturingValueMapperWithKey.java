@@ -58,7 +58,7 @@ public final class ErrorCapturingValueMapperWithKey<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> ValueMapperWithKey<K, V, ProcessedValue<V, VR>> captureErrors(
-            final ValueMapperWithKey<? super K, ? super V, ? extends VR> mapper) {
+            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends VR> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -81,8 +81,8 @@ public final class ErrorCapturingValueMapperWithKey<K, V, VR>
      * @return {@code ValueMapperWithKey}
      */
     public static <K, V, VR> ValueMapperWithKey<K, V, ProcessedValue<V, VR>> captureErrors(
-            final ValueMapperWithKey<? super K, ? super V, ? extends VR> mapper,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends VR> mapper,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingValueMapperWithKey<>(mapper, errorFilter);
     }
 

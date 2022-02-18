@@ -24,13 +24,16 @@
 
 package com.bakdata.kafka;
 
+import java.util.Set;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.kstream.Transformer;
+import org.apache.kafka.streams.kstream.TransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
  * Wrap a {@code Transformer} and log thrown exceptions with input key and value.
@@ -60,16 +63,15 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, R> Transformer<K, V, R> logErrors(
-            final Transformer<? super K, ? super V, ? extends R> transformer) {
+            final @NonNull Transformer<? super K, ? super V, ? extends R> transformer) {
         return logErrors(transformer, ErrorUtil::isRecoverable);
     }
 
     /**
      * Wrap a {@code Transformer} and log thrown exceptions with input key and value.
      * <pre>{@code
-     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, VR> output = input.transform(() -> logErrors(transformer.get()));
+     * final KStream<KR, VR> output = input.transform(() -> logErrors(new Transformer<K, V, KeyValue<KR, VR>>() {...}));
      * }
      * </pre>
      *
@@ -81,8 +83,58 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
      * @return {@code Transformer}
      */
     public static <K, V, R> Transformer<K, V, R> logErrors(
-            final Transformer<? super K, ? super V, ? extends R> transformer, final Predicate<Exception> errorFilter) {
+            final @NonNull Transformer<? super K, ? super V, ? extends R> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingTransformer<>(transformer, errorFilter);
+    }
+
+    /**
+     * Wrap a {@code TransformerSupplier} and log thrown exceptions with input key and value. Recoverable Kafka
+     * exceptions such as a schema registry timeout are forwarded and not captured.
+     *
+     * @param supplier {@code TransformerSupplier} whose exceptions should be logged
+     * @param <K> type of input keys
+     * @param <V> type of input values
+     * @param <R> type of transformation result
+     * @return {@code TransformerSupplier}
+     * @see #logErrors(TransformerSupplier, Predicate)
+     * @see ErrorUtil#isRecoverable(Exception)
+     */
+    public static <K, V, R> TransformerSupplier<K, V, R> logErrors(
+            final @NonNull TransformerSupplier<? super K, ? super V, ? extends R> supplier) {
+        return logErrors(supplier, ErrorUtil::isRecoverable);
+    }
+
+    /**
+     * Wrap a {@code TransformerSupplier} and log thrown exceptions with input key and value.
+     * <pre>{@code
+     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, VR> output = input.transform(logErrors(transformer));
+     * }
+     * </pre>
+     *
+     * @param supplier {@code TransformerSupplier} whose exceptions should be logged
+     * @param errorFilter expression that filters errors which should be thrown and not logged
+     * @param <K> type of input keys
+     * @param <V> type of input values
+     * @param <R> type of transformation result
+     * @return {@code TransformerSupplier}
+     */
+    public static <K, V, R> TransformerSupplier<K, V, R> logErrors(
+            final @NonNull TransformerSupplier<? super K, ? super V, ? extends R> supplier,
+            final @NonNull Predicate<Exception> errorFilter) {
+        return new TransformerSupplier<>() {
+            @Override
+            public Set<StoreBuilder<?>> stores() {
+                return supplier.stores();
+            }
+
+            @Override
+            public Transformer<K, V, R> get() {
+                return logErrors(supplier.get(), errorFilter);
+            }
+        };
     }
 
     @Override

@@ -59,7 +59,7 @@ public final class ErrorLoggingFlatValueMapper<V, VR> implements ValueMapper<V, 
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueMapper<V, Iterable<VR>> logErrors(
-            final ValueMapper<? super V, ? extends Iterable<VR>> mapper) {
+            final @NonNull ValueMapper<? super V, ? extends Iterable<VR>> mapper) {
         return logErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -79,7 +79,8 @@ public final class ErrorLoggingFlatValueMapper<V, VR> implements ValueMapper<V, 
      * @return {@code ValueMapper}
      */
     public static <V, VR> ValueMapper<V, Iterable<VR>> logErrors(
-            final ValueMapper<? super V, ? extends Iterable<VR>> mapper, final Predicate<Exception> errorFilter) {
+            final @NonNull ValueMapper<? super V, ? extends Iterable<VR>> mapper,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingFlatValueMapper<>(mapper, errorFilter);
     }
 

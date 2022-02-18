@@ -24,8 +24,11 @@
 
 package com.bakdata.kafka;
 
+import java.util.Set;
 import lombok.NonNull;
 import org.apache.kafka.streams.kstream.Transformer;
+import org.apache.kafka.streams.kstream.TransformerSupplier;
+import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
  * Wrap a {@code Transformer} and describe thrown exceptions with input key and value.
@@ -44,9 +47,8 @@ public final class ErrorDescribingTransformer<K, V, R> extends DecoratorTransfor
     /**
      * Wrap a {@code Transformer} and describe thrown exceptions with input key and value.
      * <pre>{@code
-     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, VR> output = input.transform(() -> describeErrors(transformer.get()));
+     * final KStream<KR, VR> output = input.transform(() -> describeErrors(new Transformer<K, V, KeyValue<KR, VR>>() {...}));
      * }
      * </pre>
      *
@@ -56,8 +58,38 @@ public final class ErrorDescribingTransformer<K, V, R> extends DecoratorTransfor
      * @param <R> type of transformation result
      * @return {@code Transformer}
      */
-    public static <K, V, R> Transformer<K, V, R> describeErrors(final Transformer<K, V, R> transformer) {
+    public static <K, V, R> Transformer<K, V, R> describeErrors(final @NonNull Transformer<K, V, R> transformer) {
         return new ErrorDescribingTransformer<>(transformer);
+    }
+
+    /**
+     * Wrap a {@code TransformerSupplier} and describe thrown exceptions with input key and value.
+     * <pre>{@code
+     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, VR> output = input.transform(describeErrors(transformer));
+     * }
+     * </pre>
+     *
+     * @param supplier {@code TransformerSupplier} whose exceptions should be described
+     * @param <K> type of input keys
+     * @param <V> type of input values
+     * @param <R> type of transformation result
+     * @return {@code TransformerSupplier}
+     */
+    public static <K, V, R> TransformerSupplier<K, V, R> describeErrors(
+            final @NonNull TransformerSupplier<K, V, R> supplier) {
+        return new TransformerSupplier<>() {
+            @Override
+            public Set<StoreBuilder<?>> stores() {
+                return supplier.stores();
+            }
+
+            @Override
+            public Transformer<K, V, R> get() {
+                return describeErrors(supplier.get());
+            }
+        };
     }
 
     @Override

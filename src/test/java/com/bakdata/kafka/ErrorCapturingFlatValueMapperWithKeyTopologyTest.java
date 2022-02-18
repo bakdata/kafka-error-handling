@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -79,6 +80,14 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
     void shouldNotAllowNullMapper(final SoftAssertions softly) {
         softly.assertThatThrownBy(() -> ErrorCapturingFlatValueMapperWithKey.captureErrors(null))
                 .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueMapperWithKey.captureErrors(null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueMapperWithKey.captureErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -86,17 +95,17 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
         when(this.mapper.apply(1, "foo")).thenThrow(createSchemaRegistryTimeoutException());
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -108,8 +117,8 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
         when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -123,7 +132,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
@@ -131,7 +140,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 1L, 18L);
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -161,7 +170,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
@@ -170,7 +179,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .containsExactlyInAnyOrder(2L, 5L);
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -184,12 +193,12 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -219,7 +228,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
@@ -228,7 +237,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
                 .containsExactlyInAnyOrder(5L, null, 2L);
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();

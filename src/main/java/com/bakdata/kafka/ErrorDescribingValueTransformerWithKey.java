@@ -24,8 +24,11 @@
 
 package com.bakdata.kafka;
 
+import java.util.Set;
 import lombok.NonNull;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
+import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
+import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
  * Wrap a {@code ValueTransformerWithKey} and describe thrown exceptions with input key and value.
@@ -44,9 +47,8 @@ public final class ErrorDescribingValueTransformerWithKey<K, V, VR> extends Deco
     /**
      * Wrap a {@code ValueTransformerWithKey} and describe thrown exceptions with input key and value.
      * <pre>{@code
-     * final ValueTransformerWithKeySupplier<K, V, VR> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, VR> output = input.transformValues(() -> describeErrors(transformer.get()));
+     * final KStream<K, VR> output = input.transformValues(() -> describeErrors(new ValueTransformerWithKey<K, V, VR>() {...}));
      * }
      * </pre>
      *
@@ -57,8 +59,38 @@ public final class ErrorDescribingValueTransformerWithKey<K, V, VR> extends Deco
      * @return {@code ValueTransformerWithKey}
      */
     public static <K, V, VR> ValueTransformerWithKey<K, V, VR> describeErrors(
-            final ValueTransformerWithKey<K, V, VR> transformer) {
+            final @NonNull ValueTransformerWithKey<K, V, VR> transformer) {
         return new ErrorDescribingValueTransformerWithKey<>(transformer);
+    }
+
+    /**
+     * Wrap a {@code ValueTransformerWithKeySupplier} and describe thrown exceptions with input key and value.
+     * <pre>{@code
+     * final ValueTransformerWithKeySupplier<K, V, VR> transformer = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<K, VR> output = input.transformValues(describeErrors(transformer));
+     * }
+     * </pre>
+     *
+     * @param supplier {@code ValueTransformerWithKeySupplier} whose exceptions should be described
+     * @param <K> type of input keys
+     * @param <V> type of input values
+     * @param <VR> type of output values
+     * @return {@code ValueTransformerWithKeySupplier}
+     */
+    public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, VR> describeErrors(
+            final @NonNull ValueTransformerWithKeySupplier<K, V, VR> supplier) {
+        return new ValueTransformerWithKeySupplier<>() {
+            @Override
+            public Set<StoreBuilder<?>> stores() {
+                return supplier.stores();
+            }
+
+            @Override
+            public ValueTransformerWithKey<K, V, VR> get() {
+                return describeErrors(supplier.get());
+            }
+        };
     }
 
     @Override
