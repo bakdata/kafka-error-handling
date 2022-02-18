@@ -57,7 +57,7 @@ public final class ErrorDescribingKeyValueMapper<K, V, R> implements KeyValueMap
      * @return {@code KeyValueMapper}
      */
     public static <K, V, R> KeyValueMapper<K, V, R> describeErrors(
-            final KeyValueMapper<? super K, ? super V, ? extends R> mapper) {
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends R> mapper) {
         return new ErrorDescribingKeyValueMapper<>(mapper);
     }
 

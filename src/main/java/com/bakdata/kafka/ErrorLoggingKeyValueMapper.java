@@ -62,7 +62,7 @@ public final class ErrorLoggingKeyValueMapper<K, V, R> implements KeyValueMapper
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, R> KeyValueMapper<K, V, Iterable<R>> logErrors(
-            final KeyValueMapper<? super K, ? super V, ? extends R> mapper) {
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends R> mapper) {
         return logErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -83,7 +83,8 @@ public final class ErrorLoggingKeyValueMapper<K, V, R> implements KeyValueMapper
      * @return {@code KeyValueMapper}
      */
     public static <K, V, R> KeyValueMapper<K, V, Iterable<R>> logErrors(
-            final KeyValueMapper<? super K, ? super V, ? extends R> mapper, final Predicate<Exception> errorFilter) {
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends R> mapper,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingKeyValueMapper<>(mapper, errorFilter);
     }
 

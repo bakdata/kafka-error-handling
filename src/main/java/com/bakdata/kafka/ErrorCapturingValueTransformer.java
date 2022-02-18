@@ -61,7 +61,7 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueTransformer<V, ProcessedValue<V, VR>> captureErrors(
-            final ValueTransformer<? super V, ? extends VR> transformer) {
+            final @NonNull ValueTransformer<? super V, ? extends VR> transformer) {
         return captureErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -82,8 +82,8 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
      * @return {@code ValueTransformer}
      */
     public static <V, VR> ValueTransformer<V, ProcessedValue<V, VR>> captureErrors(
-            final ValueTransformer<? super V, ? extends VR> transformer,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull ValueTransformer<? super V, ? extends VR> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingValueTransformer<>(transformer, errorFilter);
     }
 
@@ -99,7 +99,7 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueTransformerSupplier<V, ProcessedValue<V, VR>> captureErrors(
-            final ValueTransformerSupplier<? super V, ? extends VR> supplier) {
+            final @NonNull ValueTransformerSupplier<? super V, ? extends VR> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -122,7 +122,7 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
      */
     public static <V, VR> ValueTransformerSupplier<V, ProcessedValue<V, VR>> captureErrors(
             final @NonNull ValueTransformerSupplier<? super V, ? extends VR> supplier,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ValueTransformerSupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {

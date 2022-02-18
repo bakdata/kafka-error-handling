@@ -59,7 +59,7 @@ public final class ErrorDescribingValueTransformerWithKey<K, V, VR> extends Deco
      * @return {@code ValueTransformerWithKey}
      */
     public static <K, V, VR> ValueTransformerWithKey<K, V, VR> describeErrors(
-            final ValueTransformerWithKey<K, V, VR> transformer) {
+            final @NonNull ValueTransformerWithKey<K, V, VR> transformer) {
         return new ErrorDescribingValueTransformerWithKey<>(transformer);
     }
 

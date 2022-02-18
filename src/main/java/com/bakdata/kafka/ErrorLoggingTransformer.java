@@ -63,7 +63,7 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, R> Transformer<K, V, R> logErrors(
-            final Transformer<? super K, ? super V, ? extends R> transformer) {
+            final @NonNull Transformer<? super K, ? super V, ? extends R> transformer) {
         return logErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -83,7 +83,8 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
      * @return {@code Transformer}
      */
     public static <K, V, R> Transformer<K, V, R> logErrors(
-            final Transformer<? super K, ? super V, ? extends R> transformer, final Predicate<Exception> errorFilter) {
+            final @NonNull Transformer<? super K, ? super V, ? extends R> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingTransformer<>(transformer, errorFilter);
     }
 
@@ -100,7 +101,7 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, R> TransformerSupplier<K, V, R> logErrors(
-            final TransformerSupplier<? super K, ? super V, ? extends R> supplier) {
+            final @NonNull TransformerSupplier<? super K, ? super V, ? extends R> supplier) {
         return logErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -122,7 +123,7 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
      */
     public static <K, V, R> TransformerSupplier<K, V, R> logErrors(
             final @NonNull TransformerSupplier<? super K, ? super V, ? extends R> supplier,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull Predicate<Exception> errorFilter) {
         return new TransformerSupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {

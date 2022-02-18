@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
@@ -68,7 +69,21 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
                         (ValueTransformerWithKey<? super Object, ? super Object, ?>) null))
                 .isInstanceOf(NullPointerException.class);
         softly.assertThatThrownBy(() -> ErrorLoggingValueTransformerWithKey.logErrors(
+                        (ValueTransformerWithKey<? super Object, ? super Object, ?>) null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingValueTransformerWithKey.logErrors(
                         (ValueTransformerWithKeySupplier<? super Object, ? super Object, ?>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingValueTransformerWithKey.logErrors(
+                        (ValueTransformerWithKeySupplier<? super Object, ? super Object, ?>) null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorLoggingValueTransformerWithKey.logErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingValueTransformerWithKey.logErrors(() -> this.mapper, null))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -98,11 +113,11 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
         };
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -134,8 +149,8 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
         };
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -171,8 +186,8 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -211,8 +226,8 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -251,8 +266,8 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -286,8 +301,8 @@ class ErrorLoggingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopolo
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)

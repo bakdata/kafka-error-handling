@@ -65,7 +65,7 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueTransformer<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final ValueTransformer<? super V, ? extends Iterable<VR>> transformer) {
+            final @NonNull ValueTransformer<? super V, ? extends Iterable<VR>> transformer) {
         return captureErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -86,8 +86,8 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
      * @return {@code ValueTransformer}
      */
     public static <V, VR> ValueTransformer<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final ValueTransformer<? super V, ? extends Iterable<VR>> transformer,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull ValueTransformer<? super V, ? extends Iterable<VR>> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingFlatValueTransformer<>(transformer, errorFilter);
     }
 
@@ -103,7 +103,7 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueTransformerSupplier<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final ValueTransformerSupplier<? super V, ? extends Iterable<VR>> supplier) {
+            final @NonNull ValueTransformerSupplier<? super V, ? extends Iterable<VR>> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -126,7 +126,7 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
      */
     public static <V, VR> ValueTransformerSupplier<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
             final @NonNull ValueTransformerSupplier<? super V, ? extends Iterable<VR>> supplier,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ValueTransformerSupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {

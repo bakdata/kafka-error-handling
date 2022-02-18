@@ -66,7 +66,7 @@ public final class ErrorLoggingFlatValueTransformerWithKey<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> ValueTransformerWithKey<K, V, Iterable<VR>> logErrors(
-            final ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer) {
+            final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer) {
         return logErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -86,8 +86,8 @@ public final class ErrorLoggingFlatValueTransformerWithKey<K, V, VR>
      * @return {@code ValueTransformerWithKey}
      */
     public static <K, V, VR> ValueTransformerWithKey<K, V, Iterable<VR>> logErrors(
-            final ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingFlatValueTransformerWithKey<>(transformer, errorFilter);
     }
 
@@ -104,7 +104,7 @@ public final class ErrorLoggingFlatValueTransformerWithKey<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, Iterable<VR>> logErrors(
-            final ValueTransformerWithKeySupplier<? super K, ? super V, ? extends Iterable<VR>> supplier) {
+            final @NonNull ValueTransformerWithKeySupplier<? super K, ? super V, ? extends Iterable<VR>> supplier) {
         return logErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -126,7 +126,7 @@ public final class ErrorLoggingFlatValueTransformerWithKey<K, V, VR>
      */
     public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, Iterable<VR>> logErrors(
             final @NonNull ValueTransformerWithKeySupplier<? super K, ? super V, ? extends Iterable<VR>> supplier,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ValueTransformerWithKeySupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {

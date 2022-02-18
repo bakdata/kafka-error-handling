@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -74,6 +75,14 @@ class ErrorLoggingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyTes
     void shouldNotAllowNullMapper(final SoftAssertions softly) {
         softly.assertThatThrownBy(() -> ErrorLoggingFlatKeyValueMapper.logErrors(null))
                 .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorLoggingFlatKeyValueMapper.logErrors(null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorLoggingFlatKeyValueMapper.logErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -81,8 +90,8 @@ class ErrorLoggingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyTes
         when(this.mapper.apply(1, "foo")).thenThrow(createSchemaRegistryTimeoutException());
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                 .withKeySerde(DOUBLE_SERDE)

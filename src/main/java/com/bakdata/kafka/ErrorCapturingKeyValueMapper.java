@@ -61,7 +61,7 @@ public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> mapper) {
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -85,8 +85,8 @@ public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
      * @return {@code KeyValueMapper}
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> mapper,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> mapper,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingKeyValueMapper<>(mapper, errorFilter);
     }
 

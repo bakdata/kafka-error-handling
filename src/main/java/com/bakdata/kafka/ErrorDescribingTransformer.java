@@ -58,7 +58,7 @@ public final class ErrorDescribingTransformer<K, V, R> extends DecoratorTransfor
      * @param <R> type of transformation result
      * @return {@code Transformer}
      */
-    public static <K, V, R> Transformer<K, V, R> describeErrors(final Transformer<K, V, R> transformer) {
+    public static <K, V, R> Transformer<K, V, R> describeErrors(final @NonNull Transformer<K, V, R> transformer) {
         return new ErrorDescribingTransformer<>(transformer);
     }
 

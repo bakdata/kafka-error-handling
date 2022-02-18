@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
@@ -73,7 +74,21 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                         (ValueTransformer<? super Object, ? extends Iterable<Object>>) null))
                 .isInstanceOf(NullPointerException.class);
         softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformer.captureErrors(
+                        (ValueTransformer<? super Object, ? extends Iterable<Object>>) null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformer.captureErrors(
                         (ValueTransformerSupplier<? super Object, ? extends Iterable<Object>>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformer.captureErrors(
+                        (ValueTransformerSupplier<? super Object, ? extends Iterable<Object>>) null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformer.captureErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingFlatValueTransformer.captureErrors(() -> this.mapper, null))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -103,17 +118,17 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
         };
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .hasCauseInstanceOf(SerializationException.class);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withValueSerde(LONG_SERDE))
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -145,8 +160,8 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
         };
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 
@@ -182,8 +197,8 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
@@ -191,7 +206,7 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(6L, 15L, 15L);
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -239,8 +254,8 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
@@ -248,7 +263,7 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 5L);
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -280,13 +295,13 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(INTEGER_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(INTEGER_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueType(DeadLetter.class))
+                        .withValueType(DeadLetter.class))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)

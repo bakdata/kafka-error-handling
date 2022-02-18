@@ -64,7 +64,7 @@ public final class ErrorCapturingFlatValueTransformerWithKey<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> ValueTransformerWithKey<K, V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer) {
+            final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer) {
         return captureErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -86,8 +86,8 @@ public final class ErrorCapturingFlatValueTransformerWithKey<K, V, VR>
      * @return {@code ValueTransformerWithKey}
      */
     public static <K, V, VR> ValueTransformerWithKey<K, V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingFlatValueTransformerWithKey<>(transformer, errorFilter);
     }
 
@@ -104,7 +104,7 @@ public final class ErrorCapturingFlatValueTransformerWithKey<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final ValueTransformerWithKeySupplier<? super K, ? super V, ? extends Iterable<VR>> supplier) {
+            final @NonNull ValueTransformerWithKeySupplier<? super K, ? super V, ? extends Iterable<VR>> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -128,7 +128,7 @@ public final class ErrorCapturingFlatValueTransformerWithKey<K, V, VR>
      */
     public static <K, V, VR> ValueTransformerWithKeySupplier<K, V, Iterable<ProcessedValue<V, VR>>> captureErrors(
             final @NonNull ValueTransformerWithKeySupplier<? super K, ? super V, ? extends Iterable<VR>> supplier,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ValueTransformerWithKeySupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {

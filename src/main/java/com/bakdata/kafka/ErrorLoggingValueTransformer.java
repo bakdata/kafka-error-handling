@@ -64,7 +64,7 @@ public final class ErrorLoggingValueTransformer<V, VR> implements ValueTransform
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueTransformer<V, Iterable<VR>> logErrors(
-            final ValueTransformer<? super V, ? extends VR> transformer) {
+            final @NonNull ValueTransformer<? super V, ? extends VR> transformer) {
         return logErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -83,7 +83,8 @@ public final class ErrorLoggingValueTransformer<V, VR> implements ValueTransform
      * @return {@code ValueTransformer}
      */
     public static <V, VR> ValueTransformer<V, Iterable<VR>> logErrors(
-            final ValueTransformer<? super V, ? extends VR> transformer, final Predicate<Exception> errorFilter) {
+            final @NonNull ValueTransformer<? super V, ? extends VR> transformer,
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingValueTransformer<>(transformer, errorFilter);
     }
 
@@ -99,7 +100,7 @@ public final class ErrorLoggingValueTransformer<V, VR> implements ValueTransform
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueTransformerSupplier<V, Iterable<VR>> logErrors(
-            final ValueTransformerSupplier<? super V, ? extends VR> supplier) {
+            final @NonNull ValueTransformerSupplier<? super V, ? extends VR> supplier) {
         return logErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -120,7 +121,7 @@ public final class ErrorLoggingValueTransformer<V, VR> implements ValueTransform
      */
     public static <V, VR> ValueTransformerSupplier<V, Iterable<VR>> logErrors(
             final @NonNull ValueTransformerSupplier<? super V, ? extends VR> supplier,
-            final Predicate<Exception> errorFilter) {
+            final @NonNull Predicate<Exception> errorFilter) {
         return new ValueTransformerSupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {

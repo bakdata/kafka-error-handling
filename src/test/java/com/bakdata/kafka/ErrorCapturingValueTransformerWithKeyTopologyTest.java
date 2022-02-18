@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
@@ -73,7 +74,21 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
                         (ValueTransformerWithKey<? super Object, ? super Object, ?>) null))
                 .isInstanceOf(NullPointerException.class);
         softly.assertThatThrownBy(() -> ErrorCapturingValueTransformerWithKey.captureErrors(
+                        (ValueTransformerWithKey<? super Object, ? super Object, ?>) null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingValueTransformerWithKey.captureErrors(
                         (ValueTransformerWithKeySupplier<? super Object, ? super Object, ?>) null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingValueTransformerWithKey.captureErrors(
+                        (ValueTransformerWithKeySupplier<? super Object, ? super Object, ?>) null, filterAll()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void shouldNotAllowNullFilter(final SoftAssertions softly) {
+        softly.assertThatThrownBy(() -> ErrorCapturingValueTransformerWithKey.captureErrors(this.mapper, null))
+                .isInstanceOf(NullPointerException.class);
+        softly.assertThatThrownBy(() -> ErrorCapturingValueTransformerWithKey.captureErrors(() -> this.mapper, null))
                 .isInstanceOf(NullPointerException.class);
     }
 
