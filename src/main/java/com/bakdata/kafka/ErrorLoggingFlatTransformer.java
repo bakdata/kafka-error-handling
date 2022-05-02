@@ -73,7 +73,7 @@ public final class ErrorLoggingFlatTransformer<K, V, R> implements Transformer<K
      * Wrap a {@code Transformer} and log thrown exceptions with input key and value.
      * <pre>{@code
      * final KStream<K, V> input = ...;
-     * final KStream<K, R> output = input.transformValues(() -> logErrors(new Transformer<K, V, Iterable<R>>() {...}));
+     * final KStream<KR, RV> output = input.flatTransform(() -> logErrors(new Transformer<K, V, Iterable<KeyValue<KR, VR>>>() {...}));
      * }
      * </pre>
      *
@@ -84,7 +84,7 @@ public final class ErrorLoggingFlatTransformer<K, V, R> implements Transformer<K
      * @param <R> type of map result
      * @return {@code Transformer}
      */
-    public static <K, V, R> Transformer<K, V, Iterable<R>> logErrors(
+    public static <K, V, R, KR, VR> Transformer<K, V, Iterable<R>> logErrors(
             final @NonNull Transformer<? super K, ? super V, ? extends Iterable<R>> transformer,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingFlatTransformer<>(transformer, errorFilter);
@@ -110,9 +110,9 @@ public final class ErrorLoggingFlatTransformer<K, V, R> implements Transformer<K
     /**
      * Wrap a {@code TransformerSupplier} and log thrown exceptions with input key and value.
      * <pre>{@code
-     * final TransformerSupplier<K, V, Iterable<R>> transformer = ...;
+     * final TransformerSupplier<K, V, Iterable<KeyValue<KR, VR>>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, R> output = input.transformValues(logErrors(transformer));
+     * final KStream<KR, VR> output = input.flatTransform(logErrors(transformer));
      * }
      * </pre>
      *
