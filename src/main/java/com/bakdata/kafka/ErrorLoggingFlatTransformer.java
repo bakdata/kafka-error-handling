@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -84,7 +84,7 @@ public final class ErrorLoggingFlatTransformer<K, V, R> implements Transformer<K
      * @param <R> type of map result
      * @return {@code Transformer}
      */
-    public static <K, V, R, KR, VR> Transformer<K, V, Iterable<R>> logErrors(
+    public static <K, V, R> Transformer<K, V, Iterable<R>> logErrors(
             final @NonNull Transformer<? super K, ? super V, ? extends Iterable<R>> transformer,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorLoggingFlatTransformer<>(transformer, errorFilter);
