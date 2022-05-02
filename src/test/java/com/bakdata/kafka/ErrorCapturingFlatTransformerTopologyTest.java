@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -141,7 +141,7 @@ class ErrorCapturingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest
     }
 
     @Test
-    void shouldNotCaptureThrowable(final SoftAssertions softly) {
+    void shouldNotCaptureError(final SoftAssertions softly) {
         final Error throwable = mock(Error.class);
         this.mapper = new Transformer<>() {
             private ProcessorContext context = null;
