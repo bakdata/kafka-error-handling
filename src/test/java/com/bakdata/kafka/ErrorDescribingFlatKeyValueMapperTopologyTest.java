@@ -130,7 +130,7 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                 .containsExactlyInAnyOrder(2.0, 3.0);
         softly.assertThat(records)
                 .extracting(ProducerRecord::value)
-                .containsExactlyInAnyOrder(2L, 3l);
+                .containsExactlyInAnyOrder(2L, 3L);
     }
 
     @Test

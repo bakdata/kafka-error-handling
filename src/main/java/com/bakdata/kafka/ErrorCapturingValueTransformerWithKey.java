@@ -72,7 +72,7 @@ public final class ErrorCapturingValueTransformerWithKey<K, V, VR>
      * final KStream<K, V> input = ...;
      * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(() -> captureErrors(new ValueTransformerWithKey<K, V, VR>() {...}));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedValue::getErrors);
      * }
      * </pre>
      *
@@ -113,7 +113,7 @@ public final class ErrorCapturingValueTransformerWithKey<K, V, VR>
      * final KStream<K, V> input = ...;
      * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(() -> captureErrors(transformer.get()));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedValue::getErrors);
      * }
      * </pre>
      *

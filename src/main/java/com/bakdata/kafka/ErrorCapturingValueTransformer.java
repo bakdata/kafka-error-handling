@@ -71,7 +71,7 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
      * final KStream<K, V> input = ...;
      * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(() -> captureErrors(new ValueTransformer<V, VR>() {...}));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedValue::getErrors);
      * }
      * </pre>
      *
@@ -110,7 +110,7 @@ public final class ErrorCapturingValueTransformer<V, VR> implements ValueTransfo
      * final KStream<K, V> input = ...;
      * final KStream<K, ProcessedValue<V, VR>> processed = input.transformValues(captureErrors(transformer));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = input.flatMapValues(ProcessedValue::getErrors);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedValue::getErrors);
      * }
      * </pre>
      *

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
@@ -34,9 +35,10 @@ import org.apache.kafka.streams.kstream.Transformer;
 import org.apache.kafka.streams.kstream.TransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.StoreBuilder;
+import org.jooq.lambda.Seq;
 
 /**
- * Wrap a {@code Transformer} and capture thrown exceptions.
+ * Wrap a {@code KeyValueMapper} and capture thrown exceptions.
  *
  * @param <K> type of input keys
  * @param <V> type of input values
@@ -46,9 +48,9 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @see #captureErrors(Transformer, Predicate)
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ErrorCapturingTransformer<K, V, KR, VR>
-        implements Transformer<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> {
-    private final @NonNull Transformer<? super K, ? super V, ? extends KeyValue<KR, VR>> wrapped;
+public final class ErrorCapturingFlatTransformer<K, V, KR, VR>
+        implements Transformer<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>> {
+    private final @NonNull Transformer<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
 
     /**
@@ -64,8 +66,8 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
      * @see #captureErrors(Transformer, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */
-    public static <K, V, KR, VR> Transformer<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final @NonNull Transformer<? super K, ? super V, ? extends KeyValue<KR, VR>> transformer) {
+    public static <K, V, KR, VR> Transformer<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>>
+    captureErrors(final @NonNull Transformer<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> transformer) {
         return captureErrors(transformer, ErrorUtil::isRecoverable);
     }
 
@@ -73,7 +75,7 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
      * Wrap a {@code Transformer} and capture thrown exceptions.
      * <pre>{@code
      * final KStream<K, V> input = ...;
-     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.transform(() -> captureErrors(new Transformer<K, V, KeyValue<KR, VR>>() {...}));
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.flatTransform(() -> captureErrors(new Transformer<K, V, Iterable<KeyValue<KR, VR>>>() {...}));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
      * }
@@ -87,10 +89,10 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
      * @param <VR> type of output values
      * @return {@code Transformer}
      */
-    public static <K, V, KR, VR> Transformer<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final @NonNull Transformer<? super K, ? super V, ? extends KeyValue<KR, VR>> transformer,
+    public static <K, V, KR, VR> Transformer<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>>
+    captureErrors(final @NonNull Transformer<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> transformer,
             final @NonNull Predicate<Exception> errorFilter) {
-        return new ErrorCapturingTransformer<>(transformer, errorFilter);
+        return new ErrorCapturingFlatTransformer<>(transformer, errorFilter);
     }
 
     /**
@@ -106,17 +108,17 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
      * @see #captureErrors(TransformerSupplier, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */
-    public static <K, V, KR, VR> TransformerSupplier<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final @NonNull TransformerSupplier<? super K, ? super V, ? extends KeyValue<KR, VR>> supplier) {
+    public static <K, V, KR, VR> TransformerSupplier<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>> captureErrors(
+            final @NonNull TransformerSupplier<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
     /**
      * Wrap a {@code TransformerSupplier} and capture thrown exceptions.
      * <pre>{@code
-     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
+     * final TransformerSupplier<K, V, Iterable<KeyValue<KR, VR>>> transformer = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.transform(captureErrors(transformer));
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.flatTransform(captureErrors(transformer));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
      * }
@@ -130,8 +132,8 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
      * @param <VR> type of output values
      * @return {@code TransformerSupplier}
      */
-    public static <K, V, KR, VR> TransformerSupplier<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final @NonNull TransformerSupplier<? super K, ? super V, ? extends KeyValue<KR, VR>> supplier,
+    public static <K, V, KR, VR> TransformerSupplier<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>> captureErrors(
+            final @NonNull TransformerSupplier<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
         return new TransformerSupplier<>() {
             @Override
@@ -140,7 +142,7 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
             }
 
             @Override
-            public Transformer<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> get() {
+            public Transformer<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>> get() {
                 return captureErrors(supplier.get(), errorFilter);
             }
         };
@@ -157,21 +159,21 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
     }
 
     @Override
-    public KeyValue<KR, ProcessedKeyValue<K, V, VR>> transform(final K key, final V value) {
+    public Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>> transform(final K key, final V value) {
         try {
-            final KeyValue<KR, VR> newKeyValue = this.wrapped.transform(key, value);
-            if (newKeyValue == null) {
+            final Iterable<KeyValue<KR, VR>> newKeyValues = this.wrapped.transform(key, value);
+            if (newKeyValues == null) {
                 return null;
             }
-            final ProcessedKeyValue<K, V, VR> recordWithOldKey = SuccessKeyValue.of(newKeyValue.value);
-            return KeyValue.pair(newKeyValue.key, recordWithOldKey);
+            return Seq.seq(newKeyValues)
+                    .map(kv -> KeyValue.pair(kv.key, SuccessKeyValue.of(kv.value)));
         } catch (final Exception e) {
             if (this.errorFilter.test(e)) {
                 throw e;
             }
             final ProcessedKeyValue<K, V, VR> errorWithOldKey = ErrorKeyValue.of(key, value, e);
             // new key is only relevant if no error occurs
-            return KeyValue.pair(null, errorWithOldKey);
+            return List.of(KeyValue.pair(null, errorWithOldKey));
         }
     }
 
