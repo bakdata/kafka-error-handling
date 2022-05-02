@@ -72,7 +72,7 @@ public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
      * final KStream<K, V> input = ...;
      * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = input.flatMap(ProcessedKeyValue::getErrors);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
      * }
      * </pre>
      *
