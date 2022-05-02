@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,10 +53,9 @@ public final class ProcessingError<V> {
      *
      * @param description description of the context in which an exception has been thrown
      * @return {@code DeadLetter}
-     * @since 1.2.0
      * @deprecated Use {@link DeadLetterTransformer#createDeadLetter(String)}
      */
-    @Deprecated
+    @Deprecated(since = "1.2.0")
     public DeadLetter createDeadLetter(final @NonNull String description) {
         return this.newDeadLetterBuilder(description).build();
     }
