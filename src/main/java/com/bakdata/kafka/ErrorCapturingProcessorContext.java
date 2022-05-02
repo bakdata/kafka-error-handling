@@ -49,12 +49,14 @@ final class ErrorCapturingProcessorContext extends DecoratorProcessorContext {
         super.forward(key, recordWithOldKey);
     }
 
+    @Deprecated
     @Override
     public <K, V> void forward(final K key, final V value, final int childIndex) {
         final ProcessedKeyValue<Object, Object, V> recordWithOldKey = getValue(value);
         super.forward(key, recordWithOldKey, childIndex);
     }
 
+    @Deprecated
     @Override
     public <K, V> void forward(final K key, final V value, final String childName) {
         final ProcessedKeyValue<Object, Object, V> recordWithOldKey = getValue(value);
