@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.3](https://github.com/bakdata/kafka-error-handling/tree/1.2.3) (2022-05-02)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.2...1.2.3)
+
+**Merged pull requests:**
+
+- Add flat transformers [\#9](https://github.com/bakdata/kafka-error-handling/pull/9) ([@philipp94831](https://github.com/philipp94831))
+
 ## [1.2.2](https://github.com/bakdata/kafka-error-handling/tree/1.2.2) (2022-02-18)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.1...1.2.2)
 
