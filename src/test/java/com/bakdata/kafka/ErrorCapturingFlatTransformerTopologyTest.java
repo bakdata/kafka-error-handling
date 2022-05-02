@@ -189,6 +189,11 @@ class ErrorCapturingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest
                 if (key.equals(2) && "bar".equals(value)) {
                     return List.of(KeyValue.pair(2.0, 2L), KeyValue.pair(1.0, 1L), KeyValue.pair(18.0, 18L));
                 }
+                if (key.equals(3) && "baz".equals(value)) {
+                    this.context.forward(4.0, 4L);
+                    this.context.forward(5.0, 5L);
+                    return null;
+                }
                 throw new UnsupportedOperationException();
             }
 
@@ -201,17 +206,18 @@ class ErrorCapturingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo")
-                .add(2, "bar");
+                .add(2, "bar")
+                .add(3, "baz");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
                         .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
-                .containsExactlyInAnyOrder(2.0, 1.0, 18.0);
+                .containsExactlyInAnyOrder(2.0, 1.0, 18.0, 4.0, 5.0);
         softly.assertThat(records)
                 .extracting(ProducerRecord::value)
-                .containsExactlyInAnyOrder(2L, 1L, 18L);
+                .containsExactlyInAnyOrder(2L, 1L, 18L, 4L, 5L);
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
                         .withValueType(DeadLetter.class))
@@ -248,6 +254,52 @@ class ErrorCapturingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest
             public Iterable<KeyValue<Double, Long>> transform(final Integer key, final String value) {
                 if (key == null && value == null) {
                     return List.of(KeyValue.pair(2.0, 2L), KeyValue.pair(3.0, 3L));
+                }
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void close() {
+
+            }
+        };
+        this.createTopology();
+        this.topology.input()
+                .withValueSerde(STRING_SERDE)
+                .add(null, null);
+        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
+                .toList();
+        softly.assertThat(records)
+                .extracting(ProducerRecord::key)
+                .containsExactlyInAnyOrder(2.0, 3.0);
+        softly.assertThat(records)
+                .extracting(ProducerRecord::value)
+                .containsExactlyInAnyOrder(2L, 3L);
+        final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetter.class))
+                .toList();
+        softly.assertThat(errors)
+                .isEmpty();
+    }
+
+    @Test
+    void shouldForwardOnNullInput(final SoftAssertions softly) {
+        this.mapper = new Transformer<>() {
+            private ProcessorContext context = null;
+
+            @Override
+            public void init(final ProcessorContext context) {
+                this.context = context;
+            }
+
+            @Override
+            public Iterable<KeyValue<Double, Long>> transform(final Integer key, final String value) {
+                if (key == null && value == null) {
+                    this.context.forward(2.0, 2L);
+                    this.context.forward(3.0, 3L);
+                    return null;
                 }
                 throw new UnsupportedOperationException();
             }
@@ -344,6 +396,52 @@ class ErrorCapturingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest
             public Iterable<KeyValue<Double, Long>> transform(final Integer key, final String value) {
                 if (key.equals(2) && "bar".equals(value)) {
                     return List.of(KeyValue.pair(null, null));
+                }
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void close() {
+
+            }
+        };
+        this.createTopology();
+        this.topology.input()
+                .withValueSerde(STRING_SERDE)
+                .add(2, "bar");
+        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
+                .toList();
+        softly.assertThat(records)
+                .hasSize(1)
+                .first()
+                .isNotNull()
+                .satisfies(record -> softly.assertThat(record.key()).isNull())
+                .extracting(ProducerRecord::value)
+                .satisfies(value -> softly.assertThat(value).isNull());
+        final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetter.class))
+                .toList();
+        softly.assertThat(errors)
+                .isEmpty();
+    }
+
+    @Test
+    void shouldForwardedNullKeyValue(final SoftAssertions softly) {
+        this.mapper = new Transformer<>() {
+            private ProcessorContext context = null;
+
+            @Override
+            public void init(final ProcessorContext context) {
+                this.context = context;
+            }
+
+            @Override
+            public Iterable<KeyValue<Double, Long>> transform(final Integer key, final String value) {
+                if (key.equals(2) && "bar".equals(value)) {
+                    this.context.forward(null, null);
+                    return null;
                 }
                 throw new UnsupportedOperationException();
             }

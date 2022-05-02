@@ -33,7 +33,6 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
 import org.apache.kafka.streams.kstream.TransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.To;
 import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
@@ -173,42 +172,6 @@ public final class ErrorCapturingTransformer<K, V, KR, VR>
             final ProcessedKeyValue<K, V, VR> errorWithOldKey = ErrorKeyValue.of(key, value, e);
             // new key is only relevant if no error occurs
             return KeyValue.pair(null, errorWithOldKey);
-        }
-    }
-
-    private static final class ErrorCapturingProcessorContext extends DecoratorProcessorContext {
-        private ErrorCapturingProcessorContext(final @NonNull ProcessorContext wrapped) {
-            super(wrapped);
-        }
-
-        private static <K, V, VR> ProcessedKeyValue<K, V, VR> getValue(final VR value) {
-            return SuccessKeyValue.of(value);
-        }
-
-        @Override
-        public <K, V> void forward(final K key, final V value, final To to) {
-            final ProcessedKeyValue<Object, Object, V> recordWithOldKey = getValue(value);
-            super.forward(key, recordWithOldKey, to);
-        }
-
-        @Override
-        public <K, V> void forward(final K key, final V value) {
-            final ProcessedKeyValue<Object, Object, V> recordWithOldKey = getValue(value);
-            super.forward(key, recordWithOldKey);
-        }
-
-        @Deprecated
-        @Override
-        public <K, V> void forward(final K key, final V value, final int childIndex) {
-            final ProcessedKeyValue<Object, Object, V> recordWithOldKey = getValue(value);
-            super.forward(key, recordWithOldKey, childIndex);
-        }
-
-        @Deprecated
-        @Override
-        public <K, V> void forward(final K key, final V value, final String childName) {
-            final ProcessedKeyValue<Object, Object, V> recordWithOldKey = getValue(value);
-            super.forward(key, recordWithOldKey, childName);
         }
     }
 

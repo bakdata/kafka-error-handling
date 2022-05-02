@@ -155,13 +155,16 @@ public final class ErrorCapturingFlatTransformer<K, V, KR, VR>
 
     @Override
     public void init(final ProcessorContext context) {
-        this.wrapped.init(context);
+        this.wrapped.init(new ErrorCapturingProcessorContext(context));
     }
 
     @Override
     public Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>> transform(final K key, final V value) {
         try {
             final Iterable<KeyValue<KR, VR>> newKeyValues = this.wrapped.transform(key, value);
+            if (newKeyValues == null) {
+                return null;
+            }
             return Seq.seq(newKeyValues)
                     .map(kv -> KeyValue.pair(kv.key, SuccessKeyValue.of(kv.value)));
         } catch (final Exception e) {
