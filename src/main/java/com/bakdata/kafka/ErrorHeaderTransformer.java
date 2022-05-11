@@ -68,7 +68,7 @@ public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingErr
     /**
      * Header indicating the original offset in the partition of the input topic of the erroneous record
      */
-    public static final String OFFSET = "HEADER_PREFIX + offset";
+    public static final String OFFSET = HEADER_PREFIX + "offset";
     /**
      * Header indicating the description of the context in which an exception has been thrown
      */
