@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.2.4](https://github.com/bakdata/kafka-error-handling/tree/1.2.4) (2022-05-11)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.3...1.2.4)
+
+**Closed issues:**
+
+- Offset Header has a small typo [\#10](https://github.com/bakdata/kafka-error-handling/issues/10)
+
+**Merged pull requests:**
+
+- Fix OFFSET header name in ErrorHeaderTransformer [\#11](https://github.com/bakdata/kafka-error-handling/pull/11) ([@patrickjkennedy](https://github.com/patrickjkennedy))
+
 ## [1.2.3](https://github.com/bakdata/kafka-error-handling/tree/1.2.3) (2022-05-02)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.2...1.2.3)
 
