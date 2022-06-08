@@ -2,26 +2,7 @@ description = "A library for error handling in Kafka Streams."
 
 plugins {
     idea
-    `java-library`
-    id("io.freefair.lombok") version "5.3.3.3"
     id("com.google.protobuf") version "0.8.18"
-}
-
-group = "com.bakdata.kafka"
-
-tasks.withType<Test> {
-    maxParallelForks = 4
-    useJUnitPlatform()
-}
-
-repositories {
-    mavenCentral()
-    maven(url = "https://packages.confluent.io/maven/")
-}
-
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
