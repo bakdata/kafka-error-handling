@@ -1,3 +1,6 @@
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
+
 description = "A library for error handling in Kafka Streams."
 
 plugins {
@@ -16,4 +19,10 @@ dependencies {
     testImplementation(group = "org.assertj", name = "assertj-core", version = "3.20.2")
     val log4jVersion = "2.15.0"
     testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.18.1"
+    }
 }
