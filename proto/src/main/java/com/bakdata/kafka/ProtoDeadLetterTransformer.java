@@ -24,22 +24,23 @@
 
 package com.bakdata.kafka;
 
-import lombok.NonNull;
+import com.bakdata.kafka.proto.v1.Deadletter.DeadLetter;
 import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
+import lombok.NonNull;
 
 /**
- * Transform error representations to an avro {@code DeadLetter}
+ * Transform error representations to a {@code DeadLetter} message
  *
  * @param <V> type of the input value
  */
-public final class AvroDeadLetterTransformer<V> extends DeadLetterTransformer<V, DeadLetter> {
+public final class ProtoDeadLetterTransformer<V> extends DeadLetterTransformer<V, DeadLetter> {
 
-    private AvroDeadLetterTransformer(final @NonNull String description) {
-        super(description, new AvroDeadLetterConverter());
+    private ProtoDeadLetterTransformer(final @NonNull String description) {
+        super(description, new ProtoDeadLetterConverter());
     }
 
     /**
-     * Transforms the captured errors to avro for serialization
+     * Transforms the captured errors to protobuf for serialization
      *
      * Example:
      * <pre>
@@ -47,10 +48,10 @@ public final class AvroDeadLetterTransformer<V> extends DeadLetterTransformer<V,
      * final KStream<...> mapped = streamsBuilder.mapValues(
      *              ErrorCapturingValueMapper.captureErrors(mapper));
      *     ...
-     * // Use the transformer to serialize the errors as avro
+     * // Use the transformer to serialize the errors as protobuf
      * mapped.flatMapValues(ProcessedValue::getErrors)
-     *     .transformValues(AvroDeadLetterTransformer.create("Description"))
-     *     .to(ERROR_TOPIC);
+     *     .transformValues(ProtoDeadLetterTransformer.create("Description"))
+     *     .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
      * <pre/>
      *
      * @param description shared description for all errors
@@ -58,7 +59,6 @@ public final class AvroDeadLetterTransformer<V> extends DeadLetterTransformer<V,
      * @return a transformer supplier
      */
     public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> create(final String description) {
-        return () -> new AvroDeadLetterTransformer<>(description);
+        return () -> new ProtoDeadLetterTransformer<>(description);
     }
-
 }

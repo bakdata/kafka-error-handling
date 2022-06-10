@@ -36,6 +36,7 @@ import org.apache.kafka.streams.processor.ProcessorContext;
  * {@link ValueTransformer} that creates a {@code DeadLetter} from a processing error.
  *
  * @param <V> type of value
+ * @param <VR> the DeadLetter type
  */
 @Getter
 @RequiredArgsConstructor
