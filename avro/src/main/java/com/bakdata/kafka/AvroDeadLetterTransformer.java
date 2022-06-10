@@ -41,17 +41,17 @@ public final class AvroDeadLetterTransformer<V> extends DeadLetterTransformer<V,
     /**
      * Transforms the captured errors to avro for serialization
      *
-     * Example:
-     * <pre>
-     * // Capture errors in the topology
-     * final KStream<...> mapped = streamsBuilder.mapValues(
-     *              ErrorCapturingValueMapper.captureErrors(mapper));
-     *     ...
-     * // Use the transformer to serialize the errors as avro
-     * mapped.flatMapValues(ProcessedValue::getErrors)
-     *     .transformValues(AvroDeadLetterTransformer.create("Description"))
-     *     .to(ERROR_TOPIC);
-     * <pre/>
+     * <pre>{@code
+     * // Example, this works for all error capturing topologies
+     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
+     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * errors.transformValues(AvroDeadLetterTransformer.create("Description"))
+     *       .to(ERROR_TOPIC);
+     * }
+     * </pre>
      *
      * @param description shared description for all errors
      * @param <V> type of the input value

@@ -40,19 +40,19 @@ public final class ProtoDeadLetterTransformer<V> extends DeadLetterTransformer<V
     }
 
     /**
-     * Transforms the captured errors to protobuf for serialization
+     * Transforms the captured errors to protobuf for serialization.
      *
-     * Example:
-     * <pre>
-     * // Capture errors in the topology
-     * final KStream<...> mapped = streamsBuilder.mapValues(
-     *              ErrorCapturingValueMapper.captureErrors(mapper));
-     *     ...
-     * // Use the transformer to serialize the errors as protobuf
-     * mapped.flatMapValues(ProcessedValue::getErrors)
-     *     .transformValues(ProtoDeadLetterTransformer.create("Description"))
-     *     .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
-     * <pre/>
+     * <pre>{@code
+     * // Example, this works for all error capturing topologies
+     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
+     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * errors.transformValues(ProtoDeadLetterTransformer.create("Description"))
+     *       .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
+     * }
+     * </pre>
      *
      * @param description shared description for all errors
      * @param <V> type of the input value
