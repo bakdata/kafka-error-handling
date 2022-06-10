@@ -16,8 +16,8 @@ sourceSets {
 
 dependencies {
     val avroVersion: String by project
-    implementation(group = "org.apache.avro", name = "avro", version = avroVersion)
-    implementation(project(":core"))
+    api(group = "org.apache.avro", name = "avro", version = avroVersion)
+    api(project(":core"))
 
     val junitVersion: String by project
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)

@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core"))
+    api(project(":core"))
     implementation(group = "com.google.protobuf", name = "protobuf-java", version = "3.18.1")
     val junitVersion: String by project
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)
