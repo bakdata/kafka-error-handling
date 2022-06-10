@@ -55,7 +55,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SoftAssertionsExtension.class)
-public class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
+class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
     private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
@@ -107,23 +107,24 @@ public class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
                         .withValueType(DeadLetter.class))
                 .toList();
 
-        softly.assertThat(errors).hasSize(2);
-        softly.assertThat(errors).map(ProducerRecord::value).allSatisfy(
-                deadLetter -> {
-                    softly.assertThat(deadLetter.getDescription()).isEqualTo(DEADLETTER_DESCRIPTION);
-                    softly.assertThat(deadLetter.getCause().getMessage()).extracting(StringValue::getValue)
-                            .isEqualTo(ERROR_MESSAGE);
-                    softly.assertThat(deadLetter.getCause().getErrorClass()).extracting(StringValue::getValue)
-                            .isEqualTo(RuntimeException.class.getCanonicalName());
-                    // We don't check the exact stack trace, but only that it consists of multiple lines
-                    softly.assertThat(deadLetter.getCause().getStackTrace()).extracting(StringValue::getValue)
-                            .extracting(s -> Arrays.asList(s.split("\n"))).asList().hasSizeGreaterThan(1);
-                    softly.assertThat(deadLetter.getTopic()).extracting(StringValue::getValue)
-                            .isEqualTo(INPUT_TOPIC);
-                    softly.assertThat(deadLetter.getPartition()).extracting(Int32Value::getValue).isEqualTo(0);
-                }
-        );
-        softly.assertThat(errors).map(ProducerRecord::value).element(0).satisfies(
+        softly.assertThat(errors)
+                .hasSize(2)
+                .extracting(ProducerRecord::value).allSatisfy(
+                        deadLetter -> {
+                            softly.assertThat(deadLetter.getDescription()).isEqualTo(DEADLETTER_DESCRIPTION);
+                            softly.assertThat(deadLetter.getCause().getMessage()).extracting(StringValue::getValue)
+                                    .isEqualTo(ERROR_MESSAGE);
+                            softly.assertThat(deadLetter.getCause().getErrorClass()).extracting(StringValue::getValue)
+                                    .isEqualTo(RuntimeException.class.getCanonicalName());
+                            // We don't check the exact stack trace, but only that it consists of multiple lines
+                            softly.assertThat(deadLetter.getCause().getStackTrace()).extracting(StringValue::getValue)
+                                    .extracting(s -> Arrays.asList(s.split("\n"))).asList().hasSizeGreaterThan(1);
+                            softly.assertThat(deadLetter.getTopic()).extracting(StringValue::getValue)
+                                    .isEqualTo(INPUT_TOPIC);
+                            softly.assertThat(deadLetter.getPartition()).extracting(Int32Value::getValue).isEqualTo(0);
+                        }
+                );
+        softly.assertThat(errors).extracting(ProducerRecord::value).element(0).satisfies(
                 deadLetter -> {
                     softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("foo");
