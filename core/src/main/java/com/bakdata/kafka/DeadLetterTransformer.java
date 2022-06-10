@@ -30,6 +30,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.kafka.streams.kstream.ValueTransformer;
+import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 
 /**
@@ -44,6 +45,29 @@ public class DeadLetterTransformer<V, VR> implements ValueTransformer<Processing
     private final @NonNull String description;
     private final @NonNull DeadLetterConverter<VR> deadLetterConverter;
     private ProcessorContext context = null;
+
+    /**
+     * Transforms captured errors for serialization
+     *
+     * <pre>{@code
+     * // Example, this works for all error capturing topologies
+     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
+     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * errors.transformValues(DeadLetterTransformer.create("Description", new AvroDeadLetterConverter()))
+     *       .to(ERROR_TOPIC);
+     * }
+     * </pre>
+     *
+     * @param description shared description for all errors
+     * @param <V> type of the input value
+     * @return a transformer supplier
+     */
+    public static <V, VR> ValueTransformerSupplier<ProcessingError<V>, VR> create(final String description, final DeadLetterConverter<VR> deadLetterConverter) {
+        return () -> new DeadLetterTransformer<>(description, deadLetterConverter);
+    }
 
     @Override
     public void init(final ProcessorContext context) {

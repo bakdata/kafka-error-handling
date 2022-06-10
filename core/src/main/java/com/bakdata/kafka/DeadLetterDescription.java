@@ -27,12 +27,14 @@ package com.bakdata.kafka;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 /**
  * The representation of an error with contextual information.
  */
 @Builder
 @Value
+@Jacksonized
 public class DeadLetterDescription {
 
     /**
@@ -40,6 +42,7 @@ public class DeadLetterDescription {
      */
     @Builder
     @Value
+    @Jacksonized
     public static class Cause {
         String message;
         String stackTrace;

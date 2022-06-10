@@ -44,20 +44,7 @@ public class TestDeadLetterSerde implements Serde<DeadLetterDescription> {
     };
     private static final Deserializer<DeadLetterDescription> deserializer = (topic, data) -> {
         try {
-            final JsonNode json = objectMapper.readTree(data);
-            final JsonNode causeJson = json.get("cause");
-            return DeadLetterDescription.builder()
-                    .inputValue(asTextOrNull(json.get("inputValue")))
-                    .cause(DeadLetterDescription.Cause.builder()
-                            .message(asTextOrNull(causeJson.get("message")))
-                            .errorClass(causeJson.get("errorClass").asText())
-                            .stackTrace(causeJson.get("stackTrace").asText())
-                            .build())
-                    .description(asTextOrNull(json.get("description")))
-                    .topic(json.get("topic").asText())
-                    .partition(json.get("partition").asInt())
-                    .offset(json.get("offset").asLong())
-                    .build();
+            return objectMapper.readValue(data, DeadLetterDescription.class);
         } catch (IOException e) {
             throw new SerializationException(e);
         }

@@ -73,7 +73,7 @@ class ErrorCapturingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopol
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.valueSerde(LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
-                .transformValues(TestDeadLetterTransformer.create("Description"))
+                .transformValues(DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
                 .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
     }
 

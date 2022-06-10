@@ -1,7 +1,7 @@
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
 
-description = "A library for error handling in Kafka Streams."
+description = "Serializing errors in protobuf."
 
 plugins {
     idea
@@ -9,17 +9,13 @@ plugins {
 }
 
 dependencies {
-    val kafkaVersion: String by project
-    api(group = "org.apache.kafka", name = "kafka-streams", version = kafkaVersion)
     implementation(project(":core"))
     implementation(group = "com.google.protobuf", name = "protobuf-java", version = "3.18.1")
     val junitVersion: String by project
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)
     testImplementation(testFixtures(project(":core")))
     testImplementation(group = "org.jooq", name = "jool", version = "0.9.14")
     val mockitoVersion = "3.12.4"
-    testImplementation(group = "org.mockito", name = "mockito-core", version = mockitoVersion)
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
     testImplementation(group = "org.assertj", name = "assertj-core", version = "3.20.2")
     val log4jVersion = "2.15.0"

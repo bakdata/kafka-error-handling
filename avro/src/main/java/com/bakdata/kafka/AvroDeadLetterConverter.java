@@ -25,7 +25,7 @@
 package com.bakdata.kafka;
 
 /**
- * Convert a {@code DeadLetterDescription} to an avro {@code DeadLetter}
+ * Convert a {@code DeadLetterDescription} to an Avro {@code DeadLetter}
  */
 public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLetter> {
 

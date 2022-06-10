@@ -65,7 +65,7 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
-                .transformValues(TestDeadLetterTransformer.create("Description"))
+                .transformValues(DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
                 .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
     }
 
