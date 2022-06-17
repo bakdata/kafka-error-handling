@@ -4,7 +4,6 @@ import com.google.protobuf.gradle.protoc
 description = "Transform dead letters in Kafka Streams applications to protobuf."
 
 plugins {
-    idea
     id("com.google.protobuf") version "0.8.18"
 }
 
