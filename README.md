@@ -9,17 +9,36 @@ A library for error handling in [Kafka Streams](https://kafka.apache.org/documen
 ## Getting Started
 
 You can add kafka-error-handling via Maven Central.
+Depending on how you want to store the dead letters in kafka, you can use the Avro or protobuf converter. 
 
 #### Gradle
 ```gradle
-compile group: 'com.bakdata.kafka', name: 'error-handling', version: '1.0.0'
+compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.0.0'
+// for Avro dead letters
+compile group: 'com.bakdata.kafka', name: 'error-handling-avro', version: '1.0.0'
+// for protobuf dead letters
+compile group: 'com.bakdata.kafka', name: 'error-handling-proto', version: '1.0.0'
 ```
 
 #### Maven
 ```xml
 <dependency>
     <groupId>com.bakdata.kafka</groupId>
-    <artifactId>error-handling</artifactId>
+    <artifactId>error-handling-core</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+<!-- for Avro dead letters -->
+<dependency>
+    <groupId>com.bakdata.kafka</groupId>
+    <artifactId>error-handling-avro</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+<!-- for protobuf dead letters -->
+<dependency>
+    <groupId>com.bakdata.kafka</groupId>
+    <artifactId>error-handling-proto</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```

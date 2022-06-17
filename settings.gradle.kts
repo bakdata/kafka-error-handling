@@ -5,6 +5,6 @@ pluginManagement {
 }
 
 rootProject.name = "error-handling"
-include("core")
-include("avro")
-include("proto")
+include("error-handling-core")
+include("error-handling-avro")
+include("error-handling-proto")
