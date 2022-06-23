@@ -62,7 +62,7 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
     private static final Serde<Long> LONG_SERDE = Serdes.Long();
     private static final Serde<Double> DOUBLE_SERDE = Serdes.Double();
     @Mock
-    KeyValueMapper<Integer, String, KeyValue<Double, Long>> mapper;
+    private KeyValueMapper<Integer, String, KeyValue<Double, Long>> mapper;
 
     private static String getHeader(final Headers headers, final String key) {
         final byte[] value = headers.lastHeader(key).value();
