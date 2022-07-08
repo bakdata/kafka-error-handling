@@ -53,7 +53,7 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
 import org.assertj.core.api.SoftAssertions;
-import org.assertj.core.api.StandardSoftAssertionsProvider;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
@@ -67,6 +67,8 @@ import org.mockito.quality.Strictness;
 @ExtendWith(SoftAssertionsExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
+    @InjectSoftAssertions
+    private SoftAssertions softly;
     private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
@@ -111,7 +113,6 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
 
     @Test
     void shouldConvertAndSerializeProtoDeadLetter() {
-        final StandardSoftAssertionsProvider softly = new SoftAssertions();
         when(this.mapper.apply(any(), any())).thenThrow(new RuntimeException(ERROR_MESSAGE));
         this.createTopology();
         this.topology.input(INPUT_TOPIC).withValueSerde(STRING_SERDE)
@@ -121,42 +122,42 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         final List<ProducerRecord<Integer, String>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withValueSerde(STRING_SERDE))
                 .toList();
-        softly.assertThat(records)
+        this.softly.assertThat(records)
                 .isEmpty();
 
         final List<ProducerRecord<Integer, ProtoDeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
                         .withValueType(ProtoDeadLetter.class))
                 .toList();
 
-        softly.assertThat(errors)
+        this.softly.assertThat(errors)
                 .hasSize(2)
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
-                            softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
-                            softly.assertThat(deadLetter.getCause().getMessage()).extracting(StringValue::getValue)
+                            this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
+                            this.softly.assertThat(deadLetter.getCause().getMessage()).extracting(StringValue::getValue)
                                     .isEqualTo(ERROR_MESSAGE);
-                            softly.assertThat(deadLetter.getCause().getErrorClass()).extracting(StringValue::getValue)
+                            this.softly.assertThat(deadLetter.getCause().getErrorClass()).extracting(StringValue::getValue)
                                     .isEqualTo(RuntimeException.class.getCanonicalName());
                             // We don't check the exact stack trace, but only that it consists of multiple lines
-                            softly.assertThat(deadLetter.getCause().getStackTrace()).extracting(StringValue::getValue)
+                            this.softly.assertThat(deadLetter.getCause().getStackTrace()).extracting(StringValue::getValue)
                                     .extracting(s -> Arrays.asList(s.split("\n"))).asList().hasSizeGreaterThan(1);
-                            softly.assertThat(deadLetter.getTopic()).extracting(StringValue::getValue)
+                            this.softly.assertThat(deadLetter.getTopic()).extracting(StringValue::getValue)
                                     .isEqualTo(INPUT_TOPIC);
-                            softly.assertThat(deadLetter.getPartition()).extracting(Int32Value::getValue).isEqualTo(0);
+                            this.softly.assertThat(deadLetter.getPartition()).extracting(Int32Value::getValue).isEqualTo(0);
                         }
                 );
-        softly.assertThat(errors).extracting(ProducerRecord::value).element(0).satisfies(
+        this.softly.assertThat(errors).extracting(ProducerRecord::value).element(0).satisfies(
                 deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
+                    this.softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("foo");
-                    softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(0L);
+                    this.softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(0L);
                 }
         );
-        softly.assertThat(errors).map(ProducerRecord::value).element(1).satisfies(
+        this.softly.assertThat(errors).map(ProducerRecord::value).element(1).satisfies(
                 deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
+                    this.softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("bar");
-                    softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(1L);
+                    this.softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(1L);
                 }
         );
 

@@ -25,7 +25,7 @@
 package com.bakdata.kafka;
 
 import org.assertj.core.api.SoftAssertions;
-import org.assertj.core.api.StandardSoftAssertionsProvider;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +33,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(SoftAssertionsExtension.class)
 class AvroDeadLetterConverterTest {
 
-    static final AvroDeadLetterConverter converter = new AvroDeadLetterConverter();
+    @InjectSoftAssertions
+    private SoftAssertions softly;
 
     @Test
     void shouldConvertDeadletterDescriptionWithOptionalFields() {
-        final StandardSoftAssertionsProvider softly = new SoftAssertions();
+        final AvroDeadLetterConverter converter = new AvroDeadLetterConverter();
         final DeadLetterDescription deadLetterDescription = DeadLetterDescription.builder()
                 .inputValue("inputValue")
                 .cause(DeadLetterDescription.Cause.builder()
@@ -52,30 +53,30 @@ class AvroDeadLetterConverterTest {
                 .build();
 
         final AvroDeadLetter deadLetter = converter.convert(deadLetterDescription);
-        softly.assertThat(deadLetter.getInputValue()).hasValue("inputValue");
-        softly.assertThat(deadLetter.getCause().getMessage()).hasValue("message");
-        softly.assertThat(deadLetter.getCause().getStackTrace()).hasValue("stackTrace");
-        softly.assertThat(deadLetter.getCause().getErrorClass()).hasValue("errorClass");
-        softly.assertThat(deadLetter.getDescription()).isEqualTo("description");
-        softly.assertThat(deadLetter.getPartition()).hasValue(1);
-        softly.assertThat(deadLetter.getOffset()).hasValue(1L);
+        this.softly.assertThat(deadLetter.getInputValue()).hasValue("inputValue");
+        this.softly.assertThat(deadLetter.getCause().getMessage()).hasValue("message");
+        this.softly.assertThat(deadLetter.getCause().getStackTrace()).hasValue("stackTrace");
+        this.softly.assertThat(deadLetter.getCause().getErrorClass()).hasValue("errorClass");
+        this.softly.assertThat(deadLetter.getDescription()).isEqualTo("description");
+        this.softly.assertThat(deadLetter.getPartition()).hasValue(1);
+        this.softly.assertThat(deadLetter.getOffset()).hasValue(1L);
     }
 
     @Test
     void shouldConvertDeadletterDescriptionWithoutOptionalFields() {
-        final StandardSoftAssertionsProvider softly = new SoftAssertions();
+        final AvroDeadLetterConverter converter = new AvroDeadLetterConverter();
         final DeadLetterDescription onlyRequiredFieldsDeadLetterDescription = DeadLetterDescription.builder()
                 .description("description")
                 .cause(DeadLetterDescription.Cause.builder().build())
                 .build();
         final AvroDeadLetter deadLetter = converter.convert(onlyRequiredFieldsDeadLetterDescription);
-        softly.assertThat(deadLetter.getInputValue()).isNotPresent();
-        softly.assertThat(deadLetter.getCause().getMessage()).isNotPresent();
-        softly.assertThat(deadLetter.getCause().getStackTrace()).isNotPresent();
-        softly.assertThat(deadLetter.getCause().getErrorClass()).isNotPresent();
-        softly.assertThat(deadLetter.getDescription()).isEqualTo("description");
-        softly.assertThat(deadLetter.getPartition()).isNotPresent();
-        softly.assertThat(deadLetter.getOffset()).isNotPresent();
+        this.softly.assertThat(deadLetter.getInputValue()).isNotPresent();
+        this.softly.assertThat(deadLetter.getCause().getMessage()).isNotPresent();
+        this.softly.assertThat(deadLetter.getCause().getStackTrace()).isNotPresent();
+        this.softly.assertThat(deadLetter.getCause().getErrorClass()).isNotPresent();
+        this.softly.assertThat(deadLetter.getDescription()).isEqualTo("description");
+        this.softly.assertThat(deadLetter.getPartition()).isNotPresent();
+        this.softly.assertThat(deadLetter.getOffset()).isNotPresent();
     }
 
 }
