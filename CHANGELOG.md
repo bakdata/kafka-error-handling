@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.2.5](https://github.com/bakdata/kafka-error-handling/tree/1.2.5) (2022-06-23)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.4...1.2.5)
+
+**Closed issues:**
+
+- NPE when adding a header for an exception with a null message [\#14](https://github.com/bakdata/kafka-error-handling/issues/14)
+
+**Merged pull requests:**
+
+- Support exceptions with null message [\#15](https://github.com/bakdata/kafka-error-handling/pull/15) ([@philipp94831](https://github.com/philipp94831))
+
 ## [1.2.4](https://github.com/bakdata/kafka-error-handling/tree/1.2.4) (2022-05-11)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.3...1.2.4)
 

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,10 +62,11 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
     private static final Serde<Long> LONG_SERDE = Serdes.Long();
     private static final Serde<Double> DOUBLE_SERDE = Serdes.Double();
     @Mock
-    KeyValueMapper<Integer, String, KeyValue<Double, Long>> mapper;
+    private KeyValueMapper<Integer, String, KeyValue<Double, Long>> mapper;
 
     private static String getHeader(final Headers headers, final String key) {
-        return new String(headers.lastHeader(key).value(), StandardCharsets.UTF_8);
+        final byte[] value = headers.lastHeader(key).value();
+        return value == null ? null : new String(value, StandardCharsets.UTF_8);
     }
 
     @Override
@@ -90,8 +91,8 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
@@ -102,7 +103,7 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .isInstanceOf(Long.class)
                 .satisfies(value -> softly.assertThat(value).isEqualTo(1L));
         final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueSerde(Serdes.String()))
+                        .withValueSerde(Serdes.String()))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -134,13 +135,13 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                .withKeySerde(DOUBLE_SERDE)
-                .withValueSerde(LONG_SERDE))
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                .withValueSerde(Serdes.String()))
+                        .withValueSerde(Serdes.String()))
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
@@ -150,6 +151,35 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
                     softly.assertThat(record.key()).isNull();
                     softly.assertThat(record.value()).isNull();
                 });
+    }
+
+    @Test
+    void shouldHandleExceptionWithoutMessage(final SoftAssertions softly) {
+        when(this.mapper.apply(1, "foo")).thenThrow(new RuntimeException());
+        this.createTopology();
+        this.topology.input()
+                .withValueSerde(STRING_SERDE)
+                .add(1, "foo");
+        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+                        .withKeySerde(DOUBLE_SERDE)
+                        .withValueSerde(LONG_SERDE))
+                .toList();
+        softly.assertThat(records)
+                .isEmpty();
+        final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueSerde(Serdes.String()))
+                .toList();
+        softly.assertThat(errors)
+                .hasSize(1)
+                .first()
+                .isNotNull()
+                .satisfies(record -> {
+                    softly.assertThat(record.key()).isEqualTo(1);
+                    softly.assertThat(record.value()).isEqualTo("foo");
+                })
+                .extracting(ProducerRecord::headers)
+                .satisfies(headers -> softly.assertThat(getHeader(headers, ErrorHeaderTransformer.EXCEPTION_MESSAGE))
+                        .isNull());
     }
 
 }

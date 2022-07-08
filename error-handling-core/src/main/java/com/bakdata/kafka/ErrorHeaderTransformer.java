@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -129,6 +129,6 @@ public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingErr
     private void addHeader(final String key, final String value) {
         final Headers headers = this.context.headers();
         headers.remove(key);
-        headers.add(key, value.getBytes(StandardCharsets.UTF_8));
+        headers.add(key, value == null ? null : value.getBytes(StandardCharsets.UTF_8));
     }
 }
