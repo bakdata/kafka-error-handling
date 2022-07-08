@@ -52,7 +52,7 @@ class AvroDeadLetterConverterTest {
                 .offset(1L)
                 .build();
 
-        final AvroDeadLetter deadLetter = converter.convert(deadLetterDescription);
+        final DeadLetter deadLetter = converter.convert(deadLetterDescription);
         this.softly.assertThat(deadLetter.getInputValue()).hasValue("inputValue");
         this.softly.assertThat(deadLetter.getCause().getMessage()).hasValue("message");
         this.softly.assertThat(deadLetter.getCause().getStackTrace()).hasValue("stackTrace");
@@ -69,7 +69,7 @@ class AvroDeadLetterConverterTest {
                 .description("description")
                 .cause(DeadLetterDescription.Cause.builder().build())
                 .build();
-        final AvroDeadLetter deadLetter = converter.convert(onlyRequiredFieldsDeadLetterDescription);
+        final DeadLetter deadLetter = converter.convert(onlyRequiredFieldsDeadLetterDescription);
         this.softly.assertThat(deadLetter.getInputValue()).isNotPresent();
         this.softly.assertThat(deadLetter.getCause().getMessage()).isNotPresent();
         this.softly.assertThat(deadLetter.getCause().getStackTrace()).isNotPresent();

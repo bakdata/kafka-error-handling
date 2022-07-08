@@ -29,11 +29,11 @@ import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 /**
  * Convert a {@code DeadLetterDescription} to an Avro {@code DeadLetter}
  */
-public final class AvroDeadLetterConverter implements DeadLetterConverter<AvroDeadLetter> {
+public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLetter> {
 
     @Override
-    public AvroDeadLetter convert(final DeadLetterDescription deadLetterDescription) {
-        return AvroDeadLetter.newBuilder()
+    public DeadLetter convert(final DeadLetterDescription deadLetterDescription) {
+        return DeadLetter.newBuilder()
                 .setInputValue(deadLetterDescription.getInputValue())
                 .setCause(ErrorDescription.newBuilder()
                         .setMessage(deadLetterDescription.getCause().getMessage())
@@ -57,7 +57,7 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<AvroDe
      * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
-     * final KStream<K, AvroDeadLetter> deadLetters = errors.transformValues(
+     * final KStream<K, DeadLetter> deadLetters = errors.transformValues(
      *                      AvroDeadLetterConverter.asTransformer("Description"));
      * deadLetters.to(ERROR_TOPIC);
      * }
@@ -67,7 +67,7 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<AvroDe
      * @param <V> type of the input value
      * @return a transformer supplier
      */
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, AvroDeadLetter> asTransformer(
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> asTransformer(
             final String description) {
         return DeadLetterTransformer.create(description, new AvroDeadLetterConverter());
     }

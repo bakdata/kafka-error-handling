@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "AvroDeadLetter",
+  "name": "DeadLetter",
   "namespace": "com.bakdata.kafka",
   "fields": [
     {

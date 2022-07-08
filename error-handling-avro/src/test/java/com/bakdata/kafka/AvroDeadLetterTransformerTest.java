@@ -91,8 +91,8 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         this.softly.assertThat(records)
                 .isEmpty();
 
-        final List<ProducerRecord<Integer, AvroDeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(AvroDeadLetter.class))
+        final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetter.class))
                 .toList();
 
         this.softly.assertThat(errors)
