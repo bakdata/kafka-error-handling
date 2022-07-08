@@ -70,7 +70,7 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.valueSerde(STRING_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
-                .transformValues(DeadLetterTransformer.create(DEAD_LETTER_DESCRIPTION, new AvroDeadLetterConverter()))
+                .transformValues(AvroDeadLetterConverter.asTransformer(DEAD_LETTER_DESCRIPTION))
                 .to(ERROR_TOPIC);
     }
 

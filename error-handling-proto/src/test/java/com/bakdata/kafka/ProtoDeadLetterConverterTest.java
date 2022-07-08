@@ -24,7 +24,7 @@
 
 package com.bakdata.kafka;
 
-import com.bakdata.kafka.proto.v1.Deadletter.DeadLetter;
+import com.bakdata.kafka.proto.v1.DeadLetter;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;

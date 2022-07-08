@@ -40,7 +40,7 @@ public abstract class ErrorCaptureTopologyTest {
     protected TestTopology<Integer, String> topology = null;
 
     // Make protected if you need to overwrite this method in your test class
-    private static Properties getKafkaProperties() {
+    static Properties getKafkaProperties() {
         final Properties kafkaConfig = new Properties();
 
         // exactly once and order

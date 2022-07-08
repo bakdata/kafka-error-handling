@@ -27,20 +27,26 @@ package com.bakdata.kafka;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.bakdata.kafka.proto.v1.Deadletter.DeadLetter;
+import com.bakdata.fluent_kafka_streams_tests.TestTopology;
+import com.bakdata.kafka.proto.v1.DeadLetter;
+import com.bakdata.schemaregistrymock.SchemaRegistryMock;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
@@ -63,21 +69,12 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
     private static final Serde<String> STRING_SERDE = Serdes.String();
-    public static final String DEADLETTER_DESCRIPTION = "Description";
-    public static final String ERROR_MESSAGE = "ERROR!";
 
-    private Serde<DeadLetter> configuredDeadLetterSerde = null;
+    private static final Serde<DeadLetter> DEAD_LETTER_SERDE = new KafkaProtobufSerde<>(DeadLetter.class);
+    public static final String DEAD_LETTER_DESCRIPTION = "Description";
+    public static final String ERROR_MESSAGE = "ERROR!";
     @Mock
     KeyValueMapper<Integer, String, KeyValue<Integer, String>> mapper;
-
-    Serde<DeadLetter> deadLetterSerde() {
-        if (this.configuredDeadLetterSerde == null) {
-            this.configuredDeadLetterSerde = new KafkaProtobufSerde<>(DeadLetter.class);
-            this.configuredDeadLetterSerde.configure(Map.of(
-                    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "mock://test"), false);
-        }
-        return this.configuredDeadLetterSerde;
-    }
 
     @Override
     protected void buildTopology(final StreamsBuilder builder) {
@@ -87,8 +84,26 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.valueSerde(STRING_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
-                .transformValues(DeadLetterTransformer.create(DEADLETTER_DESCRIPTION, new ProtoDeadLetterConverter()))
-                .to(ERROR_TOPIC, Produced.valueSerde(this.deadLetterSerde()));
+                .transformValues(ProtoDeadLetterConverter.asTransformer(DEAD_LETTER_DESCRIPTION))
+                .to(ERROR_TOPIC);
+    }
+
+    @Override
+    protected void createTopology() {
+        final StreamsBuilder builder = new StreamsBuilder();
+        this.buildTopology(builder);
+        final Topology topology = builder.build();
+        final Properties kafkaProperties = getKafkaProperties();
+        kafkaProperties.put(
+                 StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaProtobufSerde.class
+        );
+        final SchemaRegistryMock schemaRegistryMock = new SchemaRegistryMock(List.of(new ProtobufSchemaProvider()));
+        this.topology = new TestTopology<Integer, String>(topology, kafkaProperties)
+                .withSchemaRegistryMock(schemaRegistryMock);
+        this.topology.start();
+        DEAD_LETTER_SERDE.configure(
+                 Map.of(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+                this.topology.getSchemaRegistryUrl()), false);
     }
 
     @Test
@@ -106,7 +121,7 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(this.deadLetterSerde())
+                        .withValueSerde(DEAD_LETTER_SERDE)
                         .withValueType(DeadLetter.class))
                 .toList();
 
@@ -114,7 +129,7 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
                 .hasSize(2)
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
-                            this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEADLETTER_DESCRIPTION);
+                            this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
                             this.softly.assertThat(deadLetter.getCause().getMessage()).extracting(StringValue::getValue)
                                     .isEqualTo(ERROR_MESSAGE);
                             this.softly.assertThat(deadLetter.getCause().getErrorClass()).extracting(StringValue::getValue)

@@ -5,6 +5,7 @@ package bakdata.kafka.proto.v1;
 import "google/protobuf/wrappers.proto";
 
 option java_package = "com.bakdata.kafka.proto.v1";
+option java_multiple_files = true;
 
 message DeadLetter {
     message Cause {

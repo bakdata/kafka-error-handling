@@ -30,10 +30,11 @@ dependencies {
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
     val log4jVersion: String by project
     testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
+    val kafkaStreamsTestsVersion: String by project
     testImplementation(
         group = "com.bakdata.fluent-kafka-streams-tests",
         name = "fluent-kafka-streams-tests-junit5",
-        version = "2.4.2"
+        version = kafkaStreamsTestsVersion
     )
     val confluentVersion: String by project
     testFixturesImplementation(
@@ -46,7 +47,7 @@ dependencies {
     testFixturesImplementation(
         group = "com.bakdata.fluent-kafka-streams-tests",
         name = "fluent-kafka-streams-tests-junit5",
-        version = "2.4.2"
+        version = kafkaStreamsTestsVersion
     )
     testFixturesImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
     testFixturesImplementation(group = "io.confluent", name = "kafka-streams-avro-serde", version = confluentVersion)

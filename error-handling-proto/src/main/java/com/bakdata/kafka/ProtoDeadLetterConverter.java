@@ -24,10 +24,12 @@
 
 package com.bakdata.kafka;
 
-import com.bakdata.kafka.proto.v1.Deadletter.DeadLetter;
+import com.bakdata.kafka.proto.v1.DeadLetter;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
+import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
+
 
 /**
  * Convert a {@code DeadLetterDescription} to a protobuf {@code DeadLetter} message
@@ -63,5 +65,28 @@ public class ProtoDeadLetterConverter implements DeadLetterConverter<DeadLetter>
             builder.setOffset(Int64Value.of(deadLetterDescription.getOffset()));
         }
         return builder.build();
+    }
+
+    /**
+     * Creates a transformer that uses the ProtoDeadLetterConverter
+     *
+     * <pre>{@code
+     * // Example, this works for all error capturing topologies
+     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
+     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * errors.transformValues(ProtoDeadLetterConverter.asTransformer("Description"))
+     *       .to(ERROR_TOPIC);
+     * }
+     * </pre>
+     *
+     * @param description shared description for all errors
+     * @param <V> type of the input value
+     * @return a transformer supplier
+     */
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> asTransformer(final String description) {
+        return DeadLetterTransformer.create(description, new ProtoDeadLetterConverter());
     }
 }
