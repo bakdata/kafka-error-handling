@@ -30,7 +30,7 @@ compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.0.0
     <version>1.0.0</version>
 </dependency>
 
-<!-- or, for protobuf dead letters -->
+<!-- or, for Protobuf dead letters -->
 <dependency>
     <groupId>com.bakdata.kafka</groupId>
     <artifactId>error-handling-proto</artifactId>
