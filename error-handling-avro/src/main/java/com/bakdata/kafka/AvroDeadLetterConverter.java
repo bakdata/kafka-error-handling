@@ -29,11 +29,11 @@ import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 /**
  * Convert a {@code DeadLetterDescription} to an Avro {@code DeadLetter}
  */
-public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLetter> {
+public final class AvroDeadLetterConverter implements DeadLetterConverter<AvroDeadLetter> {
 
     @Override
-    public DeadLetter convert(final DeadLetterDescription deadLetterDescription) {
-        return DeadLetter.newBuilder()
+    public AvroDeadLetter convert(final DeadLetterDescription deadLetterDescription) {
+        return AvroDeadLetter.newBuilder()
                 .setInputValue(deadLetterDescription.getInputValue())
                 .setCause(ErrorDescription.newBuilder()
                         .setMessage(deadLetterDescription.getCause().getMessage())
@@ -57,8 +57,9 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLe
      * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
-     * errors.transformValues(AvroDeadLetterConverter.asTransformer("Description"))
-     *       .to(ERROR_TOPIC);
+     * final KStream<K, AvroDeadLetter> deadLetters = errors.transformValues(
+     *                      AvroDeadLetterConverter.asTransformer("Description"));
+     * deadLetters.to(ERROR_TOPIC);
      * }
      * </pre>
      *
@@ -66,7 +67,7 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLe
      * @param <V> type of the input value
      * @return a transformer supplier
      */
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> asTransformer(final String description) {
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, AvroDeadLetter> asTransformer(final String description) {
         return DeadLetterTransformer.create(description, new AvroDeadLetterConverter());
     }
 

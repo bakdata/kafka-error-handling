@@ -24,7 +24,7 @@
 
 package com.bakdata.kafka;
 
-import com.bakdata.kafka.proto.v1.DeadLetter;
+import com.bakdata.kafka.proto.v1.ProtoDeadLetter;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
@@ -32,15 +32,15 @@ import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 
 
 /**
- * Convert a {@code DeadLetterDescription} to a protobuf {@code DeadLetter} message
+ * Convert a {@code DeadLetterDescription} to a {@code ProtoDeadLetter} message
  */
-public class ProtoDeadLetterConverter implements DeadLetterConverter<DeadLetter> {
+public class ProtoDeadLetterConverter implements DeadLetterConverter<ProtoDeadLetter> {
 
     @Override
-    public DeadLetter convert(final DeadLetterDescription deadLetterDescription) {
-        final DeadLetter.Builder builder = DeadLetter.newBuilder();
+    public ProtoDeadLetter convert(final DeadLetterDescription deadLetterDescription) {
+        final ProtoDeadLetter.Builder builder = ProtoDeadLetter.newBuilder();
         final DeadLetterDescription.Cause cause = deadLetterDescription.getCause();
-        final DeadLetter.Cause.Builder causeBuilder = builder.getCauseBuilder();
+        final ProtoDeadLetter.Cause.Builder causeBuilder = builder.getCauseBuilder();
         // Everything is optional with fix defaults in proto3, so use wrappers
         if (cause.getMessage() != null) {
             causeBuilder.setMessage(StringValue.of(cause.getMessage()));
@@ -76,9 +76,10 @@ public class ProtoDeadLetterConverter implements DeadLetterConverter<DeadLetter>
      * final KStream<K, V> input = ...;
      * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
-     * errors.transformValues(ProtoDeadLetterConverter.asTransformer("Description"))
-     *       .to(ERROR_TOPIC);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedKeyValue::getErrors);
+     * final KStream<K, ProtoDeadLetter> deadLetters = errors.transformValues(
+     *                      ProtoDeadLetterConverter.asTransformer("Description"));
+     * deadLetters.to(OUTPUT_TOPIC);
      * }
      * </pre>
      *
@@ -86,7 +87,7 @@ public class ProtoDeadLetterConverter implements DeadLetterConverter<DeadLetter>
      * @param <V> type of the input value
      * @return a transformer supplier
      */
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> asTransformer(final String description) {
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, ProtoDeadLetter> asTransformer(final String description) {
         return DeadLetterTransformer.create(description, new ProtoDeadLetterConverter());
     }
 }

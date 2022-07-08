@@ -79,12 +79,13 @@ public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingE
 
     @Override
     public T transform(final ProcessingError<V> error) {
+        final Throwable throwable = error.getThrowable();
         final DeadLetterDescription deadLetterDescription = DeadLetterDescription.builder()
                 .inputValue(Optional.ofNullable(error.getValue()).map(ErrorUtil::toString).orElse(null))
                 .cause(DeadLetterDescription.Cause.builder()
-                        .message(error.getThrowable().getMessage())
-                        .stackTrace(ExceptionUtils.getStackTrace(error.getThrowable()))
-                        .errorClass(error.getThrowable().getClass().getName())
+                        .message(throwable.getMessage())
+                        .stackTrace(ExceptionUtils.getStackTrace(throwable))
+                        .errorClass(throwable.getClass().getName())
                         .build())
                 .description(this.description)
                 .topic(this.context.topic())

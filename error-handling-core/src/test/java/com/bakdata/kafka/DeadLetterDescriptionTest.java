@@ -1,7 +1,7 @@
 package com.bakdata.kafka;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
 import com.bakdata.kafka.DeadLetterDescription.Cause;
 import org.junit.jupiter.api.Test;
@@ -24,23 +24,22 @@ class DeadLetterDescriptionTest {
 
     @Test
     void shouldAllowOtherFieldsNull() {
-        assertThat(DeadLetterDescription.builder()
+        assertThatCode(() -> DeadLetterDescription.builder()
                 .description("foo")
                 .cause(CAUSE)
                 .inputValue(null)
                 .topic(null)
                 .partition(null)
-                .offset(null)
-                .build()).isNotNull();
+                .offset(null).build()).doesNotThrowAnyException();
     }
 
     @Test
     void shouldAllowCauseFieldsNull() {
-        assertThat(Cause.builder()
+        assertThatCode(() -> Cause.builder()
                 .message(null)
                 .errorClass(null)
                 .stackTrace(null)
-                .build()).isNotNull();
+                .build()).doesNotThrowAnyException();
     }
 
 }

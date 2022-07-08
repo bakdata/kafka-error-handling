@@ -39,28 +39,29 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
 import org.assertj.core.api.SoftAssertions;
-import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.StandardSoftAssertionsProvider;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SoftAssertionsExtension.class)
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
-    @InjectSoftAssertions
-    private SoftAssertions softly;
     private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
     private static final Serde<String> STRING_SERDE = Serdes.String();
-    public static final String DEAD_LETTER_DESCRIPTION = "Description";
-    public static final String ERROR_MESSAGE = "ERROR!";
+    private static final String DEAD_LETTER_DESCRIPTION = "Description";
+    private static final String ERROR_MESSAGE = "ERROR!";
 
     @Mock
-    KeyValueMapper<Integer, String, KeyValue<Integer, String>> mapper;
+    private KeyValueMapper<Integer, String, KeyValue<Integer, String>> mapper;
 
     @Override
     protected void buildTopology(final StreamsBuilder builder) {
@@ -76,6 +77,7 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
 
     @Test
     void shouldConvertAndSerializeAvroDeadLetter() {
+        final StandardSoftAssertionsProvider softly = new SoftAssertions();
         when(this.mapper.apply(any(), any())).thenThrow(new RuntimeException(ERROR_MESSAGE));
         this.createTopology();
         this.topology.input(INPUT_TOPIC).withValueSerde(STRING_SERDE)
@@ -85,38 +87,38 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         final List<ProducerRecord<Integer, String>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withValueSerde(STRING_SERDE))
                 .toList();
-        this.softly.assertThat(records)
+        softly.assertThat(records)
                 .isEmpty();
 
-        final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(DeadLetter.class))
+        final List<ProducerRecord<Integer, AvroDeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(AvroDeadLetter.class))
                 .toList();
 
-        this.softly.assertThat(errors)
+        softly.assertThat(errors)
                 .hasSize(2)
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
-                            this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
-                            this.softly.assertThat(deadLetter.getCause().getMessage()).hasValue(ERROR_MESSAGE);
-                            this.softly.assertThat(deadLetter.getCause().getErrorClass())
+                            softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
+                            softly.assertThat(deadLetter.getCause().getMessage()).hasValue(ERROR_MESSAGE);
+                            softly.assertThat(deadLetter.getCause().getErrorClass())
                                     .hasValue(RuntimeException.class.getCanonicalName());
                             // We don't check the exact stack trace, but only that it consists of multiple lines
-                            this.softly.assertThat(deadLetter.getCause().getStackTrace()).map(s -> Arrays.asList(s.split("\n")))
+                            softly.assertThat(deadLetter.getCause().getStackTrace()).map(s -> Arrays.asList(s.split("\n")))
                                     .get().asList().hasSizeGreaterThan(1);
-                            this.softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
-                            this.softly.assertThat(deadLetter.getPartition()).hasValue(0);
+                            softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
+                            softly.assertThat(deadLetter.getPartition()).hasValue(0);
                         }
                 );
-        this.softly.assertThat(errors).extracting(ProducerRecord::value).element(0).satisfies(
+        softly.assertThat(errors).extracting(ProducerRecord::value).element(0).satisfies(
                 deadLetter -> {
-                    this.softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
-                    this.softly.assertThat(deadLetter.getOffset()).hasValue(0L);
+                    softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
+                    softly.assertThat(deadLetter.getOffset()).hasValue(0L);
                 }
         );
-        this.softly.assertThat(errors).extracting(ProducerRecord::value).element(1).satisfies(
+        softly.assertThat(errors).extracting(ProducerRecord::value).element(1).satisfies(
                 deadLetter -> {
-                    this.softly.assertThat(deadLetter.getInputValue()).hasValue("bar");
-                    this.softly.assertThat(deadLetter.getOffset()).hasValue(1L);
+                    softly.assertThat(deadLetter.getInputValue()).hasValue("bar");
+                    softly.assertThat(deadLetter.getOffset()).hasValue(1L);
                 }
         );
 
