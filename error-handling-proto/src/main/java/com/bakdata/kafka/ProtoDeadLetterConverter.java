@@ -87,7 +87,8 @@ public class ProtoDeadLetterConverter implements DeadLetterConverter<ProtoDeadLe
      * @param <V> type of the input value
      * @return a transformer supplier
      */
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, ProtoDeadLetter> asTransformer(final String description) {
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, ProtoDeadLetter> asTransformer(
+            final String description) {
         return DeadLetterTransformer.create(description, new ProtoDeadLetterConverter());
     }
 }

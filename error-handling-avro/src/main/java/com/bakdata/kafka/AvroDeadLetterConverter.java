@@ -67,7 +67,8 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<AvroDe
      * @param <V> type of the input value
      * @return a transformer supplier
      */
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, AvroDeadLetter> asTransformer(final String description) {
+    public static <V> ValueTransformerSupplier<ProcessingError<V>, AvroDeadLetter> asTransformer(
+            final String description) {
         return DeadLetterTransformer.create(description, new AvroDeadLetterConverter());
     }
 
