@@ -63,10 +63,12 @@ public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingE
      * </pre>
      *
      * @param description shared description for all errors
+     * @param deadLetterConverter converter from DeadLetterDescriptions to VR
      * @param <V> type of the input value
      * @return a transformer supplier
      */
-    public static <V, VR> ValueTransformerSupplier<ProcessingError<V>, VR> create(final String description, final DeadLetterConverter<VR> deadLetterConverter) {
+    public static <V, VR> ValueTransformerSupplier<ProcessingError<V>, VR> create(final String description,
+            final DeadLetterConverter<VR> deadLetterConverter) {
         return () -> new DeadLetterTransformer<>(description, deadLetterConverter);
     }
 
