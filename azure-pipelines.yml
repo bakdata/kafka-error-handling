@@ -16,6 +16,7 @@ variables:
 resources:
   repositories:
     - repository: templates
+      ref: tmp/upload-snapshot
       type: github
       name: bakdata/bakdata-project-templates
       endpoint: bot
