@@ -3,31 +3,26 @@
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=com.bakdata.kafka%3Aerror-handling&metric=coverage)](https://sonarcloud.io/dashboard?id=com.bakdata.kafka%3Aerror-handling)
 [![Maven](https://img.shields.io/maven-central/v/com.bakdata.kafka/error-handling.svg)](https://search.maven.org/search?q=g:com.bakdata.kafka%20AND%20a:error-handling&core=gav)
 
-# kafka-error-handling
-A library for error handling in [Kafka Streams](https://kafka.apache.org/documentation/streams/).
+# Kafka error handling
+Libraries for error handling in [Kafka Streams](https://kafka.apache.org/documentation/streams/).
 
 ## Getting Started
 
-You can add kafka-error-handling via Maven Central.
-Depending on how you want to store the dead letters in kafka, you can use the Avro or protobuf converter. 
+You can add Kafka error handling via Maven Central.
+Depending on how you want to store the dead letters in Kafka, you can use the Avro or Protobuf converter. 
 
 #### Gradle
 ```gradle
-compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.0.0'
 // for Avro dead letters
 compile group: 'com.bakdata.kafka', name: 'error-handling-avro', version: '1.0.0'
-// for protobuf dead letters
+// or, for Protobuf dead letters
 compile group: 'com.bakdata.kafka', name: 'error-handling-proto', version: '1.0.0'
+// or, for custom dead letters
+compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.0.0'
 ```
 
 #### Maven
 ```xml
-<dependency>
-    <groupId>com.bakdata.kafka</groupId>
-    <artifactId>error-handling-core</artifactId>
-    <version>1.0.0</version>
-</dependency>
-
 <!-- for Avro dead letters -->
 <dependency>
     <groupId>com.bakdata.kafka</groupId>
@@ -35,11 +30,18 @@ compile group: 'com.bakdata.kafka', name: 'error-handling-proto', version: '1.0.
     <version>1.0.0</version>
 </dependency>
 
-<!-- for protobuf dead letters -->
+<!-- or, for protobuf dead letters -->
 <dependency>
     <groupId>com.bakdata.kafka</groupId>
     <artifactId>error-handling-proto</artifactId>
     <version>1.0.0</version>
+</dependency>
+
+<!-- or, for custom dead letters -->
+<dependency>
+<groupId>com.bakdata.kafka</groupId>
+<artifactId>error-handling-core</artifactId>
+<version>1.0.0</version>
 </dependency>
 ```
 
@@ -65,7 +67,7 @@ final KStream<Double, Long> mapped = input.map(mapper);
 mapped.to(OUTPUT_TOPIC, Produced.with(Serdes.Double(), Serdes.Long()));
 ```
 
-You can simply add a dead letter queue to your topology with our library:
+You can simply add a dead letter queue to your topology with our libraries:
 
 ```java
 final KeyValueMapper<Integer, String, KeyValue<Double, Long>> mapper = …
@@ -75,7 +77,7 @@ final KStream<Integer, String> input =
 final KStream<Double, ProcessedKeyValue<Integer, String, Long>> mappedWithErrors =
        input.map(captureErrors(mapper));
 mappedWithErrors.flatMap(ProcessedKeyValue::getErrors)
-       .transformValues(DeadLetterTransformer.createDeadLetter("A good description where the pipeline broke"))
+       .transformValues(AvroDeadLetterConverter.asTransformer("A good description where the pipeline broke"))
        .to(ERROR_TOPIC);
 
 final KStream<Double, Long> mapped = mappedWithErrors.flatMapValues(ProcessedKeyValue::getValues);
@@ -85,6 +87,10 @@ mapped.to(OUTPUT_TOPIC, Produced.with(Serdes.Double(), Serdes.Long()));
 Successfully processed messages are sent to the output topic as before.
 However, errors are sent to a specific error topic.
 This error topic contains dead letters describing the input value, error message and stack trace of any error that is raised in that part of your topology.
+
+The example uses the `AvroDeadLetterConverter` from `error-handling-avro`.
+Analogously, `error-handling-proto` implements a `ProtoDeadLetterConverter`.
+A custom `DeadLetterConverter` can be passed to `DeadLetterTransformer.create`.
 
 ## Development
 
