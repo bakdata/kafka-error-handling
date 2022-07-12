@@ -14,11 +14,11 @@ Depending on how you want to store the dead letters in Kafka, you can use the Av
 #### Gradle
 ```gradle
 // for Avro dead letters
-compile group: 'com.bakdata.kafka', name: 'error-handling-avro', version: '1.0.0'
+compile group: 'com.bakdata.kafka', name: 'error-handling-avro', version: '1.3.0'
 // or, for Protobuf dead letters
-compile group: 'com.bakdata.kafka', name: 'error-handling-proto', version: '1.0.0'
+compile group: 'com.bakdata.kafka', name: 'error-handling-proto', version: '1.3.0'
 // or, for custom dead letters
-compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.0.0'
+compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.3.0'
 ```
 
 #### Maven
@@ -27,21 +27,21 @@ compile group: 'com.bakdata.kafka', name: 'error-handling-core', version: '1.0.0
 <dependency>
     <groupId>com.bakdata.kafka</groupId>
     <artifactId>error-handling-avro</artifactId>
-    <version>1.0.0</version>
+    <version>1.3.0</version>
 </dependency>
 
 <!-- or, for Protobuf dead letters -->
 <dependency>
     <groupId>com.bakdata.kafka</groupId>
     <artifactId>error-handling-proto</artifactId>
-    <version>1.0.0</version>
+    <version>1.3.0</version>
 </dependency>
 
 <!-- or, for custom dead letters -->
 <dependency>
 <groupId>com.bakdata.kafka</groupId>
 <artifactId>error-handling-core</artifactId>
-<version>1.0.0</version>
+<version>1.3.0</version>
 </dependency>
 ```
 
