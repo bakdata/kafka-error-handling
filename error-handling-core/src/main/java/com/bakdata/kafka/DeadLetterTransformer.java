@@ -56,9 +56,10 @@ public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingE
      * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
-     * final DeadLetterConverter<V> deadLetterConverter = ...
-     * errors.transformValues(DeadLetterTransformer.create("Description", deadLetterConverter))
-     *       .to(ERROR_TOPIC);
+     * final DeadLetterConverter<T> deadLetterConverter = ...
+     * final KStream<K, T> deadLetters = errors.transformValues(
+     *                      DeadLetterTransformer.create("Description", deadLetterConverter));
+     * deadLetters.to(ERROR_TOPIC);
      * }
      * </pre>
      *
