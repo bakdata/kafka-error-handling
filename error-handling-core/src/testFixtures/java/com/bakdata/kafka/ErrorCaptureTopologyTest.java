@@ -52,7 +52,7 @@ public abstract class ErrorCaptureTopologyTest {
         // topology
         kafkaConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, "dummy");
         kafkaConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, IntegerSerde.class);
-        kafkaConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        kafkaConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, TestDeadLetterSerde.class);
         kafkaConfig.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy");
 
         return kafkaConfig;

@@ -54,7 +54,6 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
     private static final Serde<String> STRING_SERDE = Serdes.String();
     private static final Serde<Long> LONG_SERDE = Serdes.Long();
     private static final Serde<Integer> INTEGER_SERDE = Serdes.Integer();
-    private static final Serde<DeadLetterDescription> DEAD_LETTER_SERDE = new TestDeadLetterSerde();
     private ValueTransformer<String, Iterable<Long>> mapper = null;
 
     @Override
@@ -66,7 +65,7 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
                 .transformValues(DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
-                .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
+                .to(ERROR_TOPIC);
     }
 
     @Test
@@ -129,7 +128,6 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(DEAD_LETTER_SERDE)
                         .withValueType(DeadLetterDescription.class))
                 .toList();
         softly.assertThat(errors)
@@ -208,7 +206,6 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(6L, 15L, 15L);
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(DEAD_LETTER_SERDE)
                         .withValueType(DeadLetterDescription.class))
                 .toList();
         softly.assertThat(errors)
@@ -266,7 +263,6 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 5L);
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(DEAD_LETTER_SERDE)
                         .withValueType(DeadLetterDescription.class))
                 .toList();
         softly.assertThat(errors)
@@ -305,7 +301,6 @@ class ErrorCapturingFlatValueTransformerTopologyTest extends ErrorCaptureTopolog
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(DEAD_LETTER_SERDE)
                         .withValueType(DeadLetterDescription.class))
                 .toList();
         softly.assertThat(errors)

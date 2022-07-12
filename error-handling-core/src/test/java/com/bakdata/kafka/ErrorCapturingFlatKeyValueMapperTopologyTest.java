@@ -61,7 +61,6 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
     private static final Serde<String> STRING_SERDE = Serdes.String();
     private static final Serde<Long> LONG_SERDE = Serdes.Long();
     private static final Serde<Double> DOUBLE_SERDE = Serdes.Double();
-    private static final Serde<DeadLetterDescription> DEAD_LETTER_SERDE = new TestDeadLetterSerde();
     @Mock
     KeyValueMapper<Integer, String, Iterable<KeyValue<Double, Long>>> mapper;
 
@@ -76,7 +75,7 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         mapped.flatMap(ProcessedKeyValue::getErrors)
                 .transformValues(
                         DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
-                .to(ERROR_TOPIC, Produced.valueSerde(DEAD_LETTER_SERDE));
+                .to(ERROR_TOPIC);
     }
 
     @Test
@@ -150,7 +149,6 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
 
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
                 Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueSerde(DEAD_LETTER_SERDE)
                                 .withValueType(DeadLetterDescription.class))
                         .toList();
         softly.assertThat(errors)
@@ -193,7 +191,6 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .containsExactlyInAnyOrder(2L, 3l);
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
                 Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueSerde(DEAD_LETTER_SERDE)
                                 .withValueType(DeadLetterDescription.class))
                         .toList();
         softly.assertThat(errors)
@@ -215,7 +212,6 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
                 Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueSerde(DEAD_LETTER_SERDE)
                                 .withValueType(DeadLetterDescription.class))
                         .toList();
         softly.assertThat(errors)
