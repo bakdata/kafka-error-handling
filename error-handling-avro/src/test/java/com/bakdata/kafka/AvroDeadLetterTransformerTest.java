@@ -27,13 +27,16 @@ package com.bakdata.kafka;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
@@ -75,6 +78,14 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         mapped.flatMap(ProcessedKeyValue::getErrors)
                 .transformValues(AvroDeadLetterConverter.asTransformer(DEAD_LETTER_DESCRIPTION))
                 .to(ERROR_TOPIC);
+    }
+
+    @Override
+    protected Properties getKafkaProperties() {
+        final Properties kafkaProperties  = super.getKafkaProperties();
+        kafkaProperties.setProperty(
+                StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class.getName());
+        return kafkaProperties;
     }
 
     @Test

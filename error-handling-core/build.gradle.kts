@@ -4,14 +4,6 @@ plugins {
     id("com.github.davidmc24.gradle.plugin.avro") version "1.2.1"
 }
 
-sourceSets {
-    test {
-        resources {
-            srcDirs("src/test/avro")
-        }
-    }
-}
-
 dependencies {
     val kafkaVersion: String by project
     api(group = "org.apache.kafka", name = "kafka-streams", version = kafkaVersion)
@@ -36,7 +28,6 @@ dependencies {
         name = "fluent-kafka-streams-tests-junit5",
         version = kafkaStreamsTestsVersion
     )
-    val confluentVersion: String by project
     testFixturesImplementation(
         testImplementation(
             group = "org.junit.jupiter",
@@ -50,7 +41,9 @@ dependencies {
         version = kafkaStreamsTestsVersion
     )
     testFixturesImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
-    testFixturesImplementation(group = "io.confluent", name = "kafka-streams-avro-serde", version = confluentVersion)
+    val jacksonVersion: String by project
+    testFixturesImplementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
+    testFixturesImplementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = jacksonVersion)
 }
 
 avro {

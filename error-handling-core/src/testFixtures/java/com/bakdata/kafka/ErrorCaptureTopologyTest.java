@@ -25,7 +25,6 @@
 package com.bakdata.kafka;
 
 import com.bakdata.fluent_kafka_streams_tests.TestTopology;
-import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import java.net.SocketTimeoutException;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -39,8 +38,7 @@ import org.junit.jupiter.api.AfterEach;
 public abstract class ErrorCaptureTopologyTest {
     protected TestTopology<Integer, String> topology = null;
 
-    // Make protected if you need to overwrite this method in your test class
-    static Properties getKafkaProperties() {
+    protected Properties getKafkaProperties() {
         final Properties kafkaConfig = new Properties();
 
         // exactly once and order
@@ -73,7 +71,7 @@ public abstract class ErrorCaptureTopologyTest {
         final StreamsBuilder builder = new StreamsBuilder();
         this.buildTopology(builder);
         final Topology topology = builder.build();
-        this.topology = new TestTopology<>(topology, getKafkaProperties());
+        this.topology = new TestTopology<>(topology, this.getKafkaProperties());
         this.topology.start();
     }
 

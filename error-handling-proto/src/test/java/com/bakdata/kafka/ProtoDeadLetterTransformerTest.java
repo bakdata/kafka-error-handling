@@ -92,16 +92,22 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
     }
 
     @Override
-    protected void createTopology() {
-        final StreamsBuilder builder = new StreamsBuilder();
-        this.buildTopology(builder);
-        final Topology topology = builder.build();
-        final Properties kafkaProperties = getKafkaProperties();
+    protected Properties getKafkaProperties() {
+        final Properties kafkaProperties = super.getKafkaProperties();
         kafkaProperties.setProperty(
                 StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaProtobufSerde.class.getName());
         kafkaProperties.setProperty(
                 KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE, ProtoDeadLetter.class.getName()
         );
+        return kafkaProperties;
+    }
+
+    @Override
+    protected void createTopology() {
+        final StreamsBuilder builder = new StreamsBuilder();
+        this.buildTopology(builder);
+        final Topology topology = builder.build();
+        final Properties kafkaProperties = this.getKafkaProperties();
         final SchemaRegistryMock schemaRegistryMock = new SchemaRegistryMock(List.of(new ProtobufSchemaProvider()));
         this.topology = new TestTopology<Integer, String>(topology, kafkaProperties)
                 .withSchemaRegistryMock(schemaRegistryMock);
