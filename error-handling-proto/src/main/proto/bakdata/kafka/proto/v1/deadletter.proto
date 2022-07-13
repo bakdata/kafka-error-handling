@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package bakdata.kafka.proto.v1;
+
+import "google/protobuf/wrappers.proto";
+
+option java_package = "com.bakdata.kafka.proto.v1";
+option java_multiple_files = true;
+
+message ProtoDeadLetter {
+    message Cause {
+        google.protobuf.StringValue message = 1;
+        google.protobuf.StringValue stack_trace = 2;
+        google.protobuf.StringValue error_class = 3;
+    }
+    string description = 1;
+    Cause cause = 2;
+    google.protobuf.StringValue input_value = 3;
+    google.protobuf.StringValue topic = 4;
+    google.protobuf.Int32Value partition = 5;
+    google.protobuf.Int64Value offset = 6;
+}
