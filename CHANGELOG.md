@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.0](https://github.com/bakdata/kafka-error-handling/tree/1.3.0) (2022-07-13)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.5...1.3.0)
+
+**Merged pull requests:**
+
+- Proto conversion for deadletter [\#13](https://github.com/bakdata/kafka-error-handling/pull/13) ([@mkcode92](https://github.com/mkcode92))
+
 ## [1.2.5](https://github.com/bakdata/kafka-error-handling/tree/1.2.5) (2022-06-23)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.4...1.2.5)
 
