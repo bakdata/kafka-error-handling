@@ -96,9 +96,8 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         final Properties kafkaProperties = super.getKafkaProperties();
         kafkaProperties.setProperty(
                 StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaProtobufSerde.class.getName());
-        kafkaProperties.setProperty(
-                KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE, ProtoDeadLetter.class.getName()
-        );
+        kafkaProperties.put(KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE,
+                ProtoDeadLetter.class);
         return kafkaProperties;
     }
 

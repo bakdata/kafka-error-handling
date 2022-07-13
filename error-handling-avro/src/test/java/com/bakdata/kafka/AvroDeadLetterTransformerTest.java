@@ -82,9 +82,8 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
 
     @Override
     protected Properties getKafkaProperties() {
-        final Properties kafkaProperties  = super.getKafkaProperties();
-        kafkaProperties.setProperty(
-                StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class.getName());
+        final Properties kafkaProperties = super.getKafkaProperties();
+        kafkaProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         return kafkaProperties;
     }
 
