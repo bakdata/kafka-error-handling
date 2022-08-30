@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mock;
 import java.net.SocketTimeoutException;
 import java.util.stream.Stream;
 import org.apache.kafka.common.errors.SerializationException;
+import org.apache.kafka.streams.errors.StreamsException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -65,6 +66,14 @@ class ErrorUtilTest {
     @MethodSource("generateIsRecoverableExceptionParameters")
     void shouldClassifyRecoverableErrors(final Exception exception, final boolean isRecoverable) {
         assertThat(ErrorUtil.isRecoverable(exception))
+                .isEqualTo(isRecoverable);
+    }
+
+    @ParameterizedTest
+    @MethodSource("generateIsRecoverableExceptionParameters")
+    void shouldClassifyRecoverableErrorsWrappedInStreamsException(final Exception exception,
+            final boolean isRecoverable) {
+        assertThat(ErrorUtil.isRecoverable(new StreamsException(exception)))
                 .isEqualTo(isRecoverable);
     }
 }

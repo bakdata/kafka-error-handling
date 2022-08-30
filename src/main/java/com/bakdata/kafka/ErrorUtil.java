@@ -43,6 +43,7 @@ import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.errors.RecordTooLargeException;
 import org.apache.kafka.common.errors.SerializationException;
+import org.apache.kafka.streams.errors.StreamsException;
 
 /**
  * This class provides utility methods for dealing with errors in Kafka streams, such as serializing values to string
@@ -59,7 +60,7 @@ public class ErrorUtil {
      * environment.
      * <p>Recoverable errors are:
      * <ul>
-     *     <li>{@link #isRecoverableKafkaError(Exception)}
+     *     <li>{@link #isRecoverableKafkaError(Throwable)}
      * </ul>
      *
      * @param e exception
@@ -81,7 +82,10 @@ public class ErrorUtil {
      * @param e exception
      * @return whether exception is thrown by Kafka and recoverable or not
      */
-    public static boolean isRecoverableKafkaError(final Exception e) {
+    public static boolean isRecoverableKafkaError(final Throwable e) {
+        if (e instanceof StreamsException && e.getCause() != null) {
+            return isRecoverableKafkaError(e.getCause());
+        }
         if (ORG_APACHE_KAFKA_COMMON_ERRORS.equals(e.getClass().getPackageName())) {
             if (e instanceof RecordTooLargeException) {
                 return false;
