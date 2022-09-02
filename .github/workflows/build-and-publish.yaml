@@ -12,10 +12,10 @@ jobs:
     uses: bakdata/ci-templates/.github/workflows/java-gradle-library.yaml@v1.4.0
     secrets:
       sonar-token: ${{ secrets.SONARCLOUD_TOKEN }}
-      signing-secret-key-ring: ${{ secrets.SIGNING_SECRET_KEY_RING }}
-      signing-key-id: ${{ secrets.SIGNING_KEY_ID }}
-      signing-password: ${{ secrets.SIGNING_PASSWORD }}
-      ossrh-username: ${{ secrets.OSSHR_USERNAME }}
-      ossrh-password: ${{ secrets.OSSHR_PASSWORD }}
+      signing-secret-key-ring: ${{ secrets.SONATYPE_SIGNING_SECRET_KEY_RING }}
+      signing-key-id: ${{ secrets.SONATYPE_SIGNING_KEY_ID }}
+      signing-password: ${{ secrets.SONATYPE_SIGNING_PASSWORD }}
+      ossrh-username: ${{ secrets.SONATYPE_OSSRH_USERNAME }}
+      ossrh-password: ${{ secrets.SONATYPE_OSSRH_PASSWORD }}
       github-username: ${{ secrets.GH_USERNAME }}
       github-token: ${{ secrets.GH_TOKEN }}
