@@ -1,7 +1,7 @@
 [![Build Status](https://dev.azure.com/bakdata/public/_apis/build/status/bakdata.kafka-error-handling?branchName=master)](https://dev.azure.com/bakdata/public/_build/latest?definitionId=23&branchName=master)
 [![Sonarcloud status](https://sonarcloud.io/api/project_badges/measure?project=com.bakdata.kafka%3Aerror-handling&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.bakdata.kafka%3Aerror-handling)
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=com.bakdata.kafka%3Aerror-handling&metric=coverage)](https://sonarcloud.io/dashboard?id=com.bakdata.kafka%3Aerror-handling)
-[![Maven](https://img.shields.io/maven-central/v/com.bakdata.kafka/error-handling.svg)](https://search.maven.org/search?q=g:com.bakdata.kafka%20AND%20a:error-handling&core=gav)
+[![Maven](https://img.shields.io/maven-central/v/com.bakdata.kafka/error-handling-core.svg)](https://search.maven.org/search?q=g:com.bakdata.kafka%20AND%20a:error-handling-core&core=gav)
 
 # Kafka error handling
 Libraries for error handling in [Kafka Streams](https://kafka.apache.org/documentation/streams/).
