@@ -152,7 +152,7 @@ public final class ErrorLoggingFlatValueTransformer<V, VR> implements ValueTrans
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process " + ErrorUtil.toString(value), e);
+            log.error("Cannot process {}", ErrorUtil.toString(value), e);
             return emptyList();
         }
     }

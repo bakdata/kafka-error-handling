@@ -92,7 +92,7 @@ public final class ErrorLoggingFlatValueMapper<V, VR> implements ValueMapper<V, 
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process " + ErrorUtil.toString(value), e);
+            log.error("Cannot process {}", ErrorUtil.toString(value), e);
             return emptyList();
         }
     }

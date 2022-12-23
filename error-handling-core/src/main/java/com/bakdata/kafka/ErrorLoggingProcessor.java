@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.processor.api.Processor;
 import org.apache.kafka.streams.processor.api.ProcessorContext;
 import org.apache.kafka.streams.processor.api.ProcessorSupplier;
@@ -36,102 +37,97 @@ import org.apache.kafka.streams.processor.api.Record;
 import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
- * Wrap a {@code Processor} and capture thrown exceptions.
+ * Wrap a {@code Processor} and log thrown exceptions with input key and value.
  *
  * @param <K> type of input keys
  * @param <V> type of input values
  * @param <KR> type of output keys
  * @param <VR> type of output values
- * @see #captureErrors(Processor)
- * @see #captureErrors(Processor, Predicate)
+ * @see #logErrors(Processor)
+ * @see #logErrors(Processor, Predicate)
  */
+@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ErrorCapturingProcessor<K, V, KR, VR>
-        implements Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> {
+public final class ErrorLoggingProcessor<K, V, KR, VR> implements Processor<K, V, KR, VR> {
     private final @NonNull Processor<K, V, KR, VR> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
-    private ProcessorContext<KR, ProcessedKeyValue<K, V, VR>> context;
 
     /**
-     * Wrap a {@code Processor} and capture thrown exceptions. Recoverable Kafka exceptions such as a schema registry
-     * timeout are forwarded and not captured.
+     * Wrap a {@code Processor} and log thrown exceptions with input key and value. Recoverable Kafka exceptions such as
+     * a schema registry timeout are forwarded and not captured.
      *
-     * @param processor {@code Processor} whose exceptions should be captured
+     * @param processor {@code Processor} whose exceptions should be logged
      * @param <K> type of input keys
      * @param <V> type of input values
      * @param <KR> type of output keys
      * @param <VR> type of output values
      * @return {@code Processor}
-     * @see #captureErrors(Processor, Predicate)
+     * @see #logErrors(Processor, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */
-    public static <K, V, KR, VR> Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
+    public static <K, V, KR, VR> Processor<K, V, KR, VR> logErrors(
             final @NonNull Processor<K, V, KR, VR> processor) {
-        return captureErrors(processor, ErrorUtil::isRecoverable);
+        return logErrors(processor, ErrorUtil::isRecoverable);
     }
 
     /**
-     * Wrap a {@code Processor} and capture thrown exceptions.
+     * Wrap a {@code Processor} and log thrown exceptions with input key and value.
      * <pre>{@code
      * final KStream<K, V> input = ...;
-     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.process(() -> captureErrors(new Processor<K, V, KR, VR>() {...}));
-     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * final KStream<KR, VR> output = input.process(() -> logErrors(new Processor<K, V, KR, VR>() {...}));
      * }
      * </pre>
      *
-     * @param processor {@code Processor} whose exceptions should be captured
-     * @param errorFilter expression that filters errors which should be thrown and not captured
+     * @param processor {@code Processor} whose exceptions should be logged
+     * @param errorFilter expression that filters errors which should be thrown and not logged
      * @param <K> type of input keys
      * @param <V> type of input values
      * @param <KR> type of output keys
      * @param <VR> type of output values
      * @return {@code Processor}
      */
-    public static <K, V, KR, VR> Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
+    public static <K, V, KR, VR> Processor<K, V, KR, VR> logErrors(
             final @NonNull Processor<K, V, KR, VR> processor,
             final @NonNull Predicate<Exception> errorFilter) {
-        return new ErrorCapturingProcessor<>(processor, errorFilter);
+        return new ErrorLoggingProcessor<>(processor, errorFilter);
     }
 
     /**
-     * Wrap a {@code ProcessorSupplier} and capture thrown exceptions. Recoverable Kafka exceptions such as a schema
-     * registry timeout are forwarded and not captured.
+     * Wrap a {@code ProcessorSupplier} and log thrown exceptions with input key and value. Recoverable Kafka exceptions
+     * such as a schema registry timeout are forwarded and not captured.
      *
-     * @param supplier {@code ProcessorSupplier} whose exceptions should be captured
+     * @param supplier {@code ProcessorSupplier} whose exceptions should be logged
      * @param <K> type of input keys
      * @param <V> type of input values
      * @param <KR> type of output keys
      * @param <VR> type of output values
      * @return {@code ProcessorSupplier}
-     * @see #captureErrors(ProcessorSupplier, Predicate)
+     * @see #logErrors(ProcessorSupplier, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */
-    public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
+    public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, VR> logErrors(
             final @NonNull ProcessorSupplier<K, V, KR, VR> supplier) {
-        return captureErrors(supplier, ErrorUtil::isRecoverable);
+        return logErrors(supplier, ErrorUtil::isRecoverable);
     }
 
     /**
-     * Wrap a {@code ProcessorSupplier} and capture thrown exceptions.
+     * Wrap a {@code ProcessorSupplier} and log thrown exceptions with input key and value.
      * <pre>{@code
      * final ProcessorSupplier<K, V, KR, VR> processor = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.process(captureErrors(processor));
-     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * final KStream<KR, VR> output = input.process(logErrors(processor));
      * }
      * </pre>
      *
-     * @param supplier {@code ProcessorSupplier} whose exceptions should be captured
-     * @param errorFilter expression that filters errors which should be thrown and not captured
+     * @param supplier {@code ProcessorSupplier} whose exceptions should be logged
+     * @param errorFilter expression that filters errors which should be thrown and not logged
      * @param <K> type of input keys
      * @param <V> type of input values
      * @param <KR> type of output keys
      * @param <VR> type of output values
      * @return {@code ProcessorSupplier}
      */
-    public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
+    public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, VR> logErrors(
             final @NonNull ProcessorSupplier<K, V, KR, VR> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ProcessorSupplier<>() {
@@ -141,8 +137,8 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
             }
 
             @Override
-            public Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> get() {
-                return captureErrors(supplier.get(), errorFilter);
+            public Processor<K, V, KR, VR> get() {
+                return logErrors(supplier.get(), errorFilter);
             }
         };
     }
@@ -153,9 +149,8 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
     }
 
     @Override
-    public void init(final ProcessorContext<KR, ProcessedKeyValue<K, V, VR>> context) {
-        this.wrapped.init(new ErrorCapturingApiProcessorContext<>(context));
-        this.context = context;
+    public void init(final ProcessorContext<KR, VR> context) {
+        this.wrapped.init(context);
     }
 
     @Override
@@ -166,9 +161,8 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            final ProcessedKeyValue<K, V, VR> errorWithOldKey = ErrorKeyValue.of(record.key(), record.value(), e);
-            // new key is only relevant if no error occurs
-            this.context.forward(record.<KR>withKey(null).withValue(errorWithOldKey));
+            log.error("Cannot process ('{}', '{}')", ErrorUtil.toString(record.key()),
+                    ErrorUtil.toString(record.value()), e);
         }
     }
 

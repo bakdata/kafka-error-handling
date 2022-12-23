@@ -36,7 +36,9 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <V> type of input values
  * @param <VR> type of output values
  * @see #describeErrors(ValueTransformer)
+ * @deprecated Use {@link ErrorDescribingValueProcessor}
  */
+@Deprecated(since = "1.4.0")
 public final class ErrorDescribingValueTransformer<V, VR> extends DecoratorValueTransformer<V, VR> {
 
     private ErrorDescribingValueTransformer(final @NonNull ValueTransformer<V, VR> wrapped) {

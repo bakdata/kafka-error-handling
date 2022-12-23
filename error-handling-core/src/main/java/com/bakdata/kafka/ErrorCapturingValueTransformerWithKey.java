@@ -42,8 +42,10 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <VR> type of output values
  * @see #captureErrors(ValueTransformerWithKey)
  * @see #captureErrors(ValueTransformerWithKey, Predicate)
+ * @deprecated Use {@link ErrorCapturingValueProcessor}
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Deprecated(since = "1.4.0")
 public final class ErrorCapturingValueTransformerWithKey<K, V, VR>
         implements ValueTransformerWithKey<K, V, ProcessedValue<V, VR>> {
     private final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends VR> wrapped;

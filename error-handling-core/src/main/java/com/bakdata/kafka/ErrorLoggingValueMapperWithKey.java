@@ -98,7 +98,7 @@ public final class ErrorLoggingValueMapperWithKey<K, V, VR> implements ValueMapp
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process ('" + ErrorUtil.toString(key) + "', '" + ErrorUtil.toString(value) + "')", e);
+            log.error("Cannot process ('{}', '{}')", ErrorUtil.toString(key), ErrorUtil.toString(value), e);
             return emptyList();
         }
     }

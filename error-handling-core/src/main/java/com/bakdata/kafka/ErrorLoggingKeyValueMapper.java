@@ -97,7 +97,7 @@ public final class ErrorLoggingKeyValueMapper<K, V, R> implements KeyValueMapper
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process ('" + ErrorUtil.toString(key) + "', '" + ErrorUtil.toString(value) + "')", e);
+            log.error("Cannot process ('{}', '{}')", ErrorUtil.toString(key), ErrorUtil.toString(value), e);
             return emptyList();
         }
     }

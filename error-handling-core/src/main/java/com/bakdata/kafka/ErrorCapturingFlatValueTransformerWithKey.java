@@ -44,8 +44,10 @@ import org.jooq.lambda.Seq;
  * @param <VR> type of output values
  * @see #captureErrors(ValueTransformerWithKey)
  * @see #captureErrors(ValueTransformerWithKey, Predicate)
+ * @deprecated Use {@link ErrorCapturingValueProcessor}
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Deprecated(since = "1.4.0")
 public final class ErrorCapturingFlatValueTransformerWithKey<K, V, VR>
         implements ValueTransformerWithKey<K, V, Iterable<ProcessedValue<V, VR>>> {
     private final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends Iterable<VR>> wrapped;

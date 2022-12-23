@@ -24,119 +24,119 @@
 
 package com.bakdata.kafka;
 
-import static org.jooq.lambda.Seq.seq;
-
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.streams.kstream.ValueTransformer;
-import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
-import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessor;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessorContext;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
+import org.apache.kafka.streams.processor.api.FixedKeyRecord;
 import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
- * Wrap a {@code ValueTransformer} and capture thrown exceptions.
+ * Wrap a {@code FixedKeyProcessor} and capture thrown exceptions.
  *
+ * @param <K> type of input keys
  * @param <V> type of input values
  * @param <VR> type of output values
- * @see #captureErrors(ValueTransformer)
- * @see #captureErrors(ValueTransformer, Predicate)
- * @deprecated Use {@link ErrorCapturingValueProcessor}
+ * @see #captureErrors(FixedKeyProcessor)
+ * @see #captureErrors(FixedKeyProcessor, Predicate)
  */
-@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-@Deprecated(since = "1.4.0")
-public final class ErrorCapturingFlatValueTransformer<V, VR>
-        implements ValueTransformer<V, Iterable<ProcessedValue<V, VR>>> {
-    private final @NonNull ValueTransformer<? super V, ? extends Iterable<VR>> wrapped;
+public final class ErrorCapturingValueProcessor<K, V, VR>
+        implements FixedKeyProcessor<K, V, ProcessedValue<V, VR>> {
+    private final @NonNull FixedKeyProcessor<K, V, VR> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
+    private FixedKeyProcessorContext<K, ProcessedValue<V, VR>> context;
 
     /**
-     * Wrap a {@code ValueTransformer} and capture thrown exceptions. Recoverable Kafka exceptions such as a schema
+     * Wrap a {@code FixedKeyProcessor} and capture thrown exceptions. Recoverable Kafka exceptions such as a schema
      * registry timeout are forwarded and not captured.
      *
-     * @param transformer {@code ValueTransformer} whose exceptions should be captured
+     * @param processor {@code FixedKeyProcessor} whose exceptions should be captured
+     * @param <K> type of input keys
      * @param <V> type of input values
      * @param <VR> type of output values
-     * @return {@code ValueTransformer}
-     * @see #captureErrors(ValueTransformer, Predicate)
+     * @return {@code FixedKeyProcessor}
+     * @see #captureErrors(FixedKeyProcessor, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */
-    public static <V, VR> ValueTransformer<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueTransformer<? super V, ? extends Iterable<VR>> transformer) {
-        return captureErrors(transformer, ErrorUtil::isRecoverable);
+    public static <K, V, VR> FixedKeyProcessor<K, V, ProcessedValue<V, VR>> captureErrors(
+            final @NonNull FixedKeyProcessor<K, V, VR> processor) {
+        return captureErrors(processor, ErrorUtil::isRecoverable);
     }
 
     /**
-     * Wrap a {@code ValueTransformer} and capture thrown exceptions.
+     * Wrap a {@code FixedKeyProcessor} and capture thrown exceptions.
      * <pre>{@code
      * final KStream<K, V> input = ...;
-     * final KStream<K, ProcessedValue<V, VR>> processed = input.flatTransformValues(() -> captureErrors(new ValueTransformer<V, Iterable<VR>>() {...}));
+     * final KStream<K, ProcessedValue<V, VR>> processed = input.processValues(() -> captureErrors(new FixedKeyProcessor<K, V, VR>() {...}));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedValue::getErrors);
      * }
      * </pre>
      *
-     * @param transformer {@code ValueTransformer} whose exceptions should be captured
+     * @param processor {@code FixedKeyProcessor} whose exceptions should be captured
      * @param errorFilter expression that filters errors which should be thrown and not captured
+     * @param <K> type of input keys
      * @param <V> type of input values
      * @param <VR> type of output values
-     * @return {@code ValueTransformer}
+     * @return {@code FixedKeyProcessor}
      */
-    public static <V, VR> ValueTransformer<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueTransformer<? super V, ? extends Iterable<VR>> transformer,
+    public static <K, V, VR> FixedKeyProcessor<K, V, ProcessedValue<V, VR>> captureErrors(
+            final @NonNull FixedKeyProcessor<K, V, VR> processor,
             final @NonNull Predicate<Exception> errorFilter) {
-        return new ErrorCapturingFlatValueTransformer<>(transformer, errorFilter);
+        return new ErrorCapturingValueProcessor<>(processor, errorFilter);
     }
 
     /**
-     * Wrap a {@code ValueTransformerSupplier} and capture thrown exceptions. Recoverable Kafka exceptions such as a
+     * Wrap a {@code FixedKeyProcessorSupplier} and capture thrown exceptions. Recoverable Kafka exceptions such as a
      * schema registry timeout are forwarded and not captured.
      *
-     * @param supplier {@code ValueTransformerSupplier} whose exceptions should be captured
+     * @param supplier {@code FixedKeyProcessorSupplier} whose exceptions should be captured
+     * @param <K> type of input keys
      * @param <V> type of input values
      * @param <VR> type of output values
-     * @return {@code ValueTransformerSupplier}
-     * @see #captureErrors(ValueTransformerSupplier, Predicate)
+     * @return {@code FixedKeyProcessorSupplier}
+     * @see #captureErrors(FixedKeyProcessorSupplier, Predicate)
      * @see ErrorUtil#isRecoverable(Exception)
      */
-    public static <V, VR> ValueTransformerSupplier<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueTransformerSupplier<? super V, ? extends Iterable<VR>> supplier) {
+    public static <K, V, VR> FixedKeyProcessorSupplier<K, V, ProcessedValue<V, VR>> captureErrors(
+            final @NonNull FixedKeyProcessorSupplier<K, V, VR> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
     /**
-     * Wrap a {@code ValueTransformerSupplier} and capture thrown exceptions.
+     * Wrap a {@code FixedKeyProcessorSupplier} and capture thrown exceptions.
      * <pre>{@code
-     * final ValueTransformerSupplier<V, Iterable<VR>> transformer = ...;
+     * final FixedKeyProcessorSupplier<K, V, VR> processor = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<K, ProcessedValue<V, VR>> processed = input.flatTransformValues(captureErrors(transformer));
+     * final KStream<K, ProcessedValue<V, VR>> processed = input.processValues(() -> captureErrors(processor.get()));
      * final KStream<K, VR> output = processed.flatMapValues(ProcessedValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedValue::getErrors);
      * }
      * </pre>
      *
-     * @param supplier {@code ValueTransformerSupplier} whose exceptions should be captured
+     * @param supplier {@code FixedKeyProcessorSupplier} whose exceptions should be captured
      * @param errorFilter expression that filters errors which should be thrown and not captured
+     * @param <K> type of input keys
      * @param <V> type of input values
      * @param <VR> type of output values
-     * @return {@code ValueTransformerSupplier}
+     * @return {@code FixedKeyProcessorSupplier}
      */
-    public static <V, VR> ValueTransformerSupplier<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueTransformerSupplier<? super V, ? extends Iterable<VR>> supplier,
+    public static <K, V, VR> FixedKeyProcessorSupplier<K, V, ProcessedValue<V, VR>> captureErrors(
+            final @NonNull FixedKeyProcessorSupplier<K, V, VR> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
-        return new ValueTransformerSupplier<>() {
+        return new FixedKeyProcessorSupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {
                 return supplier.stores();
             }
 
             @Override
-            public ValueTransformer<V, Iterable<ProcessedValue<V, VR>>> get() {
+            public FixedKeyProcessor<K, V, ProcessedValue<V, VR>> get() {
                 return captureErrors(supplier.get(), errorFilter);
             }
         };
@@ -148,20 +148,20 @@ public final class ErrorCapturingFlatValueTransformer<V, VR>
     }
 
     @Override
-    public void init(final ProcessorContext context) {
-        this.wrapped.init(context);
+    public void init(final FixedKeyProcessorContext<K, ProcessedValue<V, VR>> context) {
+        this.wrapped.init(new ErrorCapturingFixedKeyProcessorContext<>(context));
+        this.context = context;
     }
 
     @Override
-    public Iterable<ProcessedValue<V, VR>> transform(final V value) {
+    public void process(final FixedKeyRecord<K, V> record) {
         try {
-            final Iterable<VR> newValues = this.wrapped.transform(value);
-            return seq(newValues).map(SuccessValue::of);
+            this.wrapped.process(record);
         } catch (final Exception e) {
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            return List.of(ErrorValue.of(value, e));
+            this.context.forward(record.withValue(ErrorValue.of(record.value(), e)));
         }
     }
 

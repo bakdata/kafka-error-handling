@@ -24,12 +24,10 @@
 
 package com.bakdata.kafka;
 
-import static com.bakdata.kafka.FilterHelper.filterAll;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -47,9 +45,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(SoftAssertionsExtension.class)
-class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
+class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
-    private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
     private static final Serde<String> STRING_SERDE = Serdes.String();
@@ -60,80 +57,19 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
     @Override
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
-        final KStream<Double, ProcessedKeyValue<Integer, String, Long>> mapped =
-                input.process(ErrorCapturingProcessor.captureErrors(() -> this.mapper));
-        mapped.flatMapValues(ProcessedKeyValue::getValues)
-                .to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
-        mapped.flatMap(ProcessedKeyValue::getErrors)
-                .processValues(
-                        DeadLetterProcessor.create("Description", deadLetterDescription -> deadLetterDescription))
-                .to(ERROR_TOPIC);
+        final KStream<Double, Long> mapped =
+                input.process(ErrorDescribingProcessor.describeErrors(() -> this.mapper));
+        mapped.to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
     }
 
     @Test
     void shouldNotAllowNullProcessor(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorCapturingProcessor.captureErrors(
-                        (Processor<? super Object, ? super Object, ?, ?>) null))
+        softly.assertThatThrownBy(() -> ErrorDescribingProcessor.describeErrors(
+                        (Processor<Object, Object, Object, Object>) null))
                 .isInstanceOf(NullPointerException.class);
-        softly.assertThatThrownBy(() -> ErrorCapturingProcessor.captureErrors(
-                        (Processor<? super Object, ? super Object, ?, ?>) null, filterAll()))
+        softly.assertThatThrownBy(() -> ErrorDescribingProcessor.describeErrors(
+                        (ProcessorSupplier<Object, Object, Object, Object>) null))
                 .isInstanceOf(NullPointerException.class);
-        softly.assertThatThrownBy(() -> ErrorCapturingProcessor.captureErrors(
-                        (ProcessorSupplier<? super Object, ? super Object, ?, ?>) null))
-                .isInstanceOf(NullPointerException.class);
-        softly.assertThatThrownBy(() -> ErrorCapturingProcessor.captureErrors(
-                        (ProcessorSupplier<? super Object, ? super Object, ?, ?>) null, filterAll()))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    void shouldNotAllowNullFilter(final SoftAssertions softly) {
-        softly.assertThatThrownBy(() -> ErrorCapturingProcessor.captureErrors(this.mapper, null))
-                .isInstanceOf(NullPointerException.class);
-        softly.assertThatThrownBy(() -> ErrorCapturingProcessor.captureErrors(() -> this.mapper, null))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    void shouldForwardSchemaRegistryTimeout(final SoftAssertions softly) {
-        final RuntimeException throwable = createSchemaRegistryTimeoutException();
-        this.mapper = new Processor<>() {
-
-            @Override
-            public void init(final ProcessorContext context) {
-            }
-
-            @Override
-            public void process(final Record<Integer, String> record) {
-                if (1 == record.key() && "foo".equals(record.value())) {
-                    throw throwable;
-                }
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
-        this.createTopology();
-        softly.assertThatThrownBy(() -> this.topology.input()
-                        .withValueSerde(STRING_SERDE)
-                        .add(1, "foo"))
-                .hasCauseInstanceOf(SerializationException.class);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
-                .toList();
-        softly.assertThat(records)
-                .isEmpty();
-
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
-                        .toList();
-        softly.assertThat(errors)
-                .isEmpty();
     }
 
     @Test
@@ -151,11 +87,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                     throw throwable;
                 }
                 throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void close() {
-
             }
         };
         this.createTopology();
@@ -186,17 +117,16 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 }
                 throw new UnsupportedOperationException();
             }
-
-            @Override
-            public void close() {
-
-            }
         };
         this.createTopology();
-        this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo")
-                .add(2, "bar");
+        softly.assertThatThrownBy(() -> this.topology.input()
+                        .withValueSerde(STRING_SERDE)
+                        .add(2, "bar")
+                        .add(1, "foo"))
+                .satisfies(e -> softly.assertThat(e.getCause())
+                        .hasMessage(
+                                "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
+                );
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
                         .withValueSerde(LONG_SERDE))
@@ -210,28 +140,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
                 );
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
-                        .toList();
-        softly.assertThat(errors)
-                .hasSize(1)
-                .first()
-                .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isEqualTo(1))
-                .extracting(ProducerRecord::value)
-                .isInstanceOf(DeadLetterDescription.class)
-                .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isEqualTo("foo");
-                    softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    final DeadLetterDescription.Cause cause = deadLetter.getCause();
-                    softly.assertThat(cause.getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(cause.getStackTrace()).isNotNull();
-                    softly.assertThat(cause.getErrorClass()).isEqualTo("java.lang.RuntimeException");
-                    softly.assertThat(deadLetter.getTopic()).isEqualTo(INPUT_TOPIC);
-                    softly.assertThat(deadLetter.getPartition()).isEqualTo(0);
-                    softly.assertThat(deadLetter.getOffset()).isEqualTo(0L);
-                });
     }
 
     @Test
@@ -252,11 +160,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 }
                 throw new UnsupportedOperationException();
             }
-
-            @Override
-            public void close() {
-
-            }
         };
         this.createTopology();
         this.topology.input()
@@ -275,12 +178,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
                 );
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
-                        .toList();
-        softly.assertThat(errors)
-                .isEmpty();
     }
 
     @Test
@@ -298,44 +195,21 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 }
                 throw new UnsupportedOperationException();
             }
-
-            @Override
-            public void close() {
-
-            }
         };
         this.createTopology();
-        this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(null, null);
+        softly.assertThatThrownBy(() -> this.topology.input()
+                        .withValueSerde(STRING_SERDE)
+                        .add(null, null))
+                .satisfies(e -> softly.assertThat(e.getCause())
+                        .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
+                                + "')")
+                );
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
                         .withValueSerde(LONG_SERDE))
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
-                        .toList();
-        softly.assertThat(errors)
-                .hasSize(1)
-                .first()
-                .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isNull())
-                .extracting(ProducerRecord::value)
-                .isInstanceOf(DeadLetterDescription.class)
-                .satisfies(deadLetter -> {
-                    softly.assertThat(deadLetter.getInputValue()).isNull();
-                    softly.assertThat(deadLetter.getDescription()).isEqualTo("Description");
-                    final DeadLetterDescription.Cause cause = deadLetter.getCause();
-                    softly.assertThat(cause.getMessage()).isEqualTo("Cannot process");
-                    softly.assertThat(cause.getStackTrace()).isNotNull();
-                    softly.assertThat(cause.getErrorClass()).isEqualTo("java.lang.RuntimeException");
-                    softly.assertThat(deadLetter.getTopic()).isEqualTo(INPUT_TOPIC);
-                    softly.assertThat(deadLetter.getPartition()).isEqualTo(0);
-                    softly.assertThat(deadLetter.getOffset()).isEqualTo(0L);
-                });
     }
 
     @Test
@@ -356,11 +230,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 }
                 throw new UnsupportedOperationException();
             }
-
-            @Override
-            public void close() {
-
-            }
         };
         this.createTopology();
         this.topology.input()
@@ -379,12 +248,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(3L))
                 );
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
-                        .toList();
-        softly.assertThat(errors)
-                .isEmpty();
     }
 
     @Test
@@ -408,11 +271,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                     return;
                 }
                 throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void close() {
-
             }
         };
         this.createTopology();
@@ -439,12 +297,6 @@ class ErrorCapturingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .extracting(ProducerRecord::value)
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
-                        .toList();
-        softly.assertThat(errors)
-                .isEmpty();
     }
 
 }

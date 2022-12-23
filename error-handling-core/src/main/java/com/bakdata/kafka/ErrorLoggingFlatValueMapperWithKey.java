@@ -95,7 +95,7 @@ public final class ErrorLoggingFlatValueMapperWithKey<K, V, VR> implements Value
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process ('" + ErrorUtil.toString(key) + "', '" + ErrorUtil.toString(value) + "')", e);
+            log.error("Cannot process ('{}', '{}')", ErrorUtil.toString(key), ErrorUtil.toString(value), e);
             return emptyList();
         }
     }

@@ -26,80 +26,80 @@ package com.bakdata.kafka;
 
 import java.util.Set;
 import lombok.NonNull;
-import org.apache.kafka.streams.kstream.Transformer;
-import org.apache.kafka.streams.kstream.TransformerSupplier;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessor;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
+import org.apache.kafka.streams.processor.api.FixedKeyRecord;
 import org.apache.kafka.streams.state.StoreBuilder;
 
 /**
- * Wrap a {@code Transformer} and describe thrown exceptions with input key and value.
+ * Wrap a {@code FixedKeyProcessor} and describe thrown exceptions with input key and value.
  *
  * @param <K> type of input keys
  * @param <V> type of input values
- * @param <R> type of transformation result
- * @see #describeErrors(Transformer)
- * @deprecated Use {@link ErrorDescribingProcessor}
+ * @param <VR> type of output values
+ * @see #describeErrors(FixedKeyProcessor)
  */
-@Deprecated(since = "1.4.0")
-public final class ErrorDescribingTransformer<K, V, R> extends DecoratorTransformer<K, V, R> {
+public final class ErrorDescribingValueProcessor<K, V, VR> extends DecoratorValueProcessor<K, V, VR> {
 
-    private ErrorDescribingTransformer(final @NonNull Transformer<K, V, R> wrapped) {
+    private ErrorDescribingValueProcessor(final @NonNull FixedKeyProcessor<K, V, VR> wrapped) {
         super(wrapped);
     }
 
     /**
-     * Wrap a {@code Transformer} and describe thrown exceptions with input key and value.
+     * Wrap a {@code FixedKeyProcessor} and describe thrown exceptions with input key and value.
      * <pre>{@code
      * final KStream<K, V> input = ...;
-     * final KStream<KR, VR> output = input.transform(() -> describeErrors(new Transformer<K, V, KeyValue<KR, VR>>() {...}));
+     * final KStream<K, VR> output = input.processValues(() -> describeErrors(new FixedKeyProcessor<K, V, VR>() {...}));
      * }
      * </pre>
      *
-     * @param transformer {@code Transformer} whose exceptions should be described
+     * @param processor {@code FixedKeyProcessor} whose exceptions should be described
      * @param <K> type of input keys
      * @param <V> type of input values
-     * @param <R> type of transformation result
-     * @return {@code Transformer}
+     * @param <VR> type of output values
+     * @return {@code FixedKeyProcessor}
      */
-    public static <K, V, R> Transformer<K, V, R> describeErrors(final @NonNull Transformer<K, V, R> transformer) {
-        return new ErrorDescribingTransformer<>(transformer);
+    public static <K, V, VR> FixedKeyProcessor<K, V, VR> describeErrors(
+            final @NonNull FixedKeyProcessor<K, V, VR> processor) {
+        return new ErrorDescribingValueProcessor<>(processor);
     }
 
     /**
-     * Wrap a {@code TransformerSupplier} and describe thrown exceptions with input key and value.
+     * Wrap a {@code FixedKeyProcessorSupplier} and describe thrown exceptions with input key and value.
      * <pre>{@code
-     * final TransformerSupplier<K, V, KeyValue<KR, VR>> transformer = ...;
+     * final FixedKeyProcessorSupplier<K, V, VR> processor = ...;
      * final KStream<K, V> input = ...;
-     * final KStream<KR, VR> output = input.transform(describeErrors(transformer));
+     * final KStream<K, VR> output = input.processValues(describeErrors(processor));
      * }
      * </pre>
      *
-     * @param supplier {@code TransformerSupplier} whose exceptions should be described
+     * @param supplier {@code FixedKeyProcessorSupplier} whose exceptions should be described
      * @param <K> type of input keys
      * @param <V> type of input values
-     * @param <R> type of transformation result
-     * @return {@code TransformerSupplier}
+     * @param <VR> type of output values
+     * @return {@code FixedKeyProcessorSupplier}
      */
-    public static <K, V, R> TransformerSupplier<K, V, R> describeErrors(
-            final @NonNull TransformerSupplier<K, V, R> supplier) {
-        return new TransformerSupplier<>() {
+    public static <K, V, VR> FixedKeyProcessorSupplier<K, V, VR> describeErrors(
+            final @NonNull FixedKeyProcessorSupplier<K, V, VR> supplier) {
+        return new FixedKeyProcessorSupplier<>() {
             @Override
             public Set<StoreBuilder<?>> stores() {
                 return supplier.stores();
             }
 
             @Override
-            public Transformer<K, V, R> get() {
+            public FixedKeyProcessor<K, V, VR> get() {
                 return describeErrors(supplier.get());
             }
         };
     }
 
     @Override
-    public R transform(final K key, final V value) {
+    public void process(final FixedKeyRecord<K, V> record) {
         try {
-            return super.transform(key, value);
+            super.process(record);
         } catch (final Exception e) {
-            throw new ProcessingException(key, value, e);
+            throw new ProcessingException(record.key(), record.value(), e);
         }
     }
 

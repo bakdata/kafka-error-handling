@@ -95,7 +95,7 @@ public final class ErrorLoggingValueMapper<V, VR> implements ValueMapper<V, Iter
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process " + ErrorUtil.toString(value), e);
+            log.error("Cannot process {}", ErrorUtil.toString(value), e);
             return emptyList();
         }
     }
