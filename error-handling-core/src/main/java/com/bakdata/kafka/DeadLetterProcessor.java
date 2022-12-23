@@ -47,7 +47,7 @@ import org.apache.kafka.streams.processor.api.RecordMetadata;
 public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, ProcessingError<V>, T> {
     private final @NonNull String description;
     private final @NonNull DeadLetterConverter<T> deadLetterConverter;
-    private FixedKeyProcessorContext<K, T> context = null;
+    private FixedKeyProcessorContext<K, T> context;
 
     /**
      * Transforms captured errors for serialization

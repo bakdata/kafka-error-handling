@@ -46,7 +46,7 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingError<V>, T> {
     private final @NonNull String description;
     private final @NonNull DeadLetterConverter<T> deadLetterConverter;
-    private ProcessorContext context = null;
+    private ProcessorContext context;
 
     /**
      * Transforms captured errors for serialization

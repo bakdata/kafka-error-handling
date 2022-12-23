@@ -94,7 +94,7 @@ public class ErrorHeaderProcessor<K, V> implements FixedKeyProcessor<K, Processi
      */
     public static final String EXCEPTION_STACK_TRACE = EXCEPTION_PREFIX + "stack_trace";
     private final @NonNull String description;
-    private FixedKeyProcessorContext<K, V> context = null;
+    private FixedKeyProcessorContext<K, V> context;
 
     /**
      * Create a new {@code ErrorHeaderProcessor} with the provided description

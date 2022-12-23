@@ -91,7 +91,7 @@ public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingErr
      */
     public static final String EXCEPTION_STACK_TRACE = ErrorHeaderProcessor.EXCEPTION_STACK_TRACE;
     private final @NonNull String description;
-    private ProcessorContext context = null;
+    private ProcessorContext context;
 
     /**
      * Create a new {@code ErrorHeaderTransformer} with the provided description
