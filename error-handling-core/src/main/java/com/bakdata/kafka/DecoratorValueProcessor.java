@@ -32,6 +32,10 @@ import org.apache.kafka.streams.processor.api.FixedKeyRecord;
 
 /**
  * Base class for decorating a {@code ValueTransformerWithKey}
+ *
+ * @param <K> type of input keys
+ * @param <V> type of input values
+ * @param <R> type of output values
  */
 @RequiredArgsConstructor
 public abstract class DecoratorValueProcessor<K, V, R> implements FixedKeyProcessor<K, V, R> {

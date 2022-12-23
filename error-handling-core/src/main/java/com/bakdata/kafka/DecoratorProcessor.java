@@ -32,6 +32,11 @@ import org.apache.kafka.streams.processor.api.Record;
 
 /**
  * Base class for decorating a {@code Processor}
+ *
+ * @param <K> type of input keys
+ * @param <V> type of input values
+ * @param <KR> type of output keys
+ * @param <VR> type of output values
  */
 @RequiredArgsConstructor
 public abstract class DecoratorProcessor<K, V, KR, VR> implements Processor<K, V, KR, VR> {
