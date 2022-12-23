@@ -25,6 +25,7 @@
 package com.bakdata.kafka;
 
 import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
 
 /**
  * Convert a {@code DeadLetterDescription} to an Avro {@code DeadLetter}
@@ -66,10 +67,38 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLe
      * @param description shared description for all errors
      * @param <V> type of the input value
      * @return a transformer supplier
+     * @deprecated Use {@link #asProcessor(String)}
      */
+    @Deprecated(since = "1.4.0")
     public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> asTransformer(
             final String description) {
         return DeadLetterTransformer.create(description, new AvroDeadLetterConverter());
+    }
+
+    /**
+     * Creates a processor that uses the AvroDeadLetterConverter
+     *
+     * <pre>{@code
+     * // Example, this works for all error capturing topologies
+     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
+     * final KStream<K, V> input = ...;
+     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
+     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
+     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
+     * final KStream<K, DeadLetter> deadLetters = errors.processValues(
+     *                      AvroDeadLetterConverter.asProcessor("Description"));
+     * deadLetters.to(ERROR_TOPIC);
+     * }
+     * </pre>
+     *
+     * @param description shared description for all errors
+     * @param <K> type of the input key
+     * @param <V> type of the input value
+     * @return a processor supplier
+     */
+    public static <K, V> FixedKeyProcessorSupplier<K, ProcessingError<V>, DeadLetter> asProcessor(
+            final String description) {
+        return DeadLetterProcessor.create(description, new AvroDeadLetterConverter());
     }
 
 }

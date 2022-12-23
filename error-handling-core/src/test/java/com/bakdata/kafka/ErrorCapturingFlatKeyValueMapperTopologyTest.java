@@ -73,8 +73,8 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
-                .transformValues(
-                        DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
+                .processValues(
+                        DeadLetterProcessor.create("Description", deadLetterDescription -> deadLetterDescription))
                 .to(ERROR_TOPIC);
     }
 
@@ -188,7 +188,7 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .containsExactlyInAnyOrder(2.0, 3.0);
         softly.assertThat(records)
                 .extracting(ProducerRecord::value)
-                .containsExactlyInAnyOrder(2L, 3l);
+                .containsExactlyInAnyOrder(2L, 3L);
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
                 Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
                                 .withValueType(DeadLetterDescription.class))

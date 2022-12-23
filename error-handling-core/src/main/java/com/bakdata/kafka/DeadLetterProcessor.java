@@ -29,24 +29,25 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.kafka.streams.kstream.ValueTransformer;
-import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
-import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessor;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessorContext;
+import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
+import org.apache.kafka.streams.processor.api.FixedKeyRecord;
+import org.apache.kafka.streams.processor.api.RecordMetadata;
 
 /**
- * {@link ValueTransformer} that creates a {@code DeadLetter} from a processing error.
+ * {@link FixedKeyProcessor} that creates a {@code DeadLetter} from a processing error.
  *
+ * @param <K> type of key
  * @param <V> type of value
  * @param <T> the DeadLetter type
- * @deprecated Use {@link DeadLetterProcessor}
  */
 @Getter
 @RequiredArgsConstructor
-@Deprecated(since = "1.4.0")
-public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingError<V>, T> {
+public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, ProcessingError<V>, T> {
     private final @NonNull String description;
     private final @NonNull DeadLetterConverter<T> deadLetterConverter;
-    private ProcessorContext context = null;
+    private FixedKeyProcessorContext<K, T> context = null;
 
     /**
      * Transforms captured errors for serialization
@@ -59,31 +60,34 @@ public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingE
      * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
      * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
      * final DeadLetterConverter<T> deadLetterConverter = ...
-     * final KStream<K, T> deadLetters = errors.transformValues(
-     *                      DeadLetterTransformer.create("Description", deadLetterConverter));
+     * final KStream<K, T> deadLetters = errors.processValues(
+     *                      DeadLetterProcessor.create("Description", deadLetterConverter));
      * deadLetters.to(ERROR_TOPIC);
      * }
      * </pre>
      *
      * @param description shared description for all errors
      * @param deadLetterConverter converter from DeadLetterDescriptions to VR
+     * @param <K> type of the input key
      * @param <V> type of the input value
      * @param <VR> type of the output value
-     * @return a transformer supplier
+     * @return a processor supplier
      */
-    public static <V, VR> ValueTransformerSupplier<ProcessingError<V>, VR> create(final String description,
+    public static <K, V, VR> FixedKeyProcessorSupplier<K, ProcessingError<V>, VR> create(final String description,
             final DeadLetterConverter<VR> deadLetterConverter) {
-        return () -> new DeadLetterTransformer<>(description, deadLetterConverter);
+        return () -> new DeadLetterProcessor<>(description, deadLetterConverter);
     }
 
     @Override
-    public void init(final ProcessorContext context) {
+    public void init(final FixedKeyProcessorContext<K, T> context) {
         this.context = context;
     }
 
     @Override
-    public T transform(final ProcessingError<V> error) {
+    public void process(final FixedKeyRecord<K, ProcessingError<V>> record) {
+        final ProcessingError<V> error = record.value();
         final Throwable throwable = error.getThrowable();
+        final Optional<RecordMetadata> metadata = this.context.recordMetadata();
         final DeadLetterDescription deadLetterDescription = DeadLetterDescription.builder()
                 .inputValue(Optional.ofNullable(error.getValue()).map(ErrorUtil::toString).orElse(null))
                 .cause(DeadLetterDescription.Cause.builder()
@@ -92,11 +96,11 @@ public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingE
                         .errorClass(throwable.getClass().getName())
                         .build())
                 .description(this.description)
-                .topic(this.context.topic())
-                .partition(this.context.partition())
-                .offset(this.context.offset())
+                .topic(metadata.map(RecordMetadata::topic).orElse(null))
+                .partition(metadata.map(RecordMetadata::partition).orElse(null))
+                .offset(metadata.map(RecordMetadata::offset).orElse(null))
                 .build();
-        return this.deadLetterConverter.convert(deadLetterDescription);
+        this.context.forward(record.withValue(this.deadLetterConverter.convert(deadLetterDescription)));
     }
 
     @Override

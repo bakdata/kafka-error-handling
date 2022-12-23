@@ -64,7 +64,8 @@ class ErrorCapturingValueTransformerWithKeyTopologyTest extends ErrorCaptureTopo
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
-                .transformValues(DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
+                .processValues(
+                        DeadLetterProcessor.create("Description", deadLetterDescription -> deadLetterDescription))
                 .to(ERROR_TOPIC);
     }
 
