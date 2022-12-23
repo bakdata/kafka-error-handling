@@ -46,15 +46,15 @@ final class ErrorCapturingFixedKeyProcessorContext<K, V, VR> extends DecoratorPr
     }
 
     @Override
-    public <KIn extends K, VForward extends VR> void forward(final FixedKeyRecord<KIn, VForward> record) {
-        final FixedKeyRecord<KIn, ProcessedValue<V, VR>> recordWithOldKey = getValue(record);
+    public <KIn extends K, VForward extends VR> void forward(final FixedKeyRecord<KIn, VForward> outputRecord) {
+        final FixedKeyRecord<KIn, ProcessedValue<V, VR>> recordWithOldKey = getValue(outputRecord);
         this.wrapped.forward(recordWithOldKey);
     }
 
     @Override
-    public <KIn extends K, VForward extends VR> void forward(final FixedKeyRecord<KIn, VForward> record,
+    public <KIn extends K, VForward extends VR> void forward(final FixedKeyRecord<KIn, VForward> outputRecord,
             final String childName) {
-        final FixedKeyRecord<KIn, ProcessedValue<V, VR>> recordWithOldKey = getValue(record);
+        final FixedKeyRecord<KIn, ProcessedValue<V, VR>> recordWithOldKey = getValue(outputRecord);
         this.wrapped.forward(recordWithOldKey, childName);
     }
 }

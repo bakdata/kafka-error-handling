@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 final class SuccessValue<V, VR> implements ProcessedValue<V, VR> {
 
-    private final VR record;
+    private final VR value;
 
     static <V, VR> ProcessedValue<V, VR> of(final VR vr) {
         return new SuccessValue<>(vr);
@@ -47,7 +47,7 @@ final class SuccessValue<V, VR> implements ProcessedValue<V, VR> {
     @Override
     public Iterable<VR> getValues() {
         // allow null values
-        return Collections.singletonList(this.record);
+        return Collections.singletonList(this.value);
     }
 
 }

@@ -154,14 +154,14 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
     }
 
     @Override
-    public void process(final FixedKeyRecord<K, V> record) {
+    public void process(final FixedKeyRecord<K, V> inputRecord) {
         try {
-            this.wrapped.process(record);
+            this.wrapped.process(inputRecord);
         } catch (final Exception e) {
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            this.context.forward(record.withValue(ErrorValue.of(record.value(), e)));
+            this.context.forward(inputRecord.withValue(ErrorValue.of(inputRecord.value(), e)));
         }
     }
 

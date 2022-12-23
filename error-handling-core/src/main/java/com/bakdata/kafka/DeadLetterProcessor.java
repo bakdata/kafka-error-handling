@@ -84,8 +84,8 @@ public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, Proces
     }
 
     @Override
-    public void process(final FixedKeyRecord<K, ProcessingError<V>> record) {
-        final ProcessingError<V> error = record.value();
+    public void process(final FixedKeyRecord<K, ProcessingError<V>> inputRecord) {
+        final ProcessingError<V> error = inputRecord.value();
         final Throwable throwable = error.getThrowable();
         final Optional<RecordMetadata> metadata = this.context.recordMetadata();
         final DeadLetterDescription deadLetterDescription = DeadLetterDescription.builder()
@@ -100,7 +100,7 @@ public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, Proces
                 .partition(metadata.map(RecordMetadata::partition).orElse(null))
                 .offset(metadata.map(RecordMetadata::offset).orElse(null))
                 .build();
-        this.context.forward(record.withValue(this.deadLetterConverter.convert(deadLetterDescription)));
+        this.context.forward(inputRecord.withValue(this.deadLetterConverter.convert(deadLetterDescription)));
     }
 
     @Override

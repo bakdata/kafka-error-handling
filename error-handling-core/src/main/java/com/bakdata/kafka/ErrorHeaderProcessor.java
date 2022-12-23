@@ -121,8 +121,8 @@ public class ErrorHeaderProcessor<K, V> implements FixedKeyProcessor<K, Processi
     }
 
     @Override
-    public void process(final FixedKeyRecord<K, ProcessingError<V>> record) {
-        final Headers headers = record.headers();
+    public void process(final FixedKeyRecord<K, ProcessingError<V>> inputRecord) {
+        final Headers headers = inputRecord.headers();
         final Optional<RecordMetadata> metadata = this.context.recordMetadata();
         addHeader(TOPIC, metadata.map(RecordMetadata::topic).orElse(null), headers);
         addHeader(PARTITION, metadata.map(RecordMetadata::partition)
@@ -131,12 +131,12 @@ public class ErrorHeaderProcessor<K, V> implements FixedKeyProcessor<K, Processi
         addHeader(OFFSET, metadata.map(RecordMetadata::offset)
                 .map(p -> Long.toString(p))
                 .orElse(null), headers);
-        final ProcessingError<V> value = record.value();
+        final ProcessingError<V> value = inputRecord.value();
         addHeader(EXCEPTION_CLASS_NAME, value.getThrowable().getClass().getName(), headers);
         addHeader(EXCEPTION_MESSAGE, value.getThrowable().getMessage(), headers);
         addHeader(EXCEPTION_STACK_TRACE, ExceptionUtils.getStackTrace(value.getThrowable()), headers);
         addHeader(DESCRIPTION, this.description, headers);
-        this.context.forward(record.withValue(value.getValue()));
+        this.context.forward(inputRecord.withValue(value.getValue()));
     }
 
     @Override

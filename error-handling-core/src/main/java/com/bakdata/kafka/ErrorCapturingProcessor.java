@@ -159,16 +159,17 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
     }
 
     @Override
-    public void process(final Record<K, V> record) {
+    public void process(final Record<K, V> inputRecord) {
         try {
-            this.wrapped.process(record);
+            this.wrapped.process(inputRecord);
         } catch (final Exception e) {
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            final ProcessedKeyValue<K, V, VR> errorWithOldKey = ErrorKeyValue.of(record.key(), record.value(), e);
+            final ProcessedKeyValue<K, V, VR> errorWithOldKey =
+                    ErrorKeyValue.of(inputRecord.key(), inputRecord.value(), e);
             // new key is only relevant if no error occurs
-            this.context.forward(record.<KR>withKey(null).withValue(errorWithOldKey));
+            this.context.forward(inputRecord.<KR>withKey(null).withValue(errorWithOldKey));
         }
     }
 

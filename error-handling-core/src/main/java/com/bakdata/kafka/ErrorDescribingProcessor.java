@@ -98,11 +98,11 @@ public final class ErrorDescribingProcessor<K, V, KR, VR> extends DecoratorProce
     }
 
     @Override
-    public void process(final Record<K, V> record) {
+    public void process(final Record<K, V> inputRecord) {
         try {
-            super.process(record);
+            super.process(inputRecord);
         } catch (final Exception e) {
-            throw new ProcessingException(record.key(), record.value(), e);
+            throw new ProcessingException(inputRecord.key(), inputRecord.value(), e);
         }
     }
 

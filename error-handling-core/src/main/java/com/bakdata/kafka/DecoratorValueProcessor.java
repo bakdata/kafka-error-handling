@@ -47,8 +47,8 @@ public abstract class DecoratorValueProcessor<K, V, R> implements FixedKeyProces
     }
 
     @Override
-    public void process(final FixedKeyRecord<K, V> record) {
-        this.wrapped.process(record);
+    public void process(final FixedKeyRecord<K, V> inputRecord) {
+        this.wrapped.process(inputRecord);
     }
 
     @Override

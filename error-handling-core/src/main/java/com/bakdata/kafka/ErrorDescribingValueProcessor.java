@@ -95,11 +95,11 @@ public final class ErrorDescribingValueProcessor<K, V, VR> extends DecoratorValu
     }
 
     @Override
-    public void process(final FixedKeyRecord<K, V> record) {
+    public void process(final FixedKeyRecord<K, V> inputRecord) {
         try {
-            super.process(record);
+            super.process(inputRecord);
         } catch (final Exception e) {
-            throw new ProcessingException(record.key(), record.value(), e);
+            throw new ProcessingException(inputRecord.key(), inputRecord.value(), e);
         }
     }
 

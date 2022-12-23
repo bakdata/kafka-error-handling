@@ -48,8 +48,8 @@ public abstract class DecoratorProcessor<K, V, KR, VR> implements Processor<K, V
     }
 
     @Override
-    public void process(final Record<K, V> record) {
-        this.wrapped.process(record);
+    public void process(final Record<K, V> inputRecord) {
+        this.wrapped.process(inputRecord);
     }
 
     @Override

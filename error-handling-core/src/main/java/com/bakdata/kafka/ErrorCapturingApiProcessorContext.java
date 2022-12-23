@@ -46,15 +46,15 @@ final class ErrorCapturingApiProcessorContext<K, V, KR, VR> extends DecoratorPro
     }
 
     @Override
-    public <KForward extends KR, VForward extends VR> void forward(final Record<KForward, VForward> record) {
-        final Record<KForward, ProcessedKeyValue<K, V, VR>> recordWithOldKey = getValue(record);
+    public <KForward extends KR, VForward extends VR> void forward(final Record<KForward, VForward> outputRecord) {
+        final Record<KForward, ProcessedKeyValue<K, V, VR>> recordWithOldKey = getValue(outputRecord);
         this.wrapped.forward(recordWithOldKey);
     }
 
     @Override
-    public <KForward extends KR, VForward extends VR> void forward(final Record<KForward, VForward> record,
+    public <KForward extends KR, VForward extends VR> void forward(final Record<KForward, VForward> outputRecord,
             final String childName) {
-        final Record<KForward, ProcessedKeyValue<K, V, VR>> recordWithOldKey = getValue(record);
+        final Record<KForward, ProcessedKeyValue<K, V, VR>> recordWithOldKey = getValue(outputRecord);
         this.wrapped.forward(recordWithOldKey, childName);
     }
 }

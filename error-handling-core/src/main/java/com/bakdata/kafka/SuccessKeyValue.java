@@ -34,7 +34,7 @@ import org.apache.kafka.streams.KeyValue;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 final class SuccessKeyValue<K, V, VR> implements ProcessedKeyValue<K, V, VR> {
 
-    private final VR record;
+    private final VR value;
 
     static <K, V, VR> ProcessedKeyValue<K, V, VR> of(final VR vr) {
         return new SuccessKeyValue<>(vr);
@@ -48,6 +48,6 @@ final class SuccessKeyValue<K, V, VR> implements ProcessedKeyValue<K, V, VR> {
     @Override
     public Iterable<VR> getValues() {
         // allow null values
-        return Collections.singletonList(this.record);
+        return Collections.singletonList(this.value);
     }
 }
