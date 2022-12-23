@@ -39,10 +39,10 @@ final class ErrorCapturingFixedKeyProcessorContext<K, V, VR> extends DecoratorPr
     }
 
     private static <K, KIn extends K, V, VR, VForward extends VR> FixedKeyRecord<KIn, ProcessedValue<V, VR>> getValue(
-            final FixedKeyRecord<KIn, VForward> record) {
-        final VR value = record.value();
+            final FixedKeyRecord<KIn, VForward> outputRecord) {
+        final VR value = outputRecord.value();
         final ProcessedValue<V, VR> recordWithOldKey = SuccessValue.of(value);
-        return record.withValue(recordWithOldKey);
+        return outputRecord.withValue(recordWithOldKey);
     }
 
     @Override

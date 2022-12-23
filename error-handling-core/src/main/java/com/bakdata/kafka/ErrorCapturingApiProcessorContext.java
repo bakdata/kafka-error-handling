@@ -39,10 +39,10 @@ final class ErrorCapturingApiProcessorContext<K, V, KR, VR> extends DecoratorPro
     }
 
     private static <K, KR, KForward extends KR, V, VR, VForward extends VR> Record<KForward, ProcessedKeyValue<K, V,
-            VR>> getValue(final Record<KForward, VForward> record) {
-        final VR value = record.value();
+            VR>> getValue(final Record<KForward, VForward> outputRecord) {
+        final VR value = outputRecord.value();
         final ProcessedKeyValue<K, V, VR> recordWithOldKey = SuccessKeyValue.of(value);
-        return record.withValue(recordWithOldKey);
+        return outputRecord.withValue(recordWithOldKey);
     }
 
     @Override
