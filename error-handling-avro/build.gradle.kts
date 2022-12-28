@@ -1,7 +1,7 @@
 description = "Transform dead letters in Kafka Streams applications to Avro format."
 
 plugins {
-    id("com.github.davidmc24.gradle.plugin.avro") version "1.2.1"
+    id("com.github.davidmc24.gradle.plugin.avro") version "1.5.0"
 }
 
 // add .avsc files to jar allowing us to use them in other projects as a schema dependency
