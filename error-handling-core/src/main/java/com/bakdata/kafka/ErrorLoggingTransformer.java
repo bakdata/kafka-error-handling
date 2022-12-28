@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,9 +43,11 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <R> type of transformation result
  * @see #logErrors(Transformer)
  * @see #logErrors(Transformer, Predicate)
+ * @deprecated Use {@link ErrorLoggingProcessor}
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Deprecated(since = "1.4.0")
 public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V, R> {
     private final @NonNull Transformer<? super K, ? super V, ? extends R> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
@@ -155,7 +157,7 @@ public final class ErrorLoggingTransformer<K, V, R> implements Transformer<K, V,
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process ('" + ErrorUtil.toString(key) + "', '" + ErrorUtil.toString(value) + "')", e);
+            log.error("Cannot process ('{}', '{}')", ErrorUtil.toString(key), ErrorUtil.toString(value), e);
             return null;
         }
     }

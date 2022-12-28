@@ -37,7 +37,7 @@ class AvroDeadLetterConverterTest {
     private SoftAssertions softly;
 
     @Test
-    void shouldConvertDeadletterDescriptionWithOptionalFields() {
+    void shouldConvertDeadLetterDescriptionWithOptionalFields() {
         final AvroDeadLetterConverter converter = new AvroDeadLetterConverter();
         final DeadLetterDescription deadLetterDescription = DeadLetterDescription.builder()
                 .inputValue("inputValue")
@@ -63,7 +63,7 @@ class AvroDeadLetterConverterTest {
     }
 
     @Test
-    void shouldConvertDeadletterDescriptionWithoutOptionalFields() {
+    void shouldConvertDeadLetterDescriptionWithoutOptionalFields() {
         final AvroDeadLetterConverter converter = new AvroDeadLetterConverter();
         final DeadLetterDescription onlyRequiredFieldsDeadLetterDescription = DeadLetterDescription.builder()
                 .description("description")

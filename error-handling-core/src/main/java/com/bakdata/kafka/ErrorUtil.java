@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -118,15 +118,15 @@ public class ErrorUtil {
     /**
      * Convert a {@code SpecificRecord} to {@code String} using JSON serialization.
      *
-     * @param record record to be serialized
+     * @param specificRecord record to be serialized
      * @return JSON representation of record or record if an error occurred
      */
-    private static Object toString(final SpecificRecord record) {
+    private static Object toString(final SpecificRecord specificRecord) {
         try {
-            return writeAsJson(record);
+            return writeAsJson(specificRecord);
         } catch (final IOException ex) {
             log.warn("Failed to write to json", ex);
-            return record;
+            return specificRecord;
         }
     }
 
@@ -139,15 +139,15 @@ public class ErrorUtil {
     /**
      * Convert a {@code GenericRecord} to {@code String} using JSON serialization.
      *
-     * @param record record to be serialized
+     * @param genericRecord record to be serialized
      * @return JSON representation of record or record if an error occurred
      */
-    private static Object toString(final GenericRecord record) {
+    private static Object toString(final GenericRecord genericRecord) {
         try {
-            return writeAsJson(record);
+            return writeAsJson(genericRecord);
         } catch (final IOException ex) {
             log.warn("Failed to write to json", ex);
-            return record;
+            return genericRecord;
         }
     }
 
