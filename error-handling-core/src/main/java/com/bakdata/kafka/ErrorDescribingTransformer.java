@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,9 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <V> type of input values
  * @param <R> type of transformation result
  * @see #describeErrors(Transformer)
+ * @deprecated Use {@link ErrorDescribingProcessor}
  */
+@Deprecated(since = "1.4.0")
 public final class ErrorDescribingTransformer<K, V, R> extends DecoratorTransformer<K, V, R> {
 
     private ErrorDescribingTransformer(final @NonNull Transformer<K, V, R> wrapped) {

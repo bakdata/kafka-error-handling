@@ -25,7 +25,6 @@
 package com.bakdata.kafka;
 
 import static com.bakdata.kafka.FilterHelper.filterAll;
-import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
@@ -66,7 +65,8 @@ class ErrorCapturingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest
         mapped.flatMapValues(ProcessedKeyValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(DOUBLE_SERDE, LONG_SERDE));
         mapped.flatMap(ProcessedKeyValue::getErrors)
-                .transformValues(DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
+                .processValues(
+                        DeadLetterProcessor.create("Description", deadLetterDescription -> deadLetterDescription))
                 .to(ERROR_TOPIC);
     }
 

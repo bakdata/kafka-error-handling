@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,8 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
         mapped.flatMapValues(ProcessedValue::getValues)
                 .to(OUTPUT_TOPIC, Produced.with(INTEGER_SERDE, LONG_SERDE));
         mapped.flatMapValues(ProcessedValue::getErrors)
-                .transformValues(DeadLetterTransformer.create("Description", deadLetterDescription -> deadLetterDescription))
+                .processValues(
+                        DeadLetterProcessor.create("Description", deadLetterDescription -> deadLetterDescription))
                 .to(ERROR_TOPIC);
     }
 
