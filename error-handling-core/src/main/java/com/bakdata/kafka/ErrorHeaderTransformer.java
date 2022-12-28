@@ -24,7 +24,6 @@
 
 package com.bakdata.kafka;
 
-import java.nio.charset.StandardCharsets;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -50,47 +49,49 @@ import org.apache.kafka.streams.processor.ProcessorContext;
  * </ul>
  *
  * @param <V> type of value
+ * @deprecated Use {@link ErrorHeaderProcessor}
  */
 @RequiredArgsConstructor
+@Deprecated(since = "1.4.0")
 public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingError<V>, V> {
     /**
      * Prefix of all headers added by this ValueTransformer
      */
-    public static final String HEADER_PREFIX = "__streams.errors.";
+    public static final String HEADER_PREFIX = ErrorHeaderProcessor.HEADER_PREFIX;
     /**
      * Header indicating the original input topic of the erroneous record
      */
-    public static final String TOPIC = HEADER_PREFIX + "topic";
+    public static final String TOPIC = ErrorHeaderProcessor.TOPIC;
     /**
      * Header indicating the original partition in the input topic of the erroneous record
      */
-    public static final String PARTITION = HEADER_PREFIX + "partition";
+    public static final String PARTITION = ErrorHeaderProcessor.PARTITION;
     /**
      * Header indicating the original offset in the partition of the input topic of the erroneous record
      */
-    public static final String OFFSET = HEADER_PREFIX + "offset";
+    public static final String OFFSET = ErrorHeaderProcessor.OFFSET;
     /**
      * Header indicating the description of the context in which an exception has been thrown
      */
-    public static final String DESCRIPTION = HEADER_PREFIX + "description";
+    public static final String DESCRIPTION = ErrorHeaderProcessor.DESCRIPTION;
     /**
      * Prefix of all headers detailing the error message added by this ValueTransformer
      */
-    public static final String EXCEPTION_PREFIX = HEADER_PREFIX + "exception.";
+    public static final String EXCEPTION_PREFIX = ErrorHeaderProcessor.EXCEPTION_PREFIX;
     /**
      * Header indicating the class of the exception that was captured
      */
-    public static final String EXCEPTION_CLASS_NAME = EXCEPTION_PREFIX + "class.name";
+    public static final String EXCEPTION_CLASS_NAME = ErrorHeaderProcessor.EXCEPTION_CLASS_NAME;
     /**
      * Header indicating the message of the exception that was captured
      */
-    public static final String EXCEPTION_MESSAGE = EXCEPTION_PREFIX + "message";
+    public static final String EXCEPTION_MESSAGE = ErrorHeaderProcessor.EXCEPTION_MESSAGE;
     /**
      * Header indicating the stack trace of the exception that was captured
      */
-    public static final String EXCEPTION_STACK_TRACE = EXCEPTION_PREFIX + "stack_trace";
+    public static final String EXCEPTION_STACK_TRACE = ErrorHeaderProcessor.EXCEPTION_STACK_TRACE;
     private final @NonNull String description;
-    private ProcessorContext context = null;
+    private ProcessorContext context;
 
     /**
      * Create a new {@code ErrorHeaderTransformer} with the provided description
@@ -128,7 +129,6 @@ public class ErrorHeaderTransformer<V> implements ValueTransformer<ProcessingErr
 
     private void addHeader(final String key, final String value) {
         final Headers headers = this.context.headers();
-        headers.remove(key);
-        headers.add(key, value == null ? null : value.getBytes(StandardCharsets.UTF_8));
+        ErrorHeaderProcessor.addHeader(key, value, headers);
     }
 }

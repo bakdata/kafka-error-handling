@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -152,7 +152,7 @@ public final class ErrorLoggingFlatValueTransformer<V, VR> implements ValueTrans
             if (this.errorFilter.test(e)) {
                 throw e;
             }
-            log.error("Cannot process " + ErrorUtil.toString(value), e);
+            log.error("Cannot process {}", ErrorUtil.toString(value), e);
             return emptyList();
         }
     }

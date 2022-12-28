@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2022 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,8 +42,10 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <VR> type of output values
  * @see #captureErrors(ValueTransformerWithKey)
  * @see #captureErrors(ValueTransformerWithKey, Predicate)
+ * @deprecated Use {@link ErrorCapturingValueProcessor}
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Deprecated(since = "1.4.0")
 public final class ErrorCapturingValueTransformerWithKey<K, V, VR>
         implements ValueTransformerWithKey<K, V, ProcessedValue<V, VR>> {
     private final @NonNull ValueTransformerWithKey<? super K, ? super V, ? extends VR> wrapped;

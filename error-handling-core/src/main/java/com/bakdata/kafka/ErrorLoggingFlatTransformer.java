@@ -45,9 +45,11 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <R> type of map result
  * @see #logErrors(Transformer)
  * @see #logErrors(Transformer, Predicate)
+ * @deprecated Use {@link ErrorLoggingProcessor}
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Deprecated(since = "1.4.0")
 public final class ErrorLoggingFlatTransformer<K, V, R> implements Transformer<K, V, Iterable<R>> {
     private final @NonNull Transformer<? super K, ? super V, ? extends Iterable<R>> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
