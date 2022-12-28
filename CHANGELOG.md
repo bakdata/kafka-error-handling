@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.4.0](https://github.com/bakdata/kafka-error-handling/tree/1.4.0) (2022-12-28)
+[Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.3.0...1.4.0)
+
+**Closed issues:**
+
+- Protobuf support for dead letters [\#12](https://github.com/bakdata/kafka-error-handling/issues/12)
+
+**Merged pull requests:**
+
+- Upgrade to Avro 1.11 [\#19](https://github.com/bakdata/kafka-error-handling/pull/19) ([@philipp94831](https://github.com/philipp94831))
+- Implement new Kafka 3.3 APIs [\#18](https://github.com/bakdata/kafka-error-handling/pull/18) ([@philipp94831](https://github.com/philipp94831))
+- Fix badge for Maven Central [\#17](https://github.com/bakdata/kafka-error-handling/pull/17) ([@philipp94831](https://github.com/philipp94831))
+
 ## [1.3.0](https://github.com/bakdata/kafka-error-handling/tree/1.3.0) (2022-07-13)
 [Full Changelog](https://github.com/bakdata/kafka-error-handling/compare/1.2.5...1.3.0)
 
