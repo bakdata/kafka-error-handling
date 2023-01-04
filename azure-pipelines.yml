@@ -9,7 +9,7 @@ pr:
     - master
     
 variables:
-  - group: sonarqube
+- group: sonarqube
 - group: sign
 - group: ossrh
 - group: changelog
