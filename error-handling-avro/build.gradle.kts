@@ -24,7 +24,8 @@ dependencies {
     testImplementation(group = "org.jooq", name = "jool", version = "0.9.14")
     val mockitoVersion: String by project
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
-    testImplementation(group = "org.assertj", name = "assertj-core", version = "3.20.2")
+    val assertJVersion: String by project
+    testImplementation(group = "org.assertj", name = "assertj-core", version = assertJVersion)
     val log4jVersion: String by project
     testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
     val kafkaStreamsTestsVersion: String by project
