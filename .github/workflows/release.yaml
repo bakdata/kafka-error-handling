@@ -5,15 +5,20 @@ on:
     inputs:
       release-type:
         description: "The scope of the release (major, minor or patch)."
-        default: "patch"
-        required: false
+        type: choice
+        required: true
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   call-workflow-passing-data:
     name: Java Gradle
-    uses: bakdata/ci-templates/.github/workflows/java-gradle-release.yaml@v1.4.0
+    uses: bakdata/ci-templates/.github/workflows/java-gradle-release.yaml@1.33.0
     with:
-      release-type: "${{ github.event.inputs.release-type }}"
+      release-type: "${{ inputs.release-type }}"
     secrets:
       github-email: "${{ secrets.GH_EMAIL }}"
       github-username: "${{ secrets.GH_USERNAME }}"
