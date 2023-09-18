@@ -38,13 +38,15 @@ import org.apache.kafka.streams.processor.ProcessorContext;
  *
  * @param <V> type of value
  * @param <T> the DeadLetter type
+ * @deprecated Use {@link DeadLetterProcessor}
  */
 @Getter
 @RequiredArgsConstructor
+@Deprecated(since = "1.4.0")
 public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingError<V>, T> {
     private final @NonNull String description;
     private final @NonNull DeadLetterConverter<T> deadLetterConverter;
-    private ProcessorContext context = null;
+    private ProcessorContext context;
 
     /**
      * Transforms captured errors for serialization
@@ -66,6 +68,7 @@ public class DeadLetterTransformer<V, T> implements ValueTransformer<ProcessingE
      * @param description shared description for all errors
      * @param deadLetterConverter converter from DeadLetterDescriptions to VR
      * @param <V> type of the input value
+     * @param <VR> type of the output value
      * @return a transformer supplier
      */
     public static <V, VR> ValueTransformerSupplier<ProcessingError<V>, VR> create(final String description,
