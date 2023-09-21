@@ -14,7 +14,7 @@ on:
           - major
 
 jobs:
-  call-workflow-passing-data:
+  java-gradle-release:
     name: Java Gradle
     uses: bakdata/ci-templates/.github/workflows/java-gradle-release.yaml@1.33.0
     with:

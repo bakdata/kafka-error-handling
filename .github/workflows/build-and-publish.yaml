@@ -6,7 +6,7 @@ on:
     branches: ["**"]
 
 jobs:
-  call-workflow-passing-data:
+  build-and-publish:
     name: Java Gradle
     uses: bakdata/ci-templates/.github/workflows/java-gradle-library.yaml@v1.4.0
     secrets:
