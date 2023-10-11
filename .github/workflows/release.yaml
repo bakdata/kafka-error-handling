@@ -1,4 +1,4 @@
-name: Push GitHub Tag
+name: Release
 
 on:
   workflow_dispatch:
