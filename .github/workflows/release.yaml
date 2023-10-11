@@ -1,4 +1,4 @@
-name: Push Tag
+name: Push GutHub Tag
 
 on:
   workflow_dispatch:
