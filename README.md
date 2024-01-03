@@ -77,7 +77,7 @@ final KStream<Integer, String> input =
 final KStream<Double, ProcessedKeyValue<Integer, String, Long>> mappedWithErrors =
        input.map(captureErrors(mapper));
 mappedWithErrors.flatMap(ProcessedKeyValue::getErrors)
-       .transformValues(AvroDeadLetterConverter.asTransformer("A good description where the pipeline broke"))
+       .processValues(AvroDeadLetterConverter.asProcessor("A good description where the pipeline broke"))
        .to(ERROR_TOPIC);
 
 final KStream<Double, Long> mapped = mappedWithErrors.flatMapValues(ProcessedKeyValue::getValues);
@@ -90,7 +90,7 @@ This error topic contains dead letters describing the input value, error message
 
 The example uses the `AvroDeadLetterConverter` from `error-handling-avro`.
 Analogously, `error-handling-proto` implements a `ProtoDeadLetterConverter`.
-A custom `DeadLetterConverter` can be passed to `DeadLetterTransformer.create`.
+A custom `DeadLetterConverter` can be passed to `DeadLetterProcessor.create`.
 
 ## Development
 
