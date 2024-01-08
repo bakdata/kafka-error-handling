@@ -10,7 +10,7 @@ dependencies {
     val avroVersion: String by project
     implementation(group = "org.apache.avro", name = "avro", version = avroVersion)
     implementation(group = "org.jooq", name = "jool", version = "0.9.14")
-    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.14.0")
 
     val junitVersion: String by project
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)
@@ -22,7 +22,7 @@ dependencies {
     testImplementation(group = "org.mockito", name = "mockito-core", version = mockitoVersion)
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
     val log4jVersion: String by project
-    testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
+    testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version = log4jVersion)
     val kafkaStreamsTestsVersion: String by project
     testImplementation(
         group = "com.bakdata.fluent-kafka-streams-tests",
@@ -41,7 +41,7 @@ dependencies {
         name = "fluent-kafka-streams-tests-junit5",
         version = kafkaStreamsTestsVersion
     )
-    testFixturesImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
+    testFixturesImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version = log4jVersion)
     val jacksonVersion: String by project
     testFixturesImplementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
     testFixturesImplementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = jacksonVersion)
