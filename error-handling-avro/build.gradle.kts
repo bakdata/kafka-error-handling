@@ -27,7 +27,7 @@ dependencies {
     val assertJVersion: String by project
     testImplementation(group = "org.assertj", name = "assertj-core", version = assertJVersion)
     val log4jVersion: String by project
-    testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = log4jVersion)
+    testImplementation(group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version = log4jVersion)
     val kafkaStreamsTestsVersion: String by project
     testImplementation(
         group = "com.bakdata.fluent-kafka-streams-tests",
