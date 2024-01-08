@@ -1,4 +1,6 @@
 # Change Log
+- no changes!
+
 
 ## [1.4.1](https://github.com/bakdata/kafka-error-handling/tree/1.4.1) (2023-01-04)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.0...1.4.1)
