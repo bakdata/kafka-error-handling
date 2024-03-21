@@ -1,6 +1,30 @@
 # Change Log
-- no changes!
 
+## [1.4.3](https://github.com/bakdata/kafka-error-handling/tree/1.4.3) (2024-03-21)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.3...1.4.3)
+
+
+## [1.4.3](https://github.com/bakdata/kafka-error-handling/tree/1.4.3) (2024-03-21)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.2...1.4.3)
+
+**Merged pull requests:**
+
+- Forward all SerializationExceptions by default [\#26](https://github.com/bakdata/kafka-error-handling/pull/26) ([@philipp94831](https://github.com/philipp94831))
+- Upgrade to Gradle 8.4 [\#25](https://github.com/bakdata/kafka-error-handling/pull/25) ([@philipp94831](https://github.com/philipp94831))
+
+## [1.4.2](https://github.com/bakdata/kafka-error-handling/tree/1.4.2) (2024-01-08)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.1...1.4.2)
+
+**Closed issues:**
+
+- Migrate Azure pipeline [\#21](https://github.com/bakdata/kafka-error-handling/issues/21)
+
+**Merged pull requests:**
+
+- Fix GitHub release [\#24](https://github.com/bakdata/kafka-error-handling/pull/24) ([@philipp94831](https://github.com/philipp94831))
+- Update dependencies [\#23](https://github.com/bakdata/kafka-error-handling/pull/23) ([@philipp94831](https://github.com/philipp94831))
+- Update AvroDeadLetterConverter example from deprecated transformer style to processor style [\#22](https://github.com/bakdata/kafka-error-handling/pull/22) ([@JakobEdding](https://github.com/JakobEdding))
+- Use github actions to build and release [\#16](https://github.com/bakdata/kafka-error-handling/pull/16) ([@yannick-roeder](https://github.com/yannick-roeder))
 
 ## [1.4.1](https://github.com/bakdata/kafka-error-handling/tree/1.4.1) (2023-01-04)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.0...1.4.1)
