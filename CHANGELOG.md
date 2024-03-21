@@ -1,8 +1,15 @@
 # Change Log
 
-## [1.4.3](https://github.com/bakdata/kafka-error-handling/tree/1.4.3) (2024-03-21)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.3...1.4.3)
+## [1.4.4](https://github.com/bakdata/kafka-error-handling/tree/1.4.4) (2024-03-21)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.4...1.4.4)
 
+
+## [1.4.4](https://github.com/bakdata/kafka-error-handling/tree/1.4.4) (2024-03-21)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.3...1.4.4)
+
+**Merged pull requests:**
+
+- Forward streams errors [\#27](https://github.com/bakdata/kafka-error-handling/pull/27) ([@philipp94831](https://github.com/philipp94831))
 
 ## [1.4.3](https://github.com/bakdata/kafka-error-handling/tree/1.4.3) (2024-03-21)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.2...1.4.3)
