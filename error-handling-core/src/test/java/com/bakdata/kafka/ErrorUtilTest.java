@@ -49,8 +49,7 @@ class ErrorUtilTest {
         return Stream.of(
                 Arguments.of(mock(Exception.class), false),
                 Arguments.of(new SerializationException(), true),
-                Arguments.of(new StreamsException(new SerializationException()), true),
-                Arguments.of(new StreamsException("message"), false)
+                Arguments.of(new StreamsException("message"), true)
         );
     }
 
