@@ -29,7 +29,6 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -90,8 +89,8 @@ class ErrorLoggingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest {
     }
 
     @Test
-    void shouldForwardSerializationException(final SoftAssertions softly) {
-        final RuntimeException throwable = new SerializationException();
+    void shouldForwardRecoverableException(final SoftAssertions softly) {
+        final RuntimeException throwable = createRecoverableException();
         this.mapper = new Transformer<>() {
             private ProcessorContext context = null;
 
@@ -117,7 +116,7 @@ class ErrorLoggingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest {
         softly.assertThatThrownBy(() -> this.topology.input()
                         .withValueSerde(STRING_SERDE)
                         .add(1, "foo"))
-                .hasCauseInstanceOf(SerializationException.class);
+                .hasCause(throwable);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
                         .withValueSerde(LONG_SERDE))

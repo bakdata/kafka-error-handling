@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -93,13 +92,14 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
     }
 
     @Test
-    void shouldForwardSerializationException(final SoftAssertions softly) {
-        when(this.mapper.apply(1, "foo")).thenThrow(new SerializationException());
+    void shouldForwardRecoverableException(final SoftAssertions softly) {
+        final RuntimeException throwable = createRecoverableException();
+        when(this.mapper.apply(1, "foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
                         .withValueSerde(STRING_SERDE)
                         .add(1, "foo"))
-                .hasCauseInstanceOf(SerializationException.class);
+                .hasCause(throwable);
         final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
                         .withValueSerde(LONG_SERDE))

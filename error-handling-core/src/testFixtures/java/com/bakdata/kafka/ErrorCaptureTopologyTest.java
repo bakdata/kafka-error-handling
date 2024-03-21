@@ -27,6 +27,7 @@ package com.bakdata.kafka;
 import com.bakdata.fluent_kafka_streams_tests.TestTopology;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serdes.IntegerSerde;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -35,6 +36,17 @@ import org.junit.jupiter.api.AfterEach;
 
 public abstract class ErrorCaptureTopologyTest {
     protected TestTopology<Integer, String> topology = null;
+
+    protected static RuntimeException createRecoverableException() {
+        return new SerializationException();
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (this.topology != null) {
+            this.topology.stop();
+        }
+    }
 
     protected Properties getKafkaProperties() {
         final Properties kafkaConfig = new Properties();
@@ -52,13 +64,6 @@ public abstract class ErrorCaptureTopologyTest {
         kafkaConfig.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "fake");
 
         return kafkaConfig;
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (this.topology != null) {
-            this.topology.stop();
-        }
     }
 
     protected void createTopology() {
