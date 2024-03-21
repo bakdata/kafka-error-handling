@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Set;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.Schema;
@@ -51,6 +52,11 @@ import org.apache.kafka.common.errors.RecordTooLargeException;
 public class ErrorUtil {
 
     private static final String ORG_APACHE_KAFKA_COMMON_ERRORS = "org.apache.kafka.common.errors";
+    private static final String ORG_APACHE_KAFKA_STREAMS_ERRORS = "org.apache.kafka.streams.errors";
+    private static final Set<String> RECOVERABLE_ERROR_PACKAGES = Set.of(
+            ORG_APACHE_KAFKA_COMMON_ERRORS,
+            ORG_APACHE_KAFKA_STREAMS_ERRORS
+    );
 
     /**
      * Check if an exception is recoverable and thus should be thrown so that the process is restarted by the execution
@@ -68,8 +74,8 @@ public class ErrorUtil {
     }
 
     /**
-     * Check if an exception is thrown by Kafka, i.e., located in package {@code org.apache.kafka.common.errors}, and is
-     * recoverable.
+     * Check if an exception is thrown by Kafka, i.e., located in package {@code org.apache.kafka.common.errors} or
+     * {@code org.apache.kafka.streams.errors}, and is recoverable.
      * <p>Non-recoverable Kafka errors are:
      * <ul>
      *     <li>{@link RecordTooLargeException}
@@ -79,7 +85,7 @@ public class ErrorUtil {
      * @return whether exception is thrown by Kafka and recoverable or not
      */
     public static boolean isRecoverableKafkaError(final Exception e) {
-        if (ORG_APACHE_KAFKA_COMMON_ERRORS.equals(e.getClass().getPackageName())) {
+        if (RECOVERABLE_ERROR_PACKAGES.contains(e.getClass().getPackageName())) {
             return !(e instanceof RecordTooLargeException);
         }
         return false;
