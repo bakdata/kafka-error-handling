@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2024 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -93,8 +93,8 @@ class ErrorCapturingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest 
     }
 
     @Test
-    void shouldForwardSchemaRegistryTimeout(final SoftAssertions softly) {
-        when(this.mapper.apply(1, "foo")).thenThrow(createSchemaRegistryTimeoutException());
+    void shouldForwardSerializationException(final SoftAssertions softly) {
+        when(this.mapper.apply(1, "foo")).thenThrow(new SerializationException());
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
                         .withValueSerde(STRING_SERDE)

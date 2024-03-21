@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2024 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,8 +90,8 @@ class ErrorLoggingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest {
     }
 
     @Test
-    void shouldForwardSchemaRegistryTimeout(final SoftAssertions softly) {
-        final RuntimeException throwable = createSchemaRegistryTimeoutException();
+    void shouldForwardSerializationException(final SoftAssertions softly) {
+        final RuntimeException throwable = new SerializationException();
         this.mapper = new Transformer<>() {
             private ProcessorContext context = null;
 
@@ -234,7 +234,7 @@ class ErrorLoggingFlatTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .containsExactlyInAnyOrder(2.0, 3.0);
         softly.assertThat(records)
                 .extracting(ProducerRecord::value)
-                .containsExactlyInAnyOrder(2L, 3l);
+                .containsExactlyInAnyOrder(2L, 3L);
     }
 
     @Test

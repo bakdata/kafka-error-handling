@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2024 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,8 @@
 package com.bakdata.kafka;
 
 import com.bakdata.fluent_kafka_streams_tests.TestTopology;
-import java.net.SocketTimeoutException;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serdes.IntegerSerde;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -48,7 +46,7 @@ public abstract class ErrorCaptureTopologyTest {
         kafkaConfig.setProperty(StreamsConfig.producerPrefix(ProducerConfig.ACKS_CONFIG), "all");
 
         // topology
-        kafkaConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, "fake");
+        kafkaConfig.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "fake");
         kafkaConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, IntegerSerde.class);
         kafkaConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, TestDeadLetterSerde.class);
         kafkaConfig.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "fake");
@@ -61,10 +59,6 @@ public abstract class ErrorCaptureTopologyTest {
         if (this.topology != null) {
             this.topology.stop();
         }
-    }
-
-    protected static RuntimeException createSchemaRegistryTimeoutException() {
-        return new SerializationException(new SocketTimeoutException());
     }
 
     protected void createTopology() {
