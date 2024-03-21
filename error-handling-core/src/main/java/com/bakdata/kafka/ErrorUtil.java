@@ -75,8 +75,7 @@ public class ErrorUtil {
 
     /**
      * Check if an exception is thrown by Kafka, i.e., located in package {@code org.apache.kafka.common.errors} or
-     * {@code org.apache.kafka.streams.errors}, and is
-     * recoverable.
+     * {@code org.apache.kafka.streams.errors}, and is recoverable.
      * <p>Non-recoverable Kafka errors are:
      * <ul>
      *     <li>{@link RecordTooLargeException}
