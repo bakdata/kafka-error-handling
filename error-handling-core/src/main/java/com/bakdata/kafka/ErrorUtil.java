@@ -51,6 +51,7 @@ import org.apache.kafka.common.errors.RecordTooLargeException;
 public class ErrorUtil {
 
     private static final String ORG_APACHE_KAFKA_COMMON_ERRORS = "org.apache.kafka.common.errors";
+    private static final String ORG_APACHE_KAFKA_STREAMS_ERRORS = "org.apache.kafka.streams.errors";
 
     /**
      * Check if an exception is recoverable and thus should be thrown so that the process is restarted by the execution
@@ -70,6 +71,8 @@ public class ErrorUtil {
     /**
      * Check if an exception is thrown by Kafka, i.e., located in package {@code org.apache.kafka.common.errors}, and is
      * recoverable.
+     * If an exception is thrown by Kafka Streams, i.e., located in package {@code org.apache.kafka.streams.errors},
+     * the cause is checked for recoverability.
      * <p>Non-recoverable Kafka errors are:
      * <ul>
      *     <li>{@link RecordTooLargeException}
@@ -79,8 +82,15 @@ public class ErrorUtil {
      * @return whether exception is thrown by Kafka and recoverable or not
      */
     public static boolean isRecoverableKafkaError(final Exception e) {
-        if (ORG_APACHE_KAFKA_COMMON_ERRORS.equals(e.getClass().getPackageName())) {
+        final String packageName = e.getClass().getPackageName();
+        if (ORG_APACHE_KAFKA_COMMON_ERRORS.equals(packageName)) {
             return !(e instanceof RecordTooLargeException);
+        }
+        if (ORG_APACHE_KAFKA_STREAMS_ERRORS.equals(packageName)) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                return isRecoverable((Exception) cause);
+            }
         }
         return false;
     }
