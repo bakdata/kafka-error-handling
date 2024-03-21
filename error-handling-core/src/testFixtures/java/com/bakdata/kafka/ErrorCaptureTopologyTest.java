@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2024 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
 package com.bakdata.kafka;
 
 import com.bakdata.fluent_kafka_streams_tests.TestTopology;
-import java.net.SocketTimeoutException;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.errors.SerializationException;
@@ -38,6 +37,17 @@ import org.junit.jupiter.api.AfterEach;
 public abstract class ErrorCaptureTopologyTest {
     protected TestTopology<Integer, String> topology = null;
 
+    protected static RuntimeException createRecoverableException() {
+        return new SerializationException();
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (this.topology != null) {
+            this.topology.stop();
+        }
+    }
+
     protected Properties getKafkaProperties() {
         final Properties kafkaConfig = new Properties();
 
@@ -48,23 +58,12 @@ public abstract class ErrorCaptureTopologyTest {
         kafkaConfig.setProperty(StreamsConfig.producerPrefix(ProducerConfig.ACKS_CONFIG), "all");
 
         // topology
-        kafkaConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, "fake");
+        kafkaConfig.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "fake");
         kafkaConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, IntegerSerde.class);
         kafkaConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, TestDeadLetterSerde.class);
         kafkaConfig.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "fake");
 
         return kafkaConfig;
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (this.topology != null) {
-            this.topology.stop();
-        }
-    }
-
-    protected static RuntimeException createSchemaRegistryTimeoutException() {
-        return new SerializationException(new SocketTimeoutException());
     }
 
     protected void createTopology() {

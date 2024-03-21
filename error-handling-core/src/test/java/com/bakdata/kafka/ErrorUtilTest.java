@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2024 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ package com.bakdata.kafka;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.net.SocketTimeoutException;
 import java.util.stream.Stream;
 import org.apache.kafka.common.errors.SerializationException;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,8 +47,7 @@ class ErrorUtilTest {
     static Stream<Arguments> generateIsRecoverableExceptionParameters() {
         return Stream.of(
                 Arguments.of(mock(Exception.class), false),
-                Arguments.of(new SerializationException(new SocketTimeoutException()), true),
-                Arguments.of(new SerializationException(mock(Exception.class)), false)
+                Arguments.of(new SerializationException(), true)
         );
     }
 

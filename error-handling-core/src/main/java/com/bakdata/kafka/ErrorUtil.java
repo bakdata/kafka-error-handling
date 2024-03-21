@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2024 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ package com.bakdata.kafka;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import lombok.experimental.UtilityClass;
@@ -42,7 +41,6 @@ import org.apache.avro.io.JsonEncoder;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.errors.RecordTooLargeException;
-import org.apache.kafka.common.errors.SerializationException;
 
 /**
  * This class provides utility methods for dealing with errors in Kafka streams, such as serializing values to string
@@ -75,7 +73,6 @@ public class ErrorUtil {
      * <p>Non-recoverable Kafka errors are:
      * <ul>
      *     <li>{@link RecordTooLargeException}
-     *     <li>{@link SerializationException} which is not caused by timeout
      * </ul>
      *
      * @param e exception
@@ -83,14 +80,7 @@ public class ErrorUtil {
      */
     public static boolean isRecoverableKafkaError(final Exception e) {
         if (ORG_APACHE_KAFKA_COMMON_ERRORS.equals(e.getClass().getPackageName())) {
-            if (e instanceof RecordTooLargeException) {
-                return false;
-            }
-            if (e instanceof SerializationException) {
-                // socket timeouts usually indicate that the schema registry is temporarily down
-                return e.getCause() instanceof SocketTimeoutException;
-            }
-            return true;
+            return !(e instanceof RecordTooLargeException);
         }
         return false;
     }
