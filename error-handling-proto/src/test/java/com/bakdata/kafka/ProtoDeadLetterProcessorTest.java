@@ -33,10 +33,12 @@ import com.bakdata.schemaregistrymock.SchemaRegistryMock;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
+import com.google.protobuf.Timestamp;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig;
 import io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -118,11 +120,12 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
 
     @Test
     void shouldConvertAndSerializeProtoDeadLetter() {
+        final long startTimestamp = System.currentTimeMillis();
         when(this.mapper.apply(any(), any())).thenThrow(new RuntimeException(ERROR_MESSAGE));
         this.createTopology();
         this.topology.input(INPUT_TOPIC).withValueSerde(STRING_SERDE)
-                .add(1, "foo")
-                .add(2, "bar");
+                .add(1, "foo", 100)
+                .add(2, "bar", 200);
 
         final List<ProducerRecord<Integer, String>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withValueSerde(STRING_SERDE))
@@ -136,6 +139,7 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
 
         this.softly.assertThat(errors)
                 .hasSize(2)
+                .allSatisfy(record -> this.softly.assertThat(record.timestamp()).isGreaterThan(startTimestamp))
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
                             this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
@@ -156,6 +160,8 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                     this.softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("foo");
                     this.softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(0L);
+                    this.softly.assertThat(timestampToInstant(deadLetter.getTimestamp()))
+                            .isEqualTo(Instant.ofEpochMilli(100));
                 }
         );
         this.softly.assertThat(errors).map(ProducerRecord::value).element(1).satisfies(
@@ -163,8 +169,13 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                     this.softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("bar");
                     this.softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(1L);
+                    this.softly.assertThat(timestampToInstant(deadLetter.getTimestamp()))
+                            .isEqualTo(Instant.ofEpochMilli(200));
                 }
         );
+    }
 
+    private static Instant timestampToInstant(final Timestamp timestamp) {
+        return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
     }
 }
