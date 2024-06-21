@@ -160,7 +160,7 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                     this.softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("foo");
                     this.softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(0L);
-                    this.softly.assertThat(timestampToInstant(deadLetter.getTimestamp()))
+                    this.softly.assertThat(timestampToInstant(deadLetter.getInputTimestamp()))
                             .isEqualTo(Instant.ofEpochMilli(100));
                 }
         );
@@ -169,7 +169,7 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                     this.softly.assertThat(deadLetter.getInputValue()).extracting(StringValue::getValue)
                             .isEqualTo("bar");
                     this.softly.assertThat(deadLetter.getOffset()).extracting(Int64Value::getValue).isEqualTo(1L);
-                    this.softly.assertThat(timestampToInstant(deadLetter.getTimestamp()))
+                    this.softly.assertThat(timestampToInstant(deadLetter.getInputTimestamp()))
                             .isEqualTo(Instant.ofEpochMilli(200));
                 }
         );

@@ -126,14 +126,14 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                 deadLetter -> {
                     this.softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
                     this.softly.assertThat(deadLetter.getOffset()).hasValue(0L);
-                    this.softly.assertThat(deadLetter.getTimestamp()).hasValue(Instant.ofEpochMilli(100));
+                    this.softly.assertThat(deadLetter.getInputTimestamp()).hasValue(Instant.ofEpochMilli(100));
                 }
         );
         this.softly.assertThat(errors).extracting(ProducerRecord::value).element(1).satisfies(
                 deadLetter -> {
                     this.softly.assertThat(deadLetter.getInputValue()).hasValue("bar");
                     this.softly.assertThat(deadLetter.getOffset()).hasValue(1L);
-                    this.softly.assertThat(deadLetter.getTimestamp()).hasValue(Instant.ofEpochMilli(200));
+                    this.softly.assertThat(deadLetter.getInputTimestamp()).hasValue(Instant.ofEpochMilli(200));
                 }
         );
 

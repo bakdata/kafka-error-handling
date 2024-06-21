@@ -100,7 +100,7 @@ public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, Proces
                 .topic(metadata.map(RecordMetadata::topic).orElse(null))
                 .partition(metadata.map(RecordMetadata::partition).orElse(null))
                 .offset(metadata.map(RecordMetadata::offset).orElse(null))
-                .timestamp(Instant.ofEpochMilli(inputRecord.timestamp()))
+                .inputTimestamp(Instant.ofEpochMilli(inputRecord.timestamp()))
                 .build();
 
         final FixedKeyRecord<K, T> record = inputRecord

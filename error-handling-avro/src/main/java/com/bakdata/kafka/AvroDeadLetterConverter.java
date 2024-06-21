@@ -24,7 +24,6 @@
 
 package com.bakdata.kafka;
 
-import java.time.Instant;
 import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
 
@@ -46,7 +45,7 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLe
                 .setTopic(deadLetterDescription.getTopic())
                 .setPartition(deadLetterDescription.getPartition())
                 .setOffset(deadLetterDescription.getOffset())
-                .setTimestamp(deadLetterDescription.getTimestamp())
+                .setInputTimestamp(deadLetterDescription.getInputTimestamp())
                 .build();
     }
 

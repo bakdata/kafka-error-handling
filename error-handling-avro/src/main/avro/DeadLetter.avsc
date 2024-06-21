@@ -39,7 +39,7 @@
       "type": "string"
     },
     {
-      "name": "timestamp",
+      "name": "input_timestamp",
       "type": [
         "null",
         {

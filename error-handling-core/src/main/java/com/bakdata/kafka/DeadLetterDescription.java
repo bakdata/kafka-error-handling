@@ -56,5 +56,5 @@ public class DeadLetterDescription {
     String topic;
     Integer partition;
     Long offset;
-    Instant timestamp;
+    Instant inputTimestamp;
 }

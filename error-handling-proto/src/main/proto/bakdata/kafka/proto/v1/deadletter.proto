@@ -20,5 +20,5 @@ message ProtoDeadLetter {
     google.protobuf.StringValue topic = 4;
     google.protobuf.Int32Value partition = 5;
     google.protobuf.Int64Value offset = 6;
-    google.protobuf.Timestamp timestamp = 7;
+    google.protobuf.Timestamp input_timestamp = 7;
 }
