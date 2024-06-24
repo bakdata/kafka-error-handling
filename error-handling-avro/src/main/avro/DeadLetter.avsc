@@ -39,17 +39,6 @@
       "type": "string"
     },
     {
-      "name": "input_timestamp",
-      "type": [
-        "null",
-        {
-          "type": "long",
-          "logicalType": "timestamp-millis"
-        }
-      ],
-      "default": null
-    },
-    {
       "name": "cause",
       "type": {
         "type": "record",
@@ -79,6 +68,17 @@
           }
         ]
       }
+    },
+    {
+      "name": "input_timestamp",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
     }
   ]
 }
