@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import java.time.Instant;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -55,4 +56,5 @@ public class DeadLetterDescription {
     String topic;
     Integer partition;
     Long offset;
+    Instant inputTimestamp;
 }

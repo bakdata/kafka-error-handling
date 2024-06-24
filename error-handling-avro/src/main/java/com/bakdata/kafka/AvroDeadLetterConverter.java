@@ -45,6 +45,7 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLe
                 .setTopic(deadLetterDescription.getTopic())
                 .setPartition(deadLetterDescription.getPartition())
                 .setOffset(deadLetterDescription.getOffset())
+                .setInputTimestamp(deadLetterDescription.getInputTimestamp())
                 .build();
     }
 

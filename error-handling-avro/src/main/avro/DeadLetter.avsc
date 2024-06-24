@@ -68,6 +68,17 @@
           }
         ]
       }
+    },
+    {
+      "name": "input_timestamp",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
     }
   ]
 }

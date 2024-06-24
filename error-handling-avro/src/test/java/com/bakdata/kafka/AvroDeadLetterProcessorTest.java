@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -88,11 +89,12 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
 
     @Test
     void shouldConvertAndSerializeAvroDeadLetter() {
+        final long startTimestamp = System.currentTimeMillis();
         when(this.mapper.apply(any(), any())).thenThrow(new RuntimeException(ERROR_MESSAGE));
         this.createTopology();
         this.topology.input(INPUT_TOPIC).withValueSerde(STRING_SERDE)
-                .add(1, "foo")
-                .add(2, "bar");
+                .add(1, "foo", 100)
+                .add(2, "bar", 200);
 
         final List<ProducerRecord<Integer, String>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
                         .withValueSerde(STRING_SERDE))
@@ -106,6 +108,7 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
 
         this.softly.assertThat(errors)
                 .hasSize(2)
+                .allSatisfy(record -> this.softly.assertThat(record.timestamp()).isGreaterThan(startTimestamp))
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
                             this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
@@ -123,12 +126,14 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                 deadLetter -> {
                     this.softly.assertThat(deadLetter.getInputValue()).hasValue("foo");
                     this.softly.assertThat(deadLetter.getOffset()).hasValue(0L);
+                    this.softly.assertThat(deadLetter.getInputTimestamp()).hasValue(Instant.ofEpochMilli(100));
                 }
         );
         this.softly.assertThat(errors).extracting(ProducerRecord::value).element(1).satisfies(
                 deadLetter -> {
                     this.softly.assertThat(deadLetter.getInputValue()).hasValue("bar");
                     this.softly.assertThat(deadLetter.getOffset()).hasValue(1L);
+                    this.softly.assertThat(deadLetter.getInputTimestamp()).hasValue(Instant.ofEpochMilli(200));
                 }
         );
 

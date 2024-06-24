@@ -28,6 +28,7 @@ import com.bakdata.kafka.proto.v1.ProtoDeadLetter;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
+import com.google.protobuf.Timestamp;
 import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
 
@@ -65,6 +66,15 @@ public class ProtoDeadLetterConverter implements DeadLetterConverter<ProtoDeadLe
         if (deadLetterDescription.getOffset() != null) {
             builder.setOffset(Int64Value.of(deadLetterDescription.getOffset()));
         }
+
+        if (deadLetterDescription.getInputTimestamp() != null) {
+            final Timestamp timestamp = Timestamp.newBuilder()
+                    .setSeconds(deadLetterDescription.getInputTimestamp().getEpochSecond())
+                    .setNanos(deadLetterDescription.getInputTimestamp().getNano())
+                    .build();
+            builder.setInputTimestamp(timestamp);
+        }
+
         return builder.build();
     }
 

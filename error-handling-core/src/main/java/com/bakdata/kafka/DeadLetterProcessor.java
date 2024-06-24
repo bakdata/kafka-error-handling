@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import java.time.Instant;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
@@ -99,8 +100,14 @@ public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, Proces
                 .topic(metadata.map(RecordMetadata::topic).orElse(null))
                 .partition(metadata.map(RecordMetadata::partition).orElse(null))
                 .offset(metadata.map(RecordMetadata::offset).orElse(null))
+                .inputTimestamp(Instant.ofEpochMilli(inputRecord.timestamp()))
                 .build();
-        this.context.forward(inputRecord.withValue(this.deadLetterConverter.convert(deadLetterDescription)));
+
+        final FixedKeyRecord<K, T> record = inputRecord
+                .withValue(this.deadLetterConverter.convert(deadLetterDescription))
+                .withTimestamp(this.context.currentSystemTimeMs());
+
+        this.context.forward(record);
     }
 
     @Override
