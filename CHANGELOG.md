@@ -1,8 +1,15 @@
 # Change Log
 
-## [1.4.4](https://github.com/bakdata/kafka-error-handling/tree/1.4.4) (2024-03-21)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.4...1.4.4)
+## [1.5.0](https://github.com/bakdata/kafka-error-handling/tree/1.5.0) (2024-06-24)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.5.0...1.5.0)
 
+
+## [1.5.0](https://github.com/bakdata/kafka-error-handling/tree/1.5.0) (2024-06-24)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.4...1.5.0)
+
+**Merged pull requests:**
+
+- Use wall\-clock time for dead letter record [\#28](https://github.com/bakdata/kafka-error-handling/pull/28) ([@torbsto](https://github.com/torbsto))
 
 ## [1.4.4](https://github.com/bakdata/kafka-error-handling/tree/1.4.4) (2024-03-21)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.3...1.4.4)
