@@ -182,37 +182,4 @@ class ErrorHeaderProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .isNull());
     }
 
-    @Test
-    void shouldSetTimestamp(final SoftAssertions softly) {
-        final long timestamp = System.currentTimeMillis();
-        when(this.mapper.apply(1, "foo")).thenThrow(new RuntimeException());
-        this.createTopology();
-        this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo", 100);
-
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
-                .toList();
-        softly.assertThat(records).isEmpty();
-        final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(Serdes.String()))
-                .toList();
-
-        softly.assertThat(errors)
-                .hasSize(1)
-                .first()
-                .isNotNull()
-                .satisfies(record -> {
-                    softly.assertThat(record.key()).isEqualTo(1);
-                    softly.assertThat(record.value()).isEqualTo("foo");
-                    softly.assertThat(record.timestamp()).isGreaterThan(timestamp);
-                })
-                .extracting(ProducerRecord::headers)
-                .satisfies(headers -> softly.assertThat(getHeader(headers, ErrorHeaderProcessor.INPUT_TIMESTAMP))
-                        .isEqualTo("100"));
-    }
-
-
 }

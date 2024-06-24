@@ -78,10 +78,6 @@ public class ErrorHeaderProcessor<K, V> implements FixedKeyProcessor<K, Processi
      */
     public static final String DESCRIPTION = HEADER_PREFIX + "description";
     /**
-     * Header indicating the timestamp of the erroneous record.
-     */
-    public static final String INPUT_TIMESTAMP = HEADER_PREFIX + "input_timestamp";
-    /**
      * Prefix of all headers detailing the error message added by this FixedKeyProcessor
      */
     public static final String EXCEPTION_PREFIX = HEADER_PREFIX + "exception.";
@@ -140,8 +136,7 @@ public class ErrorHeaderProcessor<K, V> implements FixedKeyProcessor<K, Processi
         addHeader(EXCEPTION_MESSAGE, value.getThrowable().getMessage(), headers);
         addHeader(EXCEPTION_STACK_TRACE, ExceptionUtils.getStackTrace(value.getThrowable()), headers);
         addHeader(DESCRIPTION, this.description, headers);
-        addHeader(INPUT_TIMESTAMP, Long.toString(inputRecord.timestamp()), headers);
-        this.context.forward(inputRecord.withValue(value.getValue()).withTimestamp(this.context.currentSystemTimeMs()));
+        this.context.forward(inputRecord.withValue(value.getValue()));
     }
 
     @Override
