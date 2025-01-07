@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,6 @@ import org.apache.kafka.streams.processor.api.ProcessorSupplier;
 import org.apache.kafka.streams.processor.api.Record;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -127,15 +126,15 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .hasMessage(
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -165,15 +164,15 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -204,9 +203,9 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
                                 + "')")
                 );
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -235,15 +234,15 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(3.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(3.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(3L))
@@ -278,22 +277,22 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar")
                 .add(3, "baz");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
                 )
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isNull())
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                         .extracting(ProducerRecord::value)
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );

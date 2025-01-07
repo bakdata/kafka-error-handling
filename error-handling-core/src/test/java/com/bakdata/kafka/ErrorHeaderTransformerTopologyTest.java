@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,6 @@ import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -90,28 +89,28 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo")
                 .add(2, "bar");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isEqualTo(1.0))
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(1.0))
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(Long.class)
                 .satisfies(value -> softly.assertThat(value).isEqualTo(1L));
-        final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(Serdes.String()))
+        final List<ProducerRecord<Integer, String>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueSerde(Serdes.String())
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> {
-                    softly.assertThat(record.key()).isEqualTo(2);
-                    softly.assertThat(record.value()).isEqualTo("bar");
+                .satisfies(producerRecord -> {
+                    softly.assertThat(producerRecord.key()).isEqualTo(2);
+                    softly.assertThat(producerRecord.value()).isEqualTo("bar");
                 })
                 .extracting(ProducerRecord::headers)
                 .satisfies(headers -> {
@@ -134,22 +133,22 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
-        final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(Serdes.String()))
+        final List<ProducerRecord<Integer, String>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueSerde(Serdes.String())
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> {
-                    softly.assertThat(record.key()).isNull();
-                    softly.assertThat(record.value()).isNull();
+                .satisfies(producerRecord -> {
+                    softly.assertThat(producerRecord.key()).isNull();
+                    softly.assertThat(producerRecord.value()).isNull();
                 });
     }
 
@@ -160,22 +159,22 @@ class ErrorHeaderTransformerTopologyTest extends ErrorCaptureTopologyTest {
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
-        final List<ProducerRecord<Integer, String>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueSerde(Serdes.String()))
+        final List<ProducerRecord<Integer, String>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueSerde(Serdes.String())
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> {
-                    softly.assertThat(record.key()).isEqualTo(1);
-                    softly.assertThat(record.value()).isEqualTo("foo");
+                .satisfies(producerRecord -> {
+                    softly.assertThat(producerRecord.key()).isEqualTo(1);
+                    softly.assertThat(producerRecord.value()).isEqualTo("foo");
                 })
                 .extracting(ProducerRecord::headers)
                 .satisfies(headers -> softly.assertThat(getHeader(headers, ErrorHeaderTransformer.EXCEPTION_MESSAGE))

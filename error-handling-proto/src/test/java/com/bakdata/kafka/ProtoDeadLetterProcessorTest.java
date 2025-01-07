@@ -53,6 +53,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -141,7 +142,8 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
 
         this.softly.assertThat(errors)
                 .hasSize(2)
-                .allSatisfy(record -> this.softly.assertThat(record.timestamp()).isGreaterThan(startTimestamp))
+                .allSatisfy(producerRecord -> this.softly.assertThat(producerRecord.timestamp())
+                        .isGreaterThan(startTimestamp))
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
                             this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
@@ -151,7 +153,9 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                                     .isEqualTo(RuntimeException.class.getCanonicalName());
                             // We don't check the exact stack trace, but only that it consists of multiple lines
                             this.softly.assertThat(deadLetter.getCause().getStackTrace()).extracting(StringValue::getValue)
-                                    .extracting(s -> Arrays.asList(s.split("\n"))).asList().hasSizeGreaterThan(1);
+                                    .extracting(s -> Arrays.asList(s.split("\n")))
+                                    .asInstanceOf(InstanceOfAssertFactories.LIST)
+                                    .hasSizeGreaterThan(1);
                             this.softly.assertThat(deadLetter.getTopic()).extracting(StringValue::getValue)
                                     .isEqualTo(INPUT_TOPIC);
                             this.softly.assertThat(deadLetter.getPartition()).extracting(Int32Value::getValue).isEqualTo(0);

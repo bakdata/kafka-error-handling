@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,6 @@ import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -90,11 +89,10 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
     void shouldForwardRecoverableException(final SoftAssertions softly) {
         final RuntimeException throwable = createRecoverableException();
         this.mapper = new ValueTransformer<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -107,7 +105,7 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -115,8 +113,8 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
                         .withValueSerde(STRING_SERDE)
                         .add(1, "foo"))
                 .hasCause(throwable);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -126,11 +124,10 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
     void shouldNotCaptureThrowable(final SoftAssertions softly) {
         final Error throwable = mock(Error.class);
         this.mapper = new ValueTransformer<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -143,7 +140,7 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -156,11 +153,10 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
     @Test
     void shouldCaptureTransformerError(final SoftAssertions softly) {
         this.mapper = new ValueTransformer<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -176,7 +172,7 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -184,15 +180,15 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo")
                 .add(2, "bar");
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -205,6 +201,7 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -217,22 +214,22 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isNull())
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -245,6 +242,7 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -257,16 +255,16 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -275,11 +273,10 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
     @Test
     void shouldHandleReturnedNullValue(final SoftAssertions softly) {
         this.mapper = new ValueTransformer<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -292,22 +289,22 @@ class ErrorLoggingValueTransformerTopologyTest extends ErrorCaptureTopologyTest 
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                         .extracting(ProducerRecord::value)
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );

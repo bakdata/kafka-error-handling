@@ -42,6 +42,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -107,7 +108,8 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
 
         this.softly.assertThat(errors)
                 .hasSize(2)
-                .allSatisfy(record -> this.softly.assertThat(record.timestamp()).isGreaterThan(startTimestamp))
+                .allSatisfy(producerRecord -> this.softly.assertThat(producerRecord.timestamp())
+                        .isGreaterThan(startTimestamp))
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
                             this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
@@ -116,7 +118,8 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                                     .hasValue(RuntimeException.class.getCanonicalName());
                             // We don't check the exact stack trace, but only that it consists of multiple lines
                             this.softly.assertThat(deadLetter.getCause().getStackTrace()).map(s -> Arrays.asList(s.split("\n")))
-                                    .get().asList().hasSizeGreaterThan(1);
+                                    .get().asInstanceOf(InstanceOfAssertFactories.LIST)
+                                    .hasSizeGreaterThan(1);
                             this.softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
                             this.softly.assertThat(deadLetter.getPartition()).hasValue(0);
                         }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,6 @@ import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -75,16 +74,15 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
     void shouldNotCaptureThrowable(final SoftAssertions softly) {
         final Error throwable = mock(Error.class);
         this.mapper = new ValueTransformerWithKey<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void close() {
-
+                // do nothing
             }
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -105,16 +103,15 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
     @Test
     void shouldCaptureTransformerError(final SoftAssertions softly) {
         this.mapper = new ValueTransformerWithKey<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void close() {
-
+                // do nothing
             }
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -137,15 +134,15 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
                         .hasMessage(
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -158,11 +155,12 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
 
             @Override
             public void close() {
-
+                // do nothing
             }
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -177,15 +175,15 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isNull())
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -198,11 +196,12 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
 
             @Override
             public void close() {
-
+                // do nothing
             }
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -221,9 +220,9 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
                                 + "')")
                 );
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -232,16 +231,15 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
     @Test
     void shouldHandleReturnedNullValue(final SoftAssertions softly) {
         this.mapper = new ValueTransformerWithKey<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void close() {
-
+                // do nothing
             }
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -256,15 +254,15 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                         .extracting(ProducerRecord::value)
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );

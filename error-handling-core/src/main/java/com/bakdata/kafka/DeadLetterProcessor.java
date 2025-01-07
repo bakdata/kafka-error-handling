@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -103,11 +103,11 @@ public class DeadLetterProcessor<K, V, T> implements FixedKeyProcessor<K, Proces
                 .inputTimestamp(Instant.ofEpochMilli(inputRecord.timestamp()))
                 .build();
 
-        final FixedKeyRecord<K, T> record = inputRecord
+        final FixedKeyRecord<K, T> outputRecord = inputRecord
                 .withValue(this.deadLetterConverter.convert(deadLetterDescription))
                 .withTimestamp(this.context.currentSystemTimeMs());
 
-        this.context.forward(record);
+        this.context.forward(outputRecord);
     }
 
     @Override

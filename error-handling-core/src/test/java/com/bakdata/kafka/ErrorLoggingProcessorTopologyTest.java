@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,6 @@ import org.apache.kafka.streams.processor.api.ProcessorContext;
 import org.apache.kafka.streams.processor.api.Record;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -92,6 +91,7 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -104,7 +104,7 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -112,9 +112,9 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                         .withValueSerde(STRING_SERDE)
                         .add(1, "foo"))
                 .hasCause(throwable);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -139,7 +139,7 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -173,7 +173,7 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -181,15 +181,15 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo")
                 .add(2, "bar");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -217,22 +217,22 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -257,16 +257,16 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -293,22 +293,22 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(3.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(3.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(3L))
@@ -340,7 +340,7 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -348,22 +348,22 @@ class ErrorLoggingProcessorTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar")
                 .add(3, "baz");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2.0))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2.0))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
                 )
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isNull())
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                         .extracting(ProducerRecord::value)
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );

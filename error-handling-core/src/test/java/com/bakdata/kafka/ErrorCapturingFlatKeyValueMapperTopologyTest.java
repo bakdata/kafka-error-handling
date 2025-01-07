@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,6 @@ import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -100,16 +99,16 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                         .withValueSerde(STRING_SERDE)
                         .add(1, "foo"))
                 .hasCause(throwable);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
 
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
+                this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetterDescription.class)
                         .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -136,9 +135,9 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo")
                 .add(2, "bar");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -148,14 +147,14 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .containsExactlyInAnyOrder(2L, 1L, 18L);
 
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
+                this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetterDescription.class)
                         .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isEqualTo(1))
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(1))
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetterDescription.class)
                 .satisfies(deadLetter -> {
@@ -179,9 +178,9 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -190,8 +189,8 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 3L);
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
+                this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetterDescription.class)
                         .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -204,21 +203,21 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
+                this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetterDescription.class)
                         .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isNull())
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetterDescription.class)
                 .satisfies(deadLetter -> {
@@ -241,20 +240,20 @@ class ErrorCapturingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopologyT
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                         .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isNull())
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                 .extracting(ProducerRecord::value)
                 .satisfies(value -> softly.assertThat(value).isNull());
         final List<ProducerRecord<Integer, DeadLetterDescription>> errors =
-                Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                                .withValueType(DeadLetterDescription.class))
+                this.topology.streamOutput(ERROR_TOPIC)
+                        .withValueType(DeadLetterDescription.class)
                         .toList();
         softly.assertThat(errors)
                 .isEmpty();

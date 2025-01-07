@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,6 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.ValueMapperWithKey;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -99,12 +98,12 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
                         .hasMessage(
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
-                .allSatisfy(record -> softly.assertThat(record.key()).isEqualTo(2))
+                .allSatisfy(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 1L, 18L);
     }
@@ -116,12 +115,12 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
-                .allSatisfy(record -> softly.assertThat(record.key()).isNull())
+                .allSatisfy(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 5L);
     }
@@ -137,8 +136,8 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
                                 + "')")
                 );
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -151,12 +150,12 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
-                .allSatisfy(record -> softly.assertThat(record.key()).isEqualTo(2))
+                .allSatisfy(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(5L, null, 2L);
     }
