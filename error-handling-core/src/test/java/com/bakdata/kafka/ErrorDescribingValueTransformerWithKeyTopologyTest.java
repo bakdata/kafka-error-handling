@@ -135,7 +135,7 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -176,7 +176,7 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -218,10 +218,10 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
                         .add(null, null))
                 .satisfies(e -> softly.assertThat(e.getCause())
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
-                                + "')")
+                                    + "')")
                 );
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -255,7 +255,7 @@ class ErrorDescribingValueTransformerWithKeyTopologyTest extends ErrorCaptureTop
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)

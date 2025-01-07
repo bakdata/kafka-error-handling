@@ -183,7 +183,7 @@ class ErrorLoggingFlatValueTransformerWithKeyTopologyTest extends ErrorCaptureTo
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -220,7 +220,7 @@ class ErrorLoggingFlatValueTransformerWithKeyTopologyTest extends ErrorCaptureTo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -257,7 +257,7 @@ class ErrorLoggingFlatValueTransformerWithKeyTopologyTest extends ErrorCaptureTo
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
+                .withKeySerde(INTEGER_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)

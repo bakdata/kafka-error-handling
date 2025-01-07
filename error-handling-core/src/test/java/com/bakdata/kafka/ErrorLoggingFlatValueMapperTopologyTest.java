@@ -104,8 +104,8 @@ class ErrorLoggingFlatValueMapperTopologyTest extends ErrorCaptureTopologyTest {
         when(this.mapper.apply("foo")).thenThrow(throwable);
         this.createTopology();
         softly.assertThatThrownBy(() -> this.topology.input()
-                .withValueSerde(STRING_SERDE)
-                .add(1, "foo"))
+                        .withValueSerde(STRING_SERDE)
+                        .add(1, "foo"))
                 .isEqualTo(throwable);
     }
 

@@ -101,7 +101,7 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -121,7 +121,7 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -141,10 +141,10 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                         .add(null, null))
                 .satisfies(e -> softly.assertThat(e.getCause())
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
-                                + "')")
+                                    + "')")
                 );
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -159,7 +159,7 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)

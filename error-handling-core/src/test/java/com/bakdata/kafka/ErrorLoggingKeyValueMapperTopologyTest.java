@@ -93,7 +93,7 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                         .add(1, "foo"))
                 .hasCause(throwable);
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -121,7 +121,7 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .add(1, "foo")
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -142,7 +142,7 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -163,7 +163,7 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -178,7 +178,7 @@ class ErrorLoggingKeyValueMapperTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)

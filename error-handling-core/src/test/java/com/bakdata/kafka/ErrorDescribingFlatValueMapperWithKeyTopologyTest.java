@@ -134,7 +134,7 @@ class ErrorDescribingFlatValueMapperWithKeyTopologyTest extends ErrorCaptureTopo
                         .add(null, null))
                 .satisfies(e -> softly.assertThat(e.getCause())
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
-                                + "')")
+                                    + "')")
                 );
         final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
                 .withValueSerde(LONG_SERDE)

@@ -142,7 +142,7 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -190,7 +190,7 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -232,10 +232,10 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
                         .add(null, null))
                 .satisfies(e -> softly.assertThat(e.getCause())
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
-                                + "')")
+                                    + "')")
                 );
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -271,7 +271,7 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -318,7 +318,7 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .add(2, "bar")
                 .add(3, "baz");
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
@@ -371,7 +371,7 @@ class ErrorDescribingTransformerTopologyTest extends ErrorCaptureTopologyTest {
                 .add(2, "bar")
                 .add(3, "baz");
         final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
+                .withKeySerde(DOUBLE_SERDE)
                 .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
