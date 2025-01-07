@@ -102,8 +102,8 @@ class ErrorCapturingValueProcessorTopologyTest extends ErrorCaptureTopologyTest 
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("foo".equals(record.value())) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("foo".equals(inputRecord.value())) {
                     throw throwable;
                 }
                 throw new UnsupportedOperationException();
@@ -143,8 +143,8 @@ class ErrorCapturingValueProcessorTopologyTest extends ErrorCaptureTopologyTest 
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("foo".equals(record.value())) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("foo".equals(inputRecord.value())) {
                     throw throwable;
                 }
                 throw new UnsupportedOperationException();
@@ -173,12 +173,12 @@ class ErrorCapturingValueProcessorTopologyTest extends ErrorCaptureTopologyTest 
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("foo".equals(record.value())) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("foo".equals(inputRecord.value())) {
                     throw new RuntimeException("Cannot process");
                 }
-                if ("bar".equals(record.value())) {
-                    this.context.forward(record.withValue(2L));
+                if ("bar".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.withValue(2L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -242,9 +242,9 @@ class ErrorCapturingValueProcessorTopologyTest extends ErrorCaptureTopologyTest 
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if (record.value() == null) {
-                    this.context.forward(record.withValue(2L));
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if (inputRecord.value() == null) {
+                    this.context.forward(inputRecord.withValue(2L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -289,8 +289,8 @@ class ErrorCapturingValueProcessorTopologyTest extends ErrorCaptureTopologyTest 
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if (record.value() == null) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if (inputRecord.value() == null) {
                     throw new RuntimeException("Cannot process");
                 }
                 throw new UnsupportedOperationException();
@@ -346,9 +346,9 @@ class ErrorCapturingValueProcessorTopologyTest extends ErrorCaptureTopologyTest 
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("bar".equals(record.value())) {
-                    this.context.forward(record.withValue(null));
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("bar".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.withValue(null));
                     return;
                 }
                 throw new UnsupportedOperationException();

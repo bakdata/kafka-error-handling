@@ -77,12 +77,13 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
         this.mapper = new Processor<>() {
 
             @Override
-            public void init(final ProcessorContext<Double, Long> context) {
+            public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
-            public void process(final Record<Integer, String> record) {
-                if (1 == record.key() && "foo".equals(record.value())) {
+            public void process(final Record<Integer, String> inputRecord) {
+                if (1 == inputRecord.key() && "foo".equals(inputRecord.value())) {
                     throw throwable;
                 }
                 throw new UnsupportedOperationException();
@@ -106,12 +107,12 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
             }
 
             @Override
-            public void process(final Record<Integer, String> record) {
-                if (1 == record.key() && "foo".equals(record.value())) {
+            public void process(final Record<Integer, String> inputRecord) {
+                if (1 == inputRecord.key() && "foo".equals(inputRecord.value())) {
                     throw new RuntimeException("Cannot process");
                 }
-                if (2 == record.key() && "bar".equals(record.value())) {
-                    this.context.forward(record.withKey(2.0).withValue(2L));
+                if (2 == inputRecord.key() && "bar".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.withKey(2.0).withValue(2L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -152,9 +153,9 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
             }
 
             @Override
-            public void process(final Record<Integer, String> record) {
-                if (record.key() == null && record.value() == null) {
-                    this.context.forward(record.withKey(2.0).withValue(2L));
+            public void process(final Record<Integer, String> inputRecord) {
+                if (inputRecord.key() == null && inputRecord.value() == null) {
+                    this.context.forward(inputRecord.withKey(2.0).withValue(2L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -184,12 +185,13 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
         this.mapper = new Processor<>() {
 
             @Override
-            public void init(final ProcessorContext<Double, Long> context) {
+            public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
-            public void process(final Record<Integer, String> record) {
-                if (record.key() == null && record.value() == null) {
+            public void process(final Record<Integer, String> inputRecord) {
+                if (inputRecord.key() == null && inputRecord.value() == null) {
                     throw new RuntimeException("Cannot process");
                 }
                 throw new UnsupportedOperationException();
@@ -222,9 +224,9 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
             }
 
             @Override
-            public void process(final Record<Integer, String> record) {
-                if (record.key() == null && record.value() == null) {
-                    this.context.forward(record.withKey(3.0).withValue(3L));
+            public void process(final Record<Integer, String> inputRecord) {
+                if (inputRecord.key() == null && inputRecord.value() == null) {
+                    this.context.forward(inputRecord.withKey(3.0).withValue(3L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -260,13 +262,13 @@ class ErrorDescribingProcessorTopologyTest extends ErrorCaptureTopologyTest {
             }
 
             @Override
-            public void process(final Record<Integer, String> record) {
-                if (2 == record.key() && "bar".equals(record.value())) {
-                    this.context.forward(record.withKey(2.0).withValue(2L));
+            public void process(final Record<Integer, String> inputRecord) {
+                if (2 == inputRecord.key() && "bar".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.withKey(2.0).withValue(2L));
                     return;
                 }
-                if (3 == record.key() && "baz".equals(record.value())) {
-                    this.context.forward(record.<Double>withKey(null).withValue(null));
+                if (3 == inputRecord.key() && "baz".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.<Double>withKey(null).withValue(null));
                     return;
                 }
                 throw new UnsupportedOperationException();
