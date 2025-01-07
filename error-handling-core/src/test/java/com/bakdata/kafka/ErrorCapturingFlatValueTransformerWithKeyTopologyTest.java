@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,6 @@ import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -99,11 +98,10 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
     void shouldForwardRecoverableException(final SoftAssertions softly) {
         final RuntimeException throwable = createRecoverableException();
         this.mapper = new ValueTransformerWithKey<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -116,7 +114,7 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -124,14 +122,14 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
                         .withValueSerde(STRING_SERDE)
                         .add(1, "foo"))
                 .hasCause(throwable);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
 
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(DeadLetterDescription.class))
+        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueType(DeadLetterDescription.class)
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -141,11 +139,10 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
     void shouldNotCaptureThrowable(final SoftAssertions softly) {
         final Error throwable = mock(Error.class);
         this.mapper = new ValueTransformerWithKey<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -158,7 +155,7 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -171,11 +168,10 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
     @Test
     void shouldCaptureTransformerError(final SoftAssertions softly) {
         this.mapper = new ValueTransformerWithKey<>() {
-            private ProcessorContext context = null;
 
             @Override
             public void init(final ProcessorContext context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
@@ -191,7 +187,7 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
@@ -199,23 +195,23 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
                 .withValueSerde(STRING_SERDE)
                 .add(1, "foo")
                 .add(2, "bar");
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(3)
-                .allSatisfy(record -> softly.assertThat(record.key()).isEqualTo(2))
+                .allSatisfy(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(6L, 15L, 15L);
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(DeadLetterDescription.class))
+        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueType(DeadLetterDescription.class)
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isEqualTo(1))
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(1))
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetterDescription.class)
                 .satisfies(deadLetter -> {
@@ -237,6 +233,7 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -249,24 +246,24 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(2)
-                .allSatisfy(record -> softly.assertThat(record.key()).isNull())
+                .allSatisfy(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                 .extracting(ProducerRecord::value)
                 .containsExactlyInAnyOrder(2L, 5L);
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(DeadLetterDescription.class))
+        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueType(DeadLetterDescription.class)
                 .toList();
         softly.assertThat(errors)
                 .isEmpty();
@@ -278,6 +275,7 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void init(final ProcessorContext context) {
+                // do nothing
             }
 
             @Override
@@ -290,27 +288,27 @@ class ErrorCapturingFlatValueTransformerWithKeyTopologyTest extends ErrorCapture
 
             @Override
             public void close() {
-
+                // do nothing
             }
         };
         this.createTopology();
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
-        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(DeadLetterDescription.class))
+        final List<ProducerRecord<Integer, DeadLetterDescription>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueType(DeadLetterDescription.class)
                 .toList();
         softly.assertThat(errors)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isNull())
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                 .extracting(ProducerRecord::value)
                 .isInstanceOf(DeadLetterDescription.class)
                 .satisfies(deadLetter -> {

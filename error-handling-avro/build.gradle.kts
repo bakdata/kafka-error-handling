@@ -21,7 +21,6 @@ dependencies {
     val junitVersion: String by project
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = junitVersion)
     testImplementation(testFixtures(project(":error-handling-core")))
-    testImplementation(group = "org.jooq", name = "jool", version = "0.9.14")
     val mockitoVersion: String by project
     testImplementation(group = "org.mockito", name = "mockito-junit-jupiter", version = mockitoVersion)
     val assertJVersion: String by project

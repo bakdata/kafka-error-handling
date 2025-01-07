@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -41,10 +41,10 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -81,8 +81,8 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
     }
 
     @Override
-    protected Properties getKafkaProperties() {
-        final Properties kafkaProperties = super.getKafkaProperties();
+    protected Map<String, Object> getKafkaProperties() {
+        final Map<String, Object> kafkaProperties = super.getKafkaProperties();
         kafkaProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         return kafkaProperties;
     }
@@ -95,14 +95,14 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
                 .add(1, "foo")
                 .add(2, "bar");
 
-        final List<ProducerRecord<Integer, String>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(STRING_SERDE))
+        final List<ProducerRecord<Integer, String>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(STRING_SERDE)
                 .toList();
         this.softly.assertThat(records)
                 .isEmpty();
 
-        final List<ProducerRecord<Integer, DeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(DeadLetter.class))
+        final List<ProducerRecord<Integer, DeadLetter>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueType(DeadLetter.class)
                 .toList();
 
         this.softly.assertThat(errors)
@@ -115,7 +115,8 @@ class AvroDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
                                     .hasValue(RuntimeException.class.getCanonicalName());
                             // We don't check the exact stack trace, but only that it consists of multiple lines
                             this.softly.assertThat(deadLetter.getCause().getStackTrace()).map(s -> Arrays.asList(s.split("\n")))
-                                    .get().asList().hasSizeGreaterThan(1);
+                                    .get().asInstanceOf(InstanceOfAssertFactories.LIST)
+                                    .hasSizeGreaterThan(1);
                             this.softly.assertThat(deadLetter.getTopic()).hasValue(INPUT_TOPIC);
                             this.softly.assertThat(deadLetter.getPartition()).hasValue(0);
                         }

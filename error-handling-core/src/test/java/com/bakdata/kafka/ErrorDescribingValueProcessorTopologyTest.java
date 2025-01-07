@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,6 @@ import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
 import org.apache.kafka.streams.processor.api.FixedKeyRecord;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -76,16 +75,15 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
     void shouldNotCaptureThrowable(final SoftAssertions softly) {
         final Error throwable = mock(Error.class);
         this.mapper = new FixedKeyProcessor<>() {
-            private FixedKeyProcessorContext<Integer, Long> context = null;
 
             @Override
             public void init(final FixedKeyProcessorContext<Integer, Long> context) {
-                this.context = context;
+                // do nothing
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("foo".equals(record.value())) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("foo".equals(inputRecord.value())) {
                     throw throwable;
                 }
                 throw new UnsupportedOperationException();
@@ -109,12 +107,12 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("foo".equals(record.value())) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("foo".equals(inputRecord.value())) {
                     throw new RuntimeException("Cannot process");
                 }
-                if ("bar".equals(record.value())) {
-                    this.context.forward(record.withValue(2L));
+                if ("bar".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.withValue(2L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -129,15 +127,15 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
                         .hasMessage(
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -155,9 +153,9 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if (record.value() == null) {
-                    this.context.forward(record.withValue(2L));
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if (inputRecord.value() == null) {
+                    this.context.forward(inputRecord.withValue(2L));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -167,15 +165,15 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isNull())
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                         .extracting(ProducerRecord::value)
                         .isInstanceOf(Long.class)
                         .satisfies(value -> softly.assertThat(value).isEqualTo(2L))
@@ -188,11 +186,12 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
 
             @Override
             public void init(final FixedKeyProcessorContext<Integer, Long> context) {
+                // do nothing
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if (record.value() == null) {
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if (inputRecord.value() == null) {
                     throw new RuntimeException("Cannot process");
                 }
                 throw new UnsupportedOperationException();
@@ -204,11 +203,11 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
                         .add(null, null))
                 .satisfies(e -> softly.assertThat(e.getCause())
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
-                                + "')")
+                                    + "')")
                 );
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -225,9 +224,9 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
             }
 
             @Override
-            public void process(final FixedKeyRecord<Integer, String> record) {
-                if ("bar".equals(record.value())) {
-                    this.context.forward(record.withValue(null));
+            public void process(final FixedKeyRecord<Integer, String> inputRecord) {
+                if ("bar".equals(inputRecord.value())) {
+                    this.context.forward(inputRecord.withValue(null));
                     return;
                 }
                 throw new UnsupportedOperationException();
@@ -237,15 +236,15 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
-        final List<ProducerRecord<Integer, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(INTEGER_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Integer, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(INTEGER_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .anySatisfy(r -> softly.assertThat(r)
                         .isNotNull()
-                        .satisfies(record -> softly.assertThat(record.key()).isEqualTo(2))
+                        .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isEqualTo(2))
                         .extracting(ProducerRecord::value)
                         .satisfies(value -> softly.assertThat(value).isNull())
                 );

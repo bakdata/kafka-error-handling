@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,6 @@ import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -101,9 +100,9 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                         .hasMessage(
                                 "Cannot process ('" + ErrorUtil.toString(1) + "', '" + ErrorUtil.toString("foo") + "')")
                 );
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(DOUBLE_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -121,9 +120,9 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(null, null);
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(DOUBLE_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .extracting(ProducerRecord::key)
@@ -142,11 +141,11 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
                         .add(null, null))
                 .satisfies(e -> softly.assertThat(e.getCause())
                         .hasMessage("Cannot process ('" + ErrorUtil.toString(null) + "', '" + ErrorUtil.toString(null)
-                                + "')")
+                                    + "')")
                 );
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(DOUBLE_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .isEmpty();
@@ -159,15 +158,15 @@ class ErrorDescribingFlatKeyValueMapperTopologyTest extends ErrorCaptureTopology
         this.topology.input()
                 .withValueSerde(STRING_SERDE)
                 .add(2, "bar");
-        final List<ProducerRecord<Double, Long>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withKeySerde(DOUBLE_SERDE)
-                        .withValueSerde(LONG_SERDE))
+        final List<ProducerRecord<Double, Long>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withKeySerde(DOUBLE_SERDE)
+                .withValueSerde(LONG_SERDE)
                 .toList();
         softly.assertThat(records)
                 .hasSize(1)
                 .first()
                 .isNotNull()
-                .satisfies(record -> softly.assertThat(record.key()).isNull())
+                .satisfies(producerRecord -> softly.assertThat(producerRecord.key()).isNull())
                 .extracting(ProducerRecord::value)
                 .satisfies(value -> softly.assertThat(value).isNull());
     }

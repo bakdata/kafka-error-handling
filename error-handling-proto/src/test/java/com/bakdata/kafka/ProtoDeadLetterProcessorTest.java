@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -54,10 +53,10 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.Produced;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -81,6 +80,10 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
     @Mock
     private KeyValueMapper<Integer, String, KeyValue<Integer, String>> mapper;
 
+    private static Instant timestampToInstant(final Timestamp timestamp) {
+        return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
+    }
+
     @Override
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC, Consumed.with(null, STRING_SERDE));
@@ -94,9 +97,9 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
     }
 
     @Override
-    protected Properties getKafkaProperties() {
-        final Properties kafkaProperties = super.getKafkaProperties();
-        kafkaProperties.setProperty(
+    protected Map<String, Object> getKafkaProperties() {
+        final Map<String, Object> kafkaProperties = super.getKafkaProperties();
+        kafkaProperties.put(
                 StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaProtobufSerde.class.getName());
         kafkaProperties.put(KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE,
                 ProtoDeadLetter.class);
@@ -108,7 +111,7 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
         final StreamsBuilder builder = new StreamsBuilder();
         this.buildTopology(builder);
         final Topology topology = builder.build();
-        final Properties kafkaProperties = this.getKafkaProperties();
+        final Map<String, Object> kafkaProperties = this.getKafkaProperties();
         final SchemaRegistryMock schemaRegistryMock = new SchemaRegistryMock(List.of(new ProtobufSchemaProvider()));
         this.topology = new TestTopology<Integer, String>(topology, kafkaProperties)
                 .withSchemaRegistryMock(schemaRegistryMock);
@@ -127,19 +130,20 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                 .add(1, "foo", 100)
                 .add(2, "bar", 200);
 
-        final List<ProducerRecord<Integer, String>> records = Seq.seq(this.topology.streamOutput(OUTPUT_TOPIC)
-                        .withValueSerde(STRING_SERDE))
+        final List<ProducerRecord<Integer, String>> records = this.topology.streamOutput(OUTPUT_TOPIC)
+                .withValueSerde(STRING_SERDE)
                 .toList();
         this.softly.assertThat(records)
                 .isEmpty();
 
-        final List<ProducerRecord<Integer, ProtoDeadLetter>> errors = Seq.seq(this.topology.streamOutput(ERROR_TOPIC)
-                        .withValueType(ProtoDeadLetter.class))
+        final List<ProducerRecord<Integer, ProtoDeadLetter>> errors = this.topology.streamOutput(ERROR_TOPIC)
+                .withValueType(ProtoDeadLetter.class)
                 .toList();
 
         this.softly.assertThat(errors)
                 .hasSize(2)
-                .allSatisfy(record -> this.softly.assertThat(record.timestamp()).isGreaterThan(startTimestamp))
+                .allSatisfy(producerRecord -> this.softly.assertThat(producerRecord.timestamp())
+                        .isGreaterThan(startTimestamp))
                 .extracting(ProducerRecord::value).allSatisfy(
                         deadLetter -> {
                             this.softly.assertThat(deadLetter.getDescription()).isEqualTo(DEAD_LETTER_DESCRIPTION);
@@ -149,7 +153,9 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                                     .isEqualTo(RuntimeException.class.getCanonicalName());
                             // We don't check the exact stack trace, but only that it consists of multiple lines
                             this.softly.assertThat(deadLetter.getCause().getStackTrace()).extracting(StringValue::getValue)
-                                    .extracting(s -> Arrays.asList(s.split("\n"))).asList().hasSizeGreaterThan(1);
+                                    .extracting(s -> Arrays.asList(s.split("\n")))
+                                    .asInstanceOf(InstanceOfAssertFactories.LIST)
+                                    .hasSizeGreaterThan(1);
                             this.softly.assertThat(deadLetter.getTopic()).extracting(StringValue::getValue)
                                     .isEqualTo(INPUT_TOPIC);
                             this.softly.assertThat(deadLetter.getPartition()).extracting(Int32Value::getValue).isEqualTo(0);
@@ -173,9 +179,5 @@ class ProtoDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
                             .isEqualTo(Instant.ofEpochMilli(200));
                 }
         );
-    }
-
-    private static Instant timestampToInstant(final Timestamp timestamp) {
-        return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
     }
 }

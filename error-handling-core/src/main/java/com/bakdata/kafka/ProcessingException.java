@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ package com.bakdata.kafka;
  * {@link Exception} thrown by error descriptors. The message contains information about input key and value.
  */
 public class ProcessingException extends RuntimeException {
-    private static final long serialVersionUID = 6328000609687736610L;
 
     ProcessingException(final Object value, final Throwable cause) {
         super("Cannot process " + ErrorUtil.toString(value), cause);
