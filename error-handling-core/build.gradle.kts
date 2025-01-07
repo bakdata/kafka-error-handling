@@ -9,8 +9,8 @@ dependencies {
     api(group = "org.apache.kafka", name = "kafka-streams", version = kafkaVersion)
     val avroVersion: String by project
     implementation(group = "org.apache.avro", name = "avro", version = avroVersion)
-    implementation(group = "org.jooq", name = "jool", version = "0.9.14")
-    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.14.0")
+    implementation(group = "org.jooq", name = "jool", version = "0.9.15")
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.17.0")
 
     val junitVersion: String by project
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = junitVersion)

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,8 @@
 package com.bakdata.kafka;
 
 import com.bakdata.fluent_kafka_streams_tests.TestTopology;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serdes.IntegerSerde;
@@ -48,20 +49,20 @@ public abstract class ErrorCaptureTopologyTest {
         }
     }
 
-    protected Properties getKafkaProperties() {
-        final Properties kafkaConfig = new Properties();
+    protected Map<String, Object> getKafkaProperties() {
+        final Map<String, Object> kafkaConfig = new HashMap<>();
 
         // exactly once and order
-        kafkaConfig.setProperty(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE_V2);
+        kafkaConfig.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE_V2);
         kafkaConfig.put(StreamsConfig.producerPrefix(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION), 1);
 
-        kafkaConfig.setProperty(StreamsConfig.producerPrefix(ProducerConfig.ACKS_CONFIG), "all");
+        kafkaConfig.put(StreamsConfig.producerPrefix(ProducerConfig.ACKS_CONFIG), "all");
 
         // topology
-        kafkaConfig.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "fake");
+        kafkaConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, "fake");
         kafkaConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, IntegerSerde.class);
         kafkaConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, TestDeadLetterSerde.class);
-        kafkaConfig.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "fake");
+        kafkaConfig.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "fake");
 
         return kafkaConfig;
     }
