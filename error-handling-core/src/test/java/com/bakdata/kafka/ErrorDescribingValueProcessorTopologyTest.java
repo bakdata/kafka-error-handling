@@ -186,6 +186,7 @@ class ErrorDescribingValueProcessorTopologyTest extends ErrorCaptureTopologyTest
 
             @Override
             public void init(final FixedKeyProcessorContext<Integer, Long> context) {
+                // do nothing
             }
 
             @Override
