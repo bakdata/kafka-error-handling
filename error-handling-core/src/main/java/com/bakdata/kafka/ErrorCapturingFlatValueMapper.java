@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ import org.apache.kafka.streams.kstream.ValueMapper;
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCapturingFlatValueMapper<V, VR> implements ValueMapper<V, Iterable<ProcessedValue<V, VR>>> {
-    private final @NonNull ValueMapper<? super V, ? extends Iterable<VR>> wrapped;
+    private final @NonNull ValueMapper<? super V, ? extends Iterable<? extends VR>> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
 
     /**
@@ -58,7 +58,7 @@ public final class ErrorCapturingFlatValueMapper<V, VR> implements ValueMapper<V
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <V, VR> ValueMapper<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueMapper<? super V, ? extends Iterable<VR>> mapper) {
+            final @NonNull ValueMapper<? super V, ? extends Iterable<? extends VR>> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -80,7 +80,7 @@ public final class ErrorCapturingFlatValueMapper<V, VR> implements ValueMapper<V
      * @return {@code ValueMapper}
      */
     public static <V, VR> ValueMapper<V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueMapper<? super V, ? extends Iterable<VR>> mapper,
+            final @NonNull ValueMapper<? super V, ? extends Iterable<? extends VR>> mapper,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingFlatValueMapper<>(mapper, errorFilter);
     }
@@ -88,7 +88,7 @@ public final class ErrorCapturingFlatValueMapper<V, VR> implements ValueMapper<V
     @Override
     public Iterable<ProcessedValue<V, VR>> apply(final V value) {
         try {
-            final Iterable<VR> newValues = this.wrapped.apply(value);
+            final Iterable<? extends VR> newValues = this.wrapped.apply(value);
             return seq(newValues).map(SuccessValue::of);
         } catch (final Exception e) {
             if (this.errorFilter.test(e)) {

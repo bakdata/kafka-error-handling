@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ import org.apache.kafka.streams.kstream.KeyValueMapper;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
         implements KeyValueMapper<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> {
-    private final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> wrapped;
+    private final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<? extends KR, ? extends VR>> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
 
     /**
@@ -61,7 +61,7 @@ public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> mapper) {
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<? extends KR, ? extends VR>> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -85,7 +85,7 @@ public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
      * @return {@code KeyValueMapper}
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, KeyValue<KR, ProcessedKeyValue<K, V, VR>>> captureErrors(
-            final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<KR, VR>> mapper,
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends KeyValue<? extends KR, ? extends VR>> mapper,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingKeyValueMapper<>(mapper, errorFilter);
     }
@@ -93,7 +93,7 @@ public final class ErrorCapturingKeyValueMapper<K, V, KR, VR>
     @Override
     public KeyValue<KR, ProcessedKeyValue<K, V, VR>> apply(final K key, final V value) {
         try {
-            final KeyValue<KR, VR> newKeyValue = this.wrapped.apply(key, value);
+            final KeyValue<? extends KR, ? extends VR> newKeyValue = this.wrapped.apply(key, value);
             final ProcessedKeyValue<K, V, VR> recordWithOldKey = SuccessKeyValue.of(newKeyValue.value);
             return KeyValue.pair(newKeyValue.key, recordWithOldKey);
         } catch (final Exception e) {

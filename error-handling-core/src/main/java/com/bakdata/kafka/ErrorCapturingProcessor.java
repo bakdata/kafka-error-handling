@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,8 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <VR> type of output values
  * @see #captureErrors(Processor)
  * @see #captureErrors(Processor, Predicate)
+ * @see #captureErrors(ProcessorSupplier)
+ * @see #captureErrors(ProcessorSupplier, Predicate)
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCapturingProcessor<K, V, KR, VR>
@@ -66,7 +68,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull Processor<K, V, KR, VR> processor) {
+            final @NonNull Processor<? super K, ? super V, KR, VR> processor) {
         return captureErrors(processor, ErrorUtil::isRecoverable);
     }
 
@@ -89,9 +91,9 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @return {@code Processor}
      */
     public static <K, V, KR, VR> Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull Processor<K, V, KR, VR> processor,
+            final @NonNull Processor<? super K, ? super V, KR, VR> processor,
             final @NonNull Predicate<Exception> errorFilter) {
-        return new ErrorCapturingProcessor<>(processor, errorFilter);
+        return new ErrorCapturingProcessor<>((Processor<K, V, KR, VR>) processor, errorFilter);
     }
 
     /**
@@ -108,7 +110,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull ProcessorSupplier<K, V, KR, VR> supplier) {
+            final @NonNull ProcessorSupplier<? super K, ? super V, KR, VR> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -132,7 +134,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @return {@code ProcessorSupplier}
      */
     public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull ProcessorSupplier<K, V, KR, VR> supplier,
+            final @NonNull ProcessorSupplier<? super K, ? super V, KR, VR> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ProcessorSupplier<>() {
             @Override
