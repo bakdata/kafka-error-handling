@@ -1,8 +1,15 @@
 # Change Log
 
-## [1.6.0](https://github.com/bakdata/kafka-error-handling/tree/1.6.0) (2025-01-07)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.0...1.6.0)
+## [1.6.1](https://github.com/bakdata/kafka-error-handling/tree/1.6.1) (2025-02-17)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.1...1.6.1)
 
+
+## [1.6.1](https://github.com/bakdata/kafka-error-handling/tree/1.6.1) (2025-02-17)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.0...1.6.1)
+
+**Merged pull requests:**
+
+- Update method signatures to match Kafka Streams [\#30](https://github.com/bakdata/kafka-error-handling/pull/30) ([@philipp94831](https://github.com/philipp94831))
 
 ## [1.6.0](https://github.com/bakdata/kafka-error-handling/tree/1.6.0) (2025-01-07)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.5.0...1.6.0)
