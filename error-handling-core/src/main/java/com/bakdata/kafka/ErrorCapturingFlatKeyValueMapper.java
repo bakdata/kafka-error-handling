@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,9 @@ import org.jooq.lambda.Seq;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCapturingFlatKeyValueMapper<K, V, KR, VR>
         implements KeyValueMapper<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>> {
-    private final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> wrapped;
+    private final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<? extends KeyValue<? extends KR, ?
+            extends VR>>>
+            wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
 
     /**
@@ -63,7 +65,9 @@ public final class ErrorCapturingFlatKeyValueMapper<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>>
-    captureErrors(final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> mapper) {
+    captureErrors(
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<? extends KeyValue<? extends KR, ?
+                    extends VR>>> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -87,7 +91,9 @@ public final class ErrorCapturingFlatKeyValueMapper<K, V, KR, VR>
      * @return {@code KeyValueMapper}
      */
     public static <K, V, KR, VR> KeyValueMapper<K, V, Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>>>
-    captureErrors(final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<KeyValue<KR, VR>>> mapper,
+    captureErrors(
+            final @NonNull KeyValueMapper<? super K, ? super V, ? extends Iterable<? extends KeyValue<? extends KR, ?
+                    extends VR>>> mapper,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingFlatKeyValueMapper<>(mapper, errorFilter);
     }
@@ -95,7 +101,8 @@ public final class ErrorCapturingFlatKeyValueMapper<K, V, KR, VR>
     @Override
     public Iterable<KeyValue<KR, ProcessedKeyValue<K, V, VR>>> apply(final K key, final V value) {
         try {
-            final Iterable<KeyValue<KR, VR>> newKeyValues = this.wrapped.apply(key, value);
+            final Iterable<? extends KeyValue<? extends KR, ? extends VR>> newKeyValues =
+                    this.wrapped.apply(key, value);
             return Seq.seq(newKeyValues)
                     .map(kv -> KeyValue.pair(kv.key, SuccessKeyValue.of(kv.value)));
         } catch (final Exception e) {

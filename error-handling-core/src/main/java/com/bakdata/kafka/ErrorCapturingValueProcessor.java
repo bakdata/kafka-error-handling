@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,8 @@ import org.apache.kafka.streams.state.StoreBuilder;
  * @param <VR> type of output values
  * @see #captureErrors(FixedKeyProcessor)
  * @see #captureErrors(FixedKeyProcessor, Predicate)
+ * @see #captureErrors(FixedKeyProcessorSupplier)
+ * @see #captureErrors(FixedKeyProcessorSupplier, Predicate)
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCapturingValueProcessor<K, V, VR>
@@ -64,7 +66,7 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> FixedKeyProcessor<K, V, ProcessedValue<V, VR>> captureErrors(
-            final @NonNull FixedKeyProcessor<K, V, VR> processor) {
+            final @NonNull FixedKeyProcessor<? super K, ? super V, VR> processor) {
         return captureErrors(processor, ErrorUtil::isRecoverable);
     }
 
@@ -86,9 +88,9 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
      * @return {@code FixedKeyProcessor}
      */
     public static <K, V, VR> FixedKeyProcessor<K, V, ProcessedValue<V, VR>> captureErrors(
-            final @NonNull FixedKeyProcessor<K, V, VR> processor,
+            final @NonNull FixedKeyProcessor<? super K, ? super V, VR> processor,
             final @NonNull Predicate<Exception> errorFilter) {
-        return new ErrorCapturingValueProcessor<>(processor, errorFilter);
+        return new ErrorCapturingValueProcessor<>((FixedKeyProcessor<K, V, VR>) processor, errorFilter);
     }
 
     /**
@@ -104,7 +106,7 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> FixedKeyProcessorSupplier<K, V, ProcessedValue<V, VR>> captureErrors(
-            final @NonNull FixedKeyProcessorSupplier<K, V, VR> supplier) {
+            final @NonNull FixedKeyProcessorSupplier<? super K, ? super V, VR> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -127,7 +129,7 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
      * @return {@code FixedKeyProcessorSupplier}
      */
     public static <K, V, VR> FixedKeyProcessorSupplier<K, V, ProcessedValue<V, VR>> captureErrors(
-            final @NonNull FixedKeyProcessorSupplier<K, V, VR> supplier,
+            final @NonNull FixedKeyProcessorSupplier<? super K, ? super V, VR> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
         return new FixedKeyProcessorSupplier<>() {
             @Override

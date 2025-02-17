@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ import org.jooq.lambda.Seq;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCapturingFlatValueMapperWithKey<K, V, VR>
         implements ValueMapperWithKey<K, V, Iterable<ProcessedValue<V, VR>>> {
-    private final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends Iterable<VR>> wrapped;
+    private final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends Iterable<? extends VR>> wrapped;
     private final @NonNull Predicate<Exception> errorFilter;
 
     /**
@@ -60,7 +60,7 @@ public final class ErrorCapturingFlatValueMapperWithKey<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> ValueMapperWithKey<K, V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends Iterable<VR>> mapper) {
+            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends Iterable<? extends VR>> mapper) {
         return captureErrors(mapper, ErrorUtil::isRecoverable);
     }
 
@@ -83,7 +83,7 @@ public final class ErrorCapturingFlatValueMapperWithKey<K, V, VR>
      * @return {@code ValueMapperWithKey}
      */
     public static <K, V, VR> ValueMapperWithKey<K, V, Iterable<ProcessedValue<V, VR>>> captureErrors(
-            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends Iterable<VR>> mapper,
+            final @NonNull ValueMapperWithKey<? super K, ? super V, ? extends Iterable<? extends VR>> mapper,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingFlatValueMapperWithKey<>(mapper, errorFilter);
     }
@@ -91,7 +91,7 @@ public final class ErrorCapturingFlatValueMapperWithKey<K, V, VR>
     @Override
     public Iterable<ProcessedValue<V, VR>> apply(final K key, final V value) {
         try {
-            final Iterable<VR> newValues = this.wrapped.apply(key, value);
+            final Iterable<? extends VR> newValues = this.wrapped.apply(key, value);
             return Seq.seq(newValues).map(SuccessValue::of);
         } catch (final Exception e) {
             if (this.errorFilter.test(e)) {
