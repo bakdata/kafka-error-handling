@@ -1,8 +1,8 @@
 plugins {
     id("com.bakdata.release") version "1.7.1"
     id("com.bakdata.sonar") version "1.7.1"
-    id("com.bakdata.sonatype") version "1.7.1"
-    id("io.freefair.lombok") version "8.11"
+    id("com.bakdata.sonatype") version "1.8.2-SNAPSHOT"
+    id("io.freefair.lombok") version "8.12.2"
 }
 
 allprojects {
@@ -20,27 +20,6 @@ allprojects {
     }
 }
 
-configure<com.bakdata.gradle.SonatypeSettings> {
-    developers {
-        developer {
-            name.set("Sven Lehmann")
-            id.set("SvenLehmann")
-        }
-        developer {
-            name.set("Torben Meyer")
-            id.set("torbsto")
-        }
-        developer {
-            name.set("Philipp Schirmer")
-            id.set("philipp94831")
-        }
-        developer {
-            name.set("Markus Kobold")
-            id.set("mkcode92")
-        }
-    }
-}
-
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "java-test-fixtures")
@@ -49,6 +28,27 @@ subprojects {
     configure<JavaPluginExtension> {
         toolchain {
             languageVersion = JavaLanguageVersion.of(11)
+        }
+    }
+
+    publication {
+        developers {
+            developer {
+                name.set("Sven Lehmann")
+                id.set("SvenLehmann")
+            }
+            developer {
+                name.set("Torben Meyer")
+                id.set("torbsto")
+            }
+            developer {
+                name.set("Philipp Schirmer")
+                id.set("philipp94831")
+            }
+            developer {
+                name.set("Markus Kobold")
+                id.set("mkcode92")
+            }
         }
     }
 }
