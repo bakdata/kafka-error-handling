@@ -21,6 +21,17 @@ allprojects {
 }
 
 subprojects {
+    plugins.matching { it is JavaPlugin }.all {
+        apply(plugin = "java-test-fixtures")
+        apply(plugin = "io.freefair.lombok")
+
+        configure<JavaPluginExtension> {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(11)
+            }
+        }
+    }
+
     publication {
         developers {
             developer {

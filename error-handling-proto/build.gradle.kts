@@ -2,15 +2,7 @@ description = "Transform dead letters in Kafka Streams applications to protobuf.
 
 plugins {
     id("java-library")
-    id("java-test-fixtures")
-    id("io.freefair.lombok")
     id("com.google.protobuf") version "0.9.4"
-}
-
-configure<JavaPluginExtension> {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
 }
 
 val protobufVersion: String by project
