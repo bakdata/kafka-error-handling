@@ -11,11 +11,3 @@ dependencies {
         api(project(":error-handling-proto"))
     }
 }
-
-publishing {
-    publications {
-        create<MavenPublication>("sonatype") {
-            from(components["javaPlatform"])
-        }
-    }
-}
