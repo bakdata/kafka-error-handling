@@ -1,7 +1,16 @@
 description = "A library for error handling in Kafka Streams."
 
 plugins {
+    id("java-library")
+    id("java-test-fixtures")
+    id("io.freefair.lombok")
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
+}
+
+configure<JavaPluginExtension> {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 dependencies {
