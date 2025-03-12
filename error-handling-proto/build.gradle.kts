@@ -1,6 +1,7 @@
 description = "Transform dead letters in Kafka Streams applications to protobuf."
 
 plugins {
+    id("java-library")
     id("com.google.protobuf") version "0.9.4"
 }
 

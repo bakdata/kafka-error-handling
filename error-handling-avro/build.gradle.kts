@@ -1,6 +1,7 @@
 description = "Transform dead letters in Kafka Streams applications to Avro format."
 
 plugins {
+    id("java-library")
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
 }
 

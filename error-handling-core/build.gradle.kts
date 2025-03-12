@@ -1,6 +1,7 @@
 description = "A library for error handling in Kafka Streams."
 
 plugins {
+    id("java-library")
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
 }
 
