@@ -1,8 +1,15 @@
 # Change Log
 
-## [1.6.1](https://github.com/bakdata/kafka-error-handling/tree/1.6.1) (2025-02-17)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.1...1.6.1)
+## [1.7.0](https://github.com/bakdata/kafka-error-handling/tree/1.7.0) (2025-03-12)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.7.0...1.7.0)
 
+
+## [1.7.0](https://github.com/bakdata/kafka-error-handling/tree/1.7.0) (2025-03-12)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.1...1.7.0)
+
+**Merged pull requests:**
+
+- Create BOM [\#31](https://github.com/bakdata/kafka-error-handling/pull/31) ([@philipp94831](https://github.com/philipp94831))
 
 ## [1.6.1](https://github.com/bakdata/kafka-error-handling/tree/1.6.1) (2025-02-17)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.0...1.6.1)
@@ -51,7 +58,7 @@
 
 - Fix GitHub release [\#24](https://github.com/bakdata/kafka-error-handling/pull/24) ([@philipp94831](https://github.com/philipp94831))
 - Update dependencies [\#23](https://github.com/bakdata/kafka-error-handling/pull/23) ([@philipp94831](https://github.com/philipp94831))
-- Update AvroDeadLetterConverter example from deprecated transformer style to processor style [\#22](https://github.com/bakdata/kafka-error-handling/pull/22) ([@JakobEdding](https://github.com/JakobEdding))
+- Update AvroDeadLetterConverter example from deprecated transformer style to processor style [\#22](https://github.com/bakdata/kafka-error-handling/pull/22) ([@jkbe](https://github.com/jkbe))
 - Use github actions to build and release [\#16](https://github.com/bakdata/kafka-error-handling/pull/16) ([@yannick-roeder](https://github.com/yannick-roeder))
 
 ## [1.4.1](https://github.com/bakdata/kafka-error-handling/tree/1.4.1) (2023-01-04)
