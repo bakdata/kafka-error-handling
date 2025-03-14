@@ -70,7 +70,6 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
     private static final Serde<String> STRING_SERDE = Serdes.String();
-    private static final Serde<ProtoDeadLetter> DEAD_LETTER_SERDE = new KafkaProtobufSerde<>(ProtoDeadLetter.class);
     private static final String DEAD_LETTER_DESCRIPTION = "Description";
     private static final String ERROR_MESSAGE = "ERROR!";
     @Mock
