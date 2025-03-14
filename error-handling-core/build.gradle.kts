@@ -6,7 +6,8 @@ plugins {
 }
 
 dependencies {
-    api(platform("com.bakdata.kafka:kafka-bom:1.0.1-SNAPSHOT"))
+    val kafkaUtilsVersion: String by project
+    api(platform("com.bakdata.kafka:kafka-bom:$kafkaUtilsVersion"))
     api(group = "org.apache.kafka", name = "kafka-streams")
     val avroVersion: String by project
     implementation(group = "org.apache.avro", name = "avro", version = avroVersion)

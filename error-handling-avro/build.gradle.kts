@@ -34,7 +34,8 @@ dependencies {
         name = "fluent-kafka-streams-tests-junit5",
         version = kafkaStreamsTestsVersion
     )
-    testImplementation(platform("com.bakdata.kafka:confluent-bom"))
+    val kafkaUtilsVersion: String by project
+    testImplementation(platform("com.bakdata.kafka:confluent-bom:$kafkaUtilsVersion"))
     testImplementation(group = "io.confluent", name = "kafka-streams-avro-serde")
 }
 
