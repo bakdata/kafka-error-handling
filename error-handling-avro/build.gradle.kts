@@ -34,8 +34,7 @@ dependencies {
         name = "fluent-kafka-streams-tests-junit5",
         version = kafkaStreamsTestsVersion
     )
-    val confluentVersion: String by project
-    testImplementation(group = "io.confluent", name = "kafka-streams-avro-serde", version = confluentVersion)
+    testImplementation(group = "io.confluent", name = "kafka-streams-avro-serde")
 }
 
 avro {

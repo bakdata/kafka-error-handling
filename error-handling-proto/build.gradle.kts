@@ -29,8 +29,7 @@ dependencies {
         name = "schema-registry-mock-junit5",
         version = kafkaStreamsTestsVersion
     )
-    val confluentVersion: String by project
-    testImplementation(group = "io.confluent", name = "kafka-streams-protobuf-serde", version = confluentVersion)
+    testImplementation(group = "io.confluent", name = "kafka-streams-protobuf-serde")
 }
 
 protobuf {
