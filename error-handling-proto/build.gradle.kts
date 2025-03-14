@@ -24,6 +24,7 @@ dependencies {
         name = "fluent-kafka-streams-tests-junit5",
         version = kafkaStreamsTestsVersion
     )
+    testImplementation(platform("com.bakdata.kafka:confluent-bom"))
     testImplementation(group = "io.confluent", name = "kafka-streams-protobuf-serde")
 }
 
