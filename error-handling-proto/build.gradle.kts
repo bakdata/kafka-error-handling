@@ -24,11 +24,6 @@ dependencies {
         name = "fluent-kafka-streams-tests-junit5",
         version = kafkaStreamsTestsVersion
     )
-    testImplementation(
-        group = "com.bakdata.fluent-kafka-streams-tests",
-        name = "schema-registry-mock-junit5",
-        version = kafkaStreamsTestsVersion
-    )
     testImplementation(group = "io.confluent", name = "kafka-streams-protobuf-serde")
 }
 

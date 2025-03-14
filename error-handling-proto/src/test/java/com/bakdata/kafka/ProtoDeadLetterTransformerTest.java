@@ -105,7 +105,7 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         this.buildTopology(builder);
         final Topology topology = builder.build();
         final Map<String, Object> kafkaProperties = this.getKafkaProperties();
-        this.topology = new TestTopology<Integer, String>(topology, kafkaProperties);
+        this.topology = new TestTopology<>(topology, kafkaProperties);
         this.topology.start();
     }
 
