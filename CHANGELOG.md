@@ -1,8 +1,15 @@
 # Change Log
 
-## [1.7.0](https://github.com/bakdata/kafka-error-handling/tree/1.7.0) (2025-03-12)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.7.0...1.7.0)
+## [1.8.0](https://github.com/bakdata/kafka-error-handling/tree/1.8.0) (2025-03-20)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.8.0...1.8.0)
 
+
+## [1.8.0](https://github.com/bakdata/kafka-error-handling/tree/1.8.0) (2025-03-20)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.7.0...1.8.0)
+
+**Merged pull requests:**
+
+- Upgrade to Kafka 3.9 [\#32](https://github.com/bakdata/kafka-error-handling/pull/32) ([@philipp94831](https://github.com/philipp94831))
 
 ## [1.7.0](https://github.com/bakdata/kafka-error-handling/tree/1.7.0) (2025-03-12)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.1...1.7.0)
