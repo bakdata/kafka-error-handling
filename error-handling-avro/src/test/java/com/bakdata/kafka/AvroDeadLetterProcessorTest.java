@@ -27,6 +27,7 @@ package com.bakdata.kafka;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import java.time.Instant;
 import java.util.Arrays;
@@ -84,6 +85,7 @@ class AvroDeadLetterProcessorTest extends ErrorCaptureTopologyTest {
     protected Map<String, Object> getKafkaProperties() {
         final Map<String, Object> kafkaProperties = super.getKafkaProperties();
         kafkaProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        kafkaProperties.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "mock://");
         return kafkaProperties;
     }
 

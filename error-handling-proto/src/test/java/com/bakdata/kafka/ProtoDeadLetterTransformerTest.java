@@ -29,11 +29,9 @@ import static org.mockito.Mockito.when;
 
 import com.bakdata.fluent_kafka_streams_tests.TestTopology;
 import com.bakdata.kafka.proto.v1.ProtoDeadLetter;
-import com.bakdata.schemaregistrymock.SchemaRegistryMock;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
-import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig;
 import io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde;
@@ -72,7 +70,6 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
     private static final String OUTPUT_TOPIC = "output";
     private static final String INPUT_TOPIC = "input";
     private static final Serde<String> STRING_SERDE = Serdes.String();
-    private static final Serde<ProtoDeadLetter> DEAD_LETTER_SERDE = new KafkaProtobufSerde<>(ProtoDeadLetter.class);
     private static final String DEAD_LETTER_DESCRIPTION = "Description";
     private static final String ERROR_MESSAGE = "ERROR!";
     @Mock
@@ -97,6 +94,7 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
                 StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaProtobufSerde.class.getName());
         kafkaProperties.put(KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE,
                 ProtoDeadLetter.class);
+        kafkaProperties.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "mock://");
         return kafkaProperties;
     }
 
@@ -106,13 +104,8 @@ class ProtoDeadLetterTransformerTest extends ErrorCaptureTopologyTest {
         this.buildTopology(builder);
         final Topology topology = builder.build();
         final Map<String, Object> kafkaProperties = this.getKafkaProperties();
-        final SchemaRegistryMock schemaRegistryMock = new SchemaRegistryMock(List.of(new ProtobufSchemaProvider()));
-        this.topology = new TestTopology<Integer, String>(topology, kafkaProperties)
-                .withSchemaRegistryMock(schemaRegistryMock);
+        this.topology = new TestTopology<>(topology, kafkaProperties);
         this.topology.start();
-        DEAD_LETTER_SERDE.configure(
-                Map.of(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
-                        this.topology.getSchemaRegistryUrl()), false);
     }
 
     @Test
