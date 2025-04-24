@@ -13,7 +13,7 @@ dependencies {
     implementation(libs.commons.lang)
 
     testRuntimeOnly(libs.junit.platform.launcher)
-    testFixturesImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
     testImplementation(libs.assertj)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.junit)
