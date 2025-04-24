@@ -30,4 +30,4 @@ sonar = { id = "com.bakdata.sonar", version = "1.7.1" }
 sonatype = { id = "com.bakdata.sonatype", version = "1.9.0" }
 lombok = { id = "io.freefair.lombok", version = "8.13.1" }
 avro = { id = "com.github.davidmc24.gradle.plugin.avro", version = "1.9.1" }
-protobuf = { id = "com.google.protobuf", version = "0.9.4" }
+protobuf = { id = "com.google.protobuf", version = "0.9.5" }
