@@ -1,0 +1,33 @@
+[versions]
+jackson = "2.18.2"
+junit = "5.11.4"
+mockito = "5.15.2"
+
+[libraries]
+kafka-bom = { group = "com.bakdata.kafka", name = "kafka-bom", version = "1.1.0" }
+kafka-streams = { group = "org.apache.kafka", name = "kafka-streams" }
+kafka-streams-avro-serde = { group = "io.confluent", name = "kafka-streams-avro-serde" }
+kafka-streams-protobuf-serde = { group = "io.confluent", name = "kafka-streams-protobuf-serde" }
+avro = { group = "org.apache.avro", name = "avro", version = "1.12.0" }
+protobuf = { group = "com.google.protobuf", name = "protobuf-java", version = "3.25.5" }
+jool = { group = "org.jooq", name = "jool", version = "0.9.15" }
+commons-lang = { group = "org.apache.commons", name = "commons-lang3", version = "3.17.0" }
+jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
+jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
+
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+assertj = { group = "org.assertj", name = "assertj-core", version = "3.27.2" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-junit = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito" }
+fluentKafkaStreamsTests = { group = "com.bakdata.fluent-kafka-streams-tests", name = "fluent-kafka-streams-tests-junit5", version = "3.3.0" }
+log4j-slf4j2 = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version = "2.24.3" }
+
+[plugins]
+release = { id = "com.bakdata.release", version = "1.7.1" }
+sonar = { id = "com.bakdata.sonar", version = "1.7.1" }
+sonatype = { id = "com.bakdata.sonatype", version = "1.9.0" }
+lombok = { id = "io.freefair.lombok", version = "8.12.2" }
+avro = { id = "com.github.davidmc24.gradle.plugin.avro", version = "1.9.1" }
+protobuf = { id = "com.google.protobuf", version = "0.9.4" }
