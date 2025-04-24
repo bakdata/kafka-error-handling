@@ -8,6 +8,7 @@ plugins {
 dependencies {
     api(platform(libs.kafka.bom))
     api(libs.kafka.streams)
+    implementation(libs.avro)
     implementation(libs.jool)
     implementation(libs.commons.lang)
 
@@ -21,7 +22,6 @@ dependencies {
     testFixturesImplementation(libs.jackson.core)
     testFixturesImplementation(libs.jackson.databind)
     testFixturesImplementation(libs.jackson.datatype.jsr310)
-    testImplementation(libs.avro)
 }
 
 avro {
