@@ -7,6 +7,7 @@ plugins {
 
 val protobufVersion = libs.protobuf.get().version
 dependencies {
+    implementation(platform(libs.kafka.bom))
     api(project(":error-handling-core"))
     compileOnly(libs.kafka.streams)
     api(libs.protobuf)
