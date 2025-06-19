@@ -15,8 +15,8 @@ sourceSets {
 }
 
 dependencies {
-    api(libs.avro)
     implementation(platform(libs.kafka.bom))
+    api(libs.avro)
     api(project(":error-handling-core"))
     compileOnly(libs.kafka.streams)
 

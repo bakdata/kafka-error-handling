@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(platform(libs.kafka.bom))
     compileOnly(libs.kafka.streams)
+    implementation(platform(libs.kafka.bom))
     implementation(libs.avro)
     implementation(libs.jool)
     implementation(libs.commons.lang)

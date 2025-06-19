@@ -9,8 +9,8 @@ val protobufVersion = libs.protobuf.get().version
 dependencies {
     implementation(platform(libs.kafka.bom))
     api(project(":error-handling-core"))
-    compileOnly(libs.kafka.streams)
     api(libs.protobuf)
+    compileOnly(libs.kafka.streams)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter)
     testImplementation(testFixtures(project(":error-handling-core")))
