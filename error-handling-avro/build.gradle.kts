@@ -15,10 +15,10 @@ sourceSets {
 }
 
 dependencies {
-    implementation(platform(libs.kafka.bom))
+    compileOnly(platform(libs.kafka.bom))
+    compileOnly(libs.kafka.streams)
     api(libs.avro)
     api(project(":error-handling-core"))
-    compileOnly(libs.kafka.streams)
 
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter)
