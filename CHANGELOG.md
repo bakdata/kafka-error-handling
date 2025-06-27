@@ -1,8 +1,27 @@
 # Change Log
 
-## [1.8.0](https://github.com/bakdata/kafka-error-handling/tree/1.8.0) (2025-03-20)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.8.0...1.8.0)
+## [1.9.0](https://github.com/bakdata/kafka-error-handling/tree/1.9.0) (2025-06-27)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.9.0...1.9.0)
 
+
+## [1.9.0](https://github.com/bakdata/kafka-error-handling/tree/1.9.0) (2025-06-27)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.8.0...1.9.0)
+
+**Merged pull requests:**
+
+- Expose Kafka dependencies as provided [\#51](https://github.com/bakdata/kafka-error-handling/pull/51) ([@philipp94831](https://github.com/philipp94831))
+- Migrate to Central Portal [\#50](https://github.com/bakdata/kafka-error-handling/pull/50) ([@philipp94831](https://github.com/philipp94831))
+- Group Dependabot updates for Protobuf [\#42](https://github.com/bakdata/kafka-error-handling/pull/42) ([@philipp94831](https://github.com/philipp94831))
+- Configure Dependabot [\#35](https://github.com/bakdata/kafka-error-handling/pull/35) ([@philipp94831](https://github.com/philipp94831))
+- Upgrade to Gradle 8.13 [\#34](https://github.com/bakdata/kafka-error-handling/pull/34) ([@philipp94831](https://github.com/philipp94831))
+- Migrate to version catalog [\#33](https://github.com/bakdata/kafka-error-handling/pull/33) ([@philipp94831](https://github.com/philipp94831))
+
+**Upgraded dependencies:**
+
+- Bump the test\-dependencies group with 4 updates [\#37](https://github.com/bakdata/kafka-error-handling/pull/37) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jackson from 2.18.2 to 2.18.3 [\#39](https://github.com/bakdata/kafka-error-handling/pull/39) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the plugins group with 3 updates [\#38](https://github.com/bakdata/kafka-error-handling/pull/38) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bakdata/ci\-templates from 1.62.0 to 1.66.1 [\#36](https://github.com/bakdata/kafka-error-handling/pull/36) ([@dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [1.8.0](https://github.com/bakdata/kafka-error-handling/tree/1.8.0) (2025-03-20)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.7.0...1.8.0)
