@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 package com.bakdata.kafka;
 
-import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
 
 /**
@@ -47,33 +46,6 @@ public final class AvroDeadLetterConverter implements DeadLetterConverter<DeadLe
                 .setOffset(deadLetterDescription.getOffset())
                 .setInputTimestamp(deadLetterDescription.getInputTimestamp())
                 .build();
-    }
-
-    /**
-     * Creates a transformer that uses the AvroDeadLetterConverter
-     *
-     * <pre>{@code
-     * // Example, this works for all error capturing topologies
-     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
-     * final KStream<K, V> input = ...;
-     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
-     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = processed.flatMap(ProcessedKeyValue::getErrors);
-     * final KStream<K, DeadLetter> deadLetters = errors.transformValues(
-     *                      AvroDeadLetterConverter.asTransformer("Description"));
-     * deadLetters.to(ERROR_TOPIC);
-     * }
-     * </pre>
-     *
-     * @param description shared description for all errors
-     * @param <V> type of the input value
-     * @return a transformer supplier
-     * @deprecated Use {@link #asProcessor(String)}
-     */
-    @Deprecated(since = "1.4.0")
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, DeadLetter> asTransformer(
-            final String description) {
-        return DeadLetterTransformer.create(description, new AvroDeadLetterConverter());
     }
 
     /**

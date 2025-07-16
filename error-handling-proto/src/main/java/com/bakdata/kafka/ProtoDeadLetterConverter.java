@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 bakdata
+ * Copyright (c) 2025 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.Timestamp;
-import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
 import org.apache.kafka.streams.processor.api.FixedKeyProcessorSupplier;
 
 
@@ -76,33 +75,6 @@ public class ProtoDeadLetterConverter implements DeadLetterConverter<ProtoDeadLe
         }
 
         return builder.build();
-    }
-
-    /**
-     * Creates a transformer that uses the ProtoDeadLetterConverter
-     *
-     * <pre>{@code
-     * // Example, this works for all error capturing topologies
-     * final KeyValueMapper<K, V, KeyValue<KR, VR>> mapper = ...;
-     * final KStream<K, V> input = ...;
-     * final KStream<KR, ProcessedKeyValue<K, V, VR>> processed = input.map(captureErrors(mapper));
-     * final KStream<KR, VR> output = processed.flatMapValues(ProcessedKeyValue::getValues);
-     * final KStream<K, ProcessingError<V>> errors = processed.flatMapValues(ProcessedKeyValue::getErrors);
-     * final KStream<K, ProtoDeadLetter> deadLetters = errors.transformValues(
-     *                      ProtoDeadLetterConverter.asTransformer("Description"));
-     * deadLetters.to(OUTPUT_TOPIC);
-     * }
-     * </pre>
-     *
-     * @param description shared description for all errors
-     * @param <V> type of the input value
-     * @return a transformer supplier
-     * @deprecated Use {@link #asProcessor(String)}
-     */
-    @Deprecated(since = "1.4.0")
-    public static <V> ValueTransformerSupplier<ProcessingError<V>, ProtoDeadLetter> asTransformer(
-            final String description) {
-        return DeadLetterTransformer.create(description, new ProtoDeadLetterConverter());
     }
 
     /**

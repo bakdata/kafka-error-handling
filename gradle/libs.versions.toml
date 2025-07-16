@@ -4,7 +4,7 @@ junit = "5.13.2"
 mockito = "5.18.0"
 
 [libraries]
-kafka-bom = { group = "com.bakdata.kafka", name = "kafka-bom", version = "1.1.0" }
+kafka-bom = { group = "com.bakdata.kafka", name = "kafka-bom", version = "1.2.0" }
 kafka-streams = { group = "org.apache.kafka", name = "kafka-streams" }
 kafka-streams-avro-serde = { group = "io.confluent", name = "kafka-streams-avro-serde" }
 kafka-streams-protobuf-serde = { group = "io.confluent", name = "kafka-streams-protobuf-serde" }
@@ -21,7 +21,7 @@ junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.r
 assertj = { group = "org.assertj", name = "assertj-core", version = "3.27.3" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-junit = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito" }
-fluentKafkaStreamsTests = { group = "com.bakdata.fluent-kafka-streams-tests", name = "fluent-kafka-streams-tests-junit5", version = "3.3.0" }
+fluentKafkaStreamsTests = { group = "com.bakdata.fluent-kafka-streams-tests", name = "fluent-kafka-streams-tests-junit5", version = "3.4.1" }
 log4j-slf4j2 = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version = "2.25.1" }
 
 [plugins]
