@@ -1,8 +1,25 @@
 # Change Log
 
-## [1.9.0](https://github.com/bakdata/kafka-error-handling/tree/1.9.0) (2025-06-27)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.9.0...1.9.0)
+## [2.0.0](https://github.com/bakdata/kafka-error-handling/tree/2.0.0) (2025-07-18)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/2.0.0...2.0.0)
 
+
+## [2.0.0](https://github.com/bakdata/kafka-error-handling/tree/2.0.0) (2025-07-18)
+[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.9.0...2.0.0)
+
+**Merged pull requests:**
+
+- Upgrade to Kafka 4.0 [\#58](https://github.com/bakdata/kafka-error-handling/pull/58) ([@philipp94831](https://github.com/philipp94831))
+- Upgrade to Gradle 8.14 [\#57](https://github.com/bakdata/kafka-error-handling/pull/57) ([@philipp94831](https://github.com/philipp94831))
+
+**Upgraded dependencies:**
+
+- Bump org.junit.jupiter:junit\-jupiter from 5.13.2 to 5.13.3 in the test\-dependencies group across 1 directory [\#62](https://github.com/bakdata/kafka-error-handling/pull/62) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.commons:commons\-lang3 from 3.17.0 to 3.18.0 [\#60](https://github.com/bakdata/kafka-error-handling/pull/60) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the plugins group with 2 updates [\#52](https://github.com/bakdata/kafka-error-handling/pull/52) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jackson from 2.18.3 to 2.19.1 [\#48](https://github.com/bakdata/kafka-error-handling/pull/48) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.logging.log4j:log4j\-slf4j2\-impl from 2.24.3 to 2.25.0 in the log\-dependencies group [\#49](https://github.com/bakdata/kafka-error-handling/pull/49) ([@dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the test\-dependencies group across 1 directory with 3 updates [\#47](https://github.com/bakdata/kafka-error-handling/pull/47) ([@dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [1.9.0](https://github.com/bakdata/kafka-error-handling/tree/1.9.0) (2025-06-27)
 [View commits](https://github.com/bakdata/kafka-error-handling/compare/1.8.0...1.9.0)
