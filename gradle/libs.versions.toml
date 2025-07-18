@@ -4,7 +4,7 @@ junit = "5.13.2"
 mockito = "5.18.0"
 
 [libraries]
-kafka-bom = { group = "com.bakdata.kafka", name = "kafka-bom", version = "1.2.0" }
+kafka-bom = { group = "com.bakdata.kafka", name = "kafka-bom", version = "1.2.1" }
 kafka-streams = { group = "org.apache.kafka", name = "kafka-streams" }
 kafka-streams-avro-serde = { group = "io.confluent", name = "kafka-streams-avro-serde" }
 kafka-streams-protobuf-serde = { group = "io.confluent", name = "kafka-streams-protobuf-serde" }
