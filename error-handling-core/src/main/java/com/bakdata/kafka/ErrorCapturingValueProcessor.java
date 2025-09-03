@@ -106,7 +106,7 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, VR> FixedKeyProcessorSupplier<K, V, ProcessedValue<V, VR>> captureErrors(
-            final @NonNull FixedKeyProcessorSupplier<? super K, ? super V, VR> supplier) {
+            final @NonNull FixedKeyProcessorSupplier<? super K, ? super V, ? extends VR> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -129,7 +129,7 @@ public final class ErrorCapturingValueProcessor<K, V, VR>
      * @return {@code FixedKeyProcessorSupplier}
      */
     public static <K, V, VR> FixedKeyProcessorSupplier<K, V, ProcessedValue<V, VR>> captureErrors(
-            final @NonNull FixedKeyProcessorSupplier<? super K, ? super V, VR> supplier,
+            final @NonNull FixedKeyProcessorSupplier<? super K, ? super V, ? extends VR> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
         return new FixedKeyProcessorSupplier<>() {
             @Override
