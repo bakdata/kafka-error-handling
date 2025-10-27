@@ -1,6 +1,6 @@
 [versions]
 jackson = "2.20.0"
-junit = "6.0.0"
+junit = "5.14.0"
 mockito = "5.20.0"
 
 [libraries]
