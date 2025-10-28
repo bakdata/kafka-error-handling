@@ -17,7 +17,9 @@ dependencies {
     testImplementation(libs.mockito.junit)
     testImplementation(libs.assertj)
     testImplementation(libs.log4j.slf4j2)
-    testImplementation(libs.kafka.streams.protobuf.serde)
+    testImplementation(libs.kafka.streams.protobuf.serde) {
+        exclude(group = "org.apache.kafka") // force usage of OSS kafka-clients
+    }
 }
 
 protobuf {

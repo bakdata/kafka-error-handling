@@ -68,7 +68,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull Processor<? super K, ? super V, KR, VR> processor) {
+            final @NonNull Processor<? super K, ? super V, ? extends KR, ? extends VR> processor) {
         return captureErrors(processor, ErrorUtil::isRecoverable);
     }
 
@@ -91,7 +91,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @return {@code Processor}
      */
     public static <K, V, KR, VR> Processor<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull Processor<? super K, ? super V, KR, VR> processor,
+            final @NonNull Processor<? super K, ? super V, ? extends KR, ? extends VR> processor,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ErrorCapturingProcessor<>((Processor<K, V, KR, VR>) processor, errorFilter);
     }
@@ -110,7 +110,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @see ErrorUtil#isRecoverable(Exception)
      */
     public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull ProcessorSupplier<? super K, ? super V, KR, VR> supplier) {
+            final @NonNull ProcessorSupplier<? super K, ? super V, ? extends KR, ? extends VR> supplier) {
         return captureErrors(supplier, ErrorUtil::isRecoverable);
     }
 
@@ -134,7 +134,7 @@ public final class ErrorCapturingProcessor<K, V, KR, VR>
      * @return {@code ProcessorSupplier}
      */
     public static <K, V, KR, VR> ProcessorSupplier<K, V, KR, ProcessedKeyValue<K, V, VR>> captureErrors(
-            final @NonNull ProcessorSupplier<? super K, ? super V, KR, VR> supplier,
+            final @NonNull ProcessorSupplier<? super K, ? super V, ? extends KR, ? extends VR> supplier,
             final @NonNull Predicate<Exception> errorFilter) {
         return new ProcessorSupplier<>() {
             @Override
