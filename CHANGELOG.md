@@ -1,211 +1,277 @@
-# Change Log
+# Changelog
 
-## [2.0.0](https://github.com/bakdata/kafka-error-handling/tree/2.0.0) (2025-07-18)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/2.0.0...2.0.0)
+All notable changes to this project will be documented in this file.
 
+## [2.1.0](https://github.com/bakdata/kafka-error-handling/tree/2.1.0) - 2025-11-11
+### What's changed
 
-## [2.0.0](https://github.com/bakdata/kafka-error-handling/tree/2.0.0) (2025-07-18)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.9.0...2.0.0)
+* Bump bakdata/ci-templates from 1.66.1 to 1.70.0 by @dependabot[bot] in [#68](https://github.com/bakdata/kafka-error-handling/pull/68)
 
-**Merged pull requests:**
+* Bump the plugins group with 3 updates by @dependabot[bot] in [#72](https://github.com/bakdata/kafka-error-handling/pull/72)
 
-- Upgrade to Kafka 4.0 [\#58](https://github.com/bakdata/kafka-error-handling/pull/58) ([@philipp94831](https://github.com/philipp94831))
-- Upgrade to Gradle 8.14 [\#57](https://github.com/bakdata/kafka-error-handling/pull/57) ([@philipp94831](https://github.com/philipp94831))
+* Bump org.apache.logging.log4j:log4j-slf4j2-impl from 2.25.1 to 2.25.2 in the log-dependencies group by @dependabot[bot] in [#74](https://github.com/bakdata/kafka-error-handling/pull/74)
 
-**Upgraded dependencies:**
+* Bump the protobuf group with 2 updates by @dependabot[bot] in [#43](https://github.com/bakdata/kafka-error-handling/pull/43)
 
-- Bump org.junit.jupiter:junit\-jupiter from 5.13.2 to 5.13.3 in the test\-dependencies group across 1 directory [\#62](https://github.com/bakdata/kafka-error-handling/pull/62) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump org.apache.commons:commons\-lang3 from 3.17.0 to 3.18.0 [\#60](https://github.com/bakdata/kafka-error-handling/pull/60) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump the plugins group with 2 updates [\#52](https://github.com/bakdata/kafka-error-handling/pull/52) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump jackson from 2.18.3 to 2.19.1 [\#48](https://github.com/bakdata/kafka-error-handling/pull/48) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump org.apache.logging.log4j:log4j\-slf4j2\-impl from 2.24.3 to 2.25.0 in the log\-dependencies group [\#49](https://github.com/bakdata/kafka-error-handling/pull/49) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump the test\-dependencies group across 1 directory with 3 updates [\#47](https://github.com/bakdata/kafka-error-handling/pull/47) ([@dependabot[bot]](https://github.com/apps/dependabot))
+* Bump jackson from 2.19.1 to 2.20.0 by @dependabot[bot] in [#69](https://github.com/bakdata/kafka-error-handling/pull/69)
 
-## [1.9.0](https://github.com/bakdata/kafka-error-handling/tree/1.9.0) (2025-06-27)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.8.0...1.9.0)
+* Bump the test-dependencies group across 1 directory with 4 updates by @dependabot[bot] in [#71](https://github.com/bakdata/kafka-error-handling/pull/71)
 
-**Merged pull requests:**
+* Upgrade to Kafka 4.1 by @philipp94831 in [#73](https://github.com/bakdata/kafka-error-handling/pull/73)
 
-- Expose Kafka dependencies as provided [\#51](https://github.com/bakdata/kafka-error-handling/pull/51) ([@philipp94831](https://github.com/philipp94831))
-- Migrate to Central Portal [\#50](https://github.com/bakdata/kafka-error-handling/pull/50) ([@philipp94831](https://github.com/philipp94831))
-- Group Dependabot updates for Protobuf [\#42](https://github.com/bakdata/kafka-error-handling/pull/42) ([@philipp94831](https://github.com/philipp94831))
-- Configure Dependabot [\#35](https://github.com/bakdata/kafka-error-handling/pull/35) ([@philipp94831](https://github.com/philipp94831))
-- Upgrade to Gradle 8.13 [\#34](https://github.com/bakdata/kafka-error-handling/pull/34) ([@philipp94831](https://github.com/philipp94831))
-- Migrate to version catalog [\#33](https://github.com/bakdata/kafka-error-handling/pull/33) ([@philipp94831](https://github.com/philipp94831))
 
-**Upgraded dependencies:**
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/2.0.0...2.1.0
 
-- Bump the test\-dependencies group with 4 updates [\#37](https://github.com/bakdata/kafka-error-handling/pull/37) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump jackson from 2.18.2 to 2.18.3 [\#39](https://github.com/bakdata/kafka-error-handling/pull/39) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump the plugins group with 3 updates [\#38](https://github.com/bakdata/kafka-error-handling/pull/38) ([@dependabot[bot]](https://github.com/apps/dependabot))
-- Bump bakdata/ci\-templates from 1.62.0 to 1.66.1 [\#36](https://github.com/bakdata/kafka-error-handling/pull/36) ([@dependabot[bot]](https://github.com/apps/dependabot))
+## [2.0.0](https://github.com/bakdata/kafka-error-handling/tree/2.0.0) - 2025-07-18
+### What's changed
 
-## [1.8.0](https://github.com/bakdata/kafka-error-handling/tree/1.8.0) (2025-03-20)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.7.0...1.8.0)
+* Bump the test-dependencies group across 1 directory with 3 updates by @dependabot[bot] in [#47](https://github.com/bakdata/kafka-error-handling/pull/47)
 
-**Merged pull requests:**
+* Bump org.apache.logging.log4j:log4j-slf4j2-impl from 2.24.3 to 2.25.0 in the log-dependencies group by @dependabot[bot] in [#49](https://github.com/bakdata/kafka-error-handling/pull/49)
 
-- Upgrade to Kafka 3.9 [\#32](https://github.com/bakdata/kafka-error-handling/pull/32) ([@philipp94831](https://github.com/philipp94831))
+* Bump jackson from 2.18.3 to 2.19.1 by @dependabot[bot] in [#48](https://github.com/bakdata/kafka-error-handling/pull/48)
 
-## [1.7.0](https://github.com/bakdata/kafka-error-handling/tree/1.7.0) (2025-03-12)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.1...1.7.0)
+* Bump the plugins group with 2 updates by @dependabot[bot] in [#52](https://github.com/bakdata/kafka-error-handling/pull/52)
 
-**Merged pull requests:**
+* Upgrade to Gradle 8.14 by @philipp94831 in [#57](https://github.com/bakdata/kafka-error-handling/pull/57)
 
-- Create BOM [\#31](https://github.com/bakdata/kafka-error-handling/pull/31) ([@philipp94831](https://github.com/philipp94831))
+* Bump org.apache.commons:commons-lang3 from 3.17.0 to 3.18.0 by @dependabot[bot] in [#60](https://github.com/bakdata/kafka-error-handling/pull/60)
 
-## [1.6.1](https://github.com/bakdata/kafka-error-handling/tree/1.6.1) (2025-02-17)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.6.0...1.6.1)
+* Bump org.junit.jupiter:junit-jupiter from 5.13.2 to 5.13.3 in the test-dependencies group across 1 directory by @dependabot[bot] in [#62](https://github.com/bakdata/kafka-error-handling/pull/62)
 
-**Merged pull requests:**
+* Upgrade to Kafka 4.0 by @philipp94831 in [#58](https://github.com/bakdata/kafka-error-handling/pull/58)
 
-- Update method signatures to match Kafka Streams [\#30](https://github.com/bakdata/kafka-error-handling/pull/30) ([@philipp94831](https://github.com/philipp94831))
 
-## [1.6.0](https://github.com/bakdata/kafka-error-handling/tree/1.6.0) (2025-01-07)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.5.0...1.6.0)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.9.0...2.0.0
 
-**Merged pull requests:**
+## [1.9.0](https://github.com/bakdata/kafka-error-handling/tree/1.9.0) - 2025-06-27
+### What's changed
 
-- Upgrade to Kafka 3.8 [\#29](https://github.com/bakdata/kafka-error-handling/pull/29) ([@philipp94831](https://github.com/philipp94831))
+* Migrate to version catalog by @philipp94831 in [#33](https://github.com/bakdata/kafka-error-handling/pull/33)
 
-## [1.5.0](https://github.com/bakdata/kafka-error-handling/tree/1.5.0) (2024-06-24)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.4...1.5.0)
+* Upgrade to Gradle 8.13 by @philipp94831 in [#34](https://github.com/bakdata/kafka-error-handling/pull/34)
 
-**Merged pull requests:**
+* Configure Dependabot by @philipp94831 in [#35](https://github.com/bakdata/kafka-error-handling/pull/35)
 
-- Use wall\-clock time for dead letter record [\#28](https://github.com/bakdata/kafka-error-handling/pull/28) ([@torbsto](https://github.com/torbsto))
+* Group Dependabot updates for Protobuf by @philipp94831 in [#42](https://github.com/bakdata/kafka-error-handling/pull/42)
 
-## [1.4.4](https://github.com/bakdata/kafka-error-handling/tree/1.4.4) (2024-03-21)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.3...1.4.4)
+* Bump bakdata/ci-templates from 1.62.0 to 1.66.1 by @dependabot[bot] in [#36](https://github.com/bakdata/kafka-error-handling/pull/36)
 
-**Merged pull requests:**
+* Bump the plugins group with 3 updates by @dependabot[bot] in [#38](https://github.com/bakdata/kafka-error-handling/pull/38)
 
-- Forward streams errors [\#27](https://github.com/bakdata/kafka-error-handling/pull/27) ([@philipp94831](https://github.com/philipp94831))
+* Bump jackson from 2.18.2 to 2.18.3 by @dependabot[bot] in [#39](https://github.com/bakdata/kafka-error-handling/pull/39)
 
-## [1.4.3](https://github.com/bakdata/kafka-error-handling/tree/1.4.3) (2024-03-21)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.2...1.4.3)
+* Bump the test-dependencies group with 4 updates by @dependabot[bot] in [#37](https://github.com/bakdata/kafka-error-handling/pull/37)
 
-**Merged pull requests:**
+* Migrate to Central Portal by @philipp94831 in [#50](https://github.com/bakdata/kafka-error-handling/pull/50)
 
-- Forward all SerializationExceptions by default [\#26](https://github.com/bakdata/kafka-error-handling/pull/26) ([@philipp94831](https://github.com/philipp94831))
-- Upgrade to Gradle 8.4 [\#25](https://github.com/bakdata/kafka-error-handling/pull/25) ([@philipp94831](https://github.com/philipp94831))
+* Expose Kafka dependencies as provided by @philipp94831 in [#51](https://github.com/bakdata/kafka-error-handling/pull/51)
 
-## [1.4.2](https://github.com/bakdata/kafka-error-handling/tree/1.4.2) (2024-01-08)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.1...1.4.2)
 
-**Closed issues:**
+### New Contributors
+* @dependabot[bot] made their first contribution in [#37](https://github.com/bakdata/kafka-error-handling/pull/37)
 
-- Migrate Azure pipeline [\#21](https://github.com/bakdata/kafka-error-handling/issues/21)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.8.0...1.9.0
 
-**Merged pull requests:**
+## [1.8.0](https://github.com/bakdata/kafka-error-handling/tree/1.8.0) - 2025-03-20
+### What's changed
 
-- Fix GitHub release [\#24](https://github.com/bakdata/kafka-error-handling/pull/24) ([@philipp94831](https://github.com/philipp94831))
-- Update dependencies [\#23](https://github.com/bakdata/kafka-error-handling/pull/23) ([@philipp94831](https://github.com/philipp94831))
-- Update AvroDeadLetterConverter example from deprecated transformer style to processor style [\#22](https://github.com/bakdata/kafka-error-handling/pull/22) ([@jkbe](https://github.com/jkbe))
-- Use github actions to build and release [\#16](https://github.com/bakdata/kafka-error-handling/pull/16) ([@yannick-roeder](https://github.com/yannick-roeder))
+* Upgrade to Kafka 3.9 by @philipp94831 in [#32](https://github.com/bakdata/kafka-error-handling/pull/32)
 
-## [1.4.1](https://github.com/bakdata/kafka-error-handling/tree/1.4.1) (2023-01-04)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.4.0...1.4.1)
 
-**Merged pull requests:**
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.7.0...1.8.0
 
-- Update dependencies [\#20](https://github.com/bakdata/kafka-error-handling/pull/20) ([@philipp94831](https://github.com/philipp94831))
+## [1.7.0](https://github.com/bakdata/kafka-error-handling/tree/1.7.0) - 2025-03-12
+### What's changed
 
-## [1.4.0](https://github.com/bakdata/kafka-error-handling/tree/1.4.0) (2022-12-28)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.3.0...1.4.0)
+* Create BOM by @philipp94831 in [#31](https://github.com/bakdata/kafka-error-handling/pull/31)
 
-**Closed issues:**
 
-- Protobuf support for dead letters [\#12](https://github.com/bakdata/kafka-error-handling/issues/12)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.6.1...1.7.0
 
-**Merged pull requests:**
+## [1.6.1](https://github.com/bakdata/kafka-error-handling/tree/1.6.1) - 2025-02-17
+### What's changed
 
-- Upgrade to Avro 1.11 [\#19](https://github.com/bakdata/kafka-error-handling/pull/19) ([@philipp94831](https://github.com/philipp94831))
-- Implement new Kafka 3.3 APIs [\#18](https://github.com/bakdata/kafka-error-handling/pull/18) ([@philipp94831](https://github.com/philipp94831))
-- Fix badge for Maven Central [\#17](https://github.com/bakdata/kafka-error-handling/pull/17) ([@philipp94831](https://github.com/philipp94831))
+* Update method signatures to match Kafka Streams by @philipp94831 in [#30](https://github.com/bakdata/kafka-error-handling/pull/30)
 
-## [1.3.0](https://github.com/bakdata/kafka-error-handling/tree/1.3.0) (2022-07-13)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.2.5...1.3.0)
 
-**Merged pull requests:**
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.6.0...1.6.1
 
-- Proto conversion for deadletter [\#13](https://github.com/bakdata/kafka-error-handling/pull/13) ([@mkcode92](https://github.com/mkcode92))
+## [1.6.0](https://github.com/bakdata/kafka-error-handling/tree/1.6.0) - 2025-01-07
+### What's changed
 
-## [1.2.5](https://github.com/bakdata/kafka-error-handling/tree/1.2.5) (2022-06-23)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.2.4...1.2.5)
+* Upgrade to Kafka 3.8 by @philipp94831 in [#29](https://github.com/bakdata/kafka-error-handling/pull/29)
 
-**Closed issues:**
 
-- NPE when adding a header for an exception with a null message [\#14](https://github.com/bakdata/kafka-error-handling/issues/14)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.5.0...1.6.0
 
-**Merged pull requests:**
+## [1.5.0](https://github.com/bakdata/kafka-error-handling/tree/1.5.0) - 2024-06-24
+### What's changed
 
-- Support exceptions with null message [\#15](https://github.com/bakdata/kafka-error-handling/pull/15) ([@philipp94831](https://github.com/philipp94831))
+* Use wall-clock time for dead letter record by @torbsto in [#28](https://github.com/bakdata/kafka-error-handling/pull/28)
 
-## [1.2.4](https://github.com/bakdata/kafka-error-handling/tree/1.2.4) (2022-05-11)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.2.3...1.2.4)
 
-**Closed issues:**
+### New Contributors
+* @torbsto made their first contribution in [#28](https://github.com/bakdata/kafka-error-handling/pull/28)
 
-- Offset Header has a small typo [\#10](https://github.com/bakdata/kafka-error-handling/issues/10)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.4.4...1.5.0
 
-**Merged pull requests:**
+## [1.4.4](https://github.com/bakdata/kafka-error-handling/tree/1.4.4) - 2024-03-21
+### What's changed
 
-- Fix OFFSET header name in ErrorHeaderTransformer [\#11](https://github.com/bakdata/kafka-error-handling/pull/11) ([@patrickjkennedy](https://github.com/patrickjkennedy))
+* Forward streams errors by @philipp94831 in [#27](https://github.com/bakdata/kafka-error-handling/pull/27)
 
-## [1.2.3](https://github.com/bakdata/kafka-error-handling/tree/1.2.3) (2022-05-02)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.2.2...1.2.3)
 
-**Merged pull requests:**
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.4.3...1.4.4
 
-- Add flat transformers [\#9](https://github.com/bakdata/kafka-error-handling/pull/9) ([@philipp94831](https://github.com/philipp94831))
+## [1.4.3](https://github.com/bakdata/kafka-error-handling/tree/1.4.3) - 2024-03-21
+### What's changed
 
-## [1.2.2](https://github.com/bakdata/kafka-error-handling/tree/1.2.2) (2022-02-18)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.2.1...1.2.2)
+* Upgrade to Gradle 8.4 by @philipp94831 in [#25](https://github.com/bakdata/kafka-error-handling/pull/25)
 
-**Merged pull requests:**
+* Forward all SerializationExceptions by default by @philipp94831 in [#26](https://github.com/bakdata/kafka-error-handling/pull/26)
 
-- Add factory methods for TransformerSuppliers [\#8](https://github.com/bakdata/kafka-error-handling/pull/8) ([@philipp94831](https://github.com/philipp94831))
 
-## [1.2.1](https://github.com/bakdata/kafka-error-handling/tree/1.2.1) (2022-02-17)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.2.0...1.2.1)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.4.2...1.4.3
 
-**Merged pull requests:**
+## [1.4.2](https://github.com/bakdata/kafka-error-handling/tree/1.4.2) - 2024-01-08
+### What's changed
 
-- Add error class to dead letter [\#7](https://github.com/bakdata/kafka-error-handling/pull/7) ([@philipp94831](https://github.com/philipp94831))
+* Use github actions to build and release by @yannick-roeder in [#16](https://github.com/bakdata/kafka-error-handling/pull/16)
 
-## [1.2.0](https://github.com/bakdata/kafka-error-handling/tree/1.2.0) (2022-02-15)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.1.2...1.2.0)
+* Update AvroDeadLetterConverter example from deprecated transformer style to processor style by @jkbe in [#22](https://github.com/bakdata/kafka-error-handling/pull/22)
 
-**Merged pull requests:**
+* Update dependencies by @philipp94831 in [#23](https://github.com/bakdata/kafka-error-handling/pull/23)
 
-- Add processing context to dead letters [\#6](https://github.com/bakdata/kafka-error-handling/pull/6) ([@philipp94831](https://github.com/philipp94831))
+* Fix GitHub release by @philipp94831 in [#24](https://github.com/bakdata/kafka-error-handling/pull/24)
 
-## [1.1.2](https://github.com/bakdata/kafka-error-handling/tree/1.1.2) (2021-12-10)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.1.1...1.1.2)
 
-**Merged pull requests:**
+### New Contributors
+* @jkbe made their first contribution in [#22](https://github.com/bakdata/kafka-error-handling/pull/22)
+* @yannick-roeder made their first contribution in [#16](https://github.com/bakdata/kafka-error-handling/pull/16)
 
-- Update avro to 1.10 [\#4](https://github.com/bakdata/kafka-error-handling/pull/4) ([@philipp94831](https://github.com/philipp94831))
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.4.1...1.4.2
 
-## [1.1.1](https://github.com/bakdata/kafka-error-handling/tree/1.1.1) (2021-12-10)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.1.0...1.1.1)
+## [1.4.1](https://github.com/bakdata/kafka-error-handling/tree/1.4.1) - 2023-01-04
+### What's changed
 
-**Merged pull requests:**
+* Update dependencies by @philipp94831 in [#20](https://github.com/bakdata/kafka-error-handling/pull/20)
 
-- Update log4j to 2.15.0 [\#5](https://github.com/bakdata/kafka-error-handling/pull/5) ([@philipp94831](https://github.com/philipp94831))
 
-## [1.1.0](https://github.com/bakdata/kafka-error-handling/tree/1.1.0) (2021-09-24)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/1.0.0...1.1.0)
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.4.0...1.4.1
 
-**Merged pull requests:**
+## [1.4.0](https://github.com/bakdata/kafka-error-handling/tree/1.4.0) - 2022-12-28
+### What's changed
 
-- Update dependencies [\#3](https://github.com/bakdata/kafka-error-handling/pull/3) ([@philipp94831](https://github.com/philipp94831))
-- Provide error details as header fields [\#2](https://github.com/bakdata/kafka-error-handling/pull/2) ([@philipp94831](https://github.com/philipp94831))
+* Fix badge for Maven Central by @philipp94831 in [#17](https://github.com/bakdata/kafka-error-handling/pull/17)
 
-## [1.0.0](https://github.com/bakdata/kafka-error-handling/tree/1.0.0) (2020-03-09)
-[View commits](https://github.com/bakdata/kafka-error-handling/compare/69873530dde0856c890f502f825ce0da046aef1d...1.0.0)
+* Implement new Kafka 3.3 APIs by @philipp94831 in [#18](https://github.com/bakdata/kafka-error-handling/pull/18)
 
-**Merged pull requests:**
+* Upgrade to Avro 1.11 by @philipp94831 in [#19](https://github.com/bakdata/kafka-error-handling/pull/19)
 
-- Create error handlers for Kafka Streams [\#1](https://github.com/bakdata/kafka-error-handling/pull/1) ([@philipp94831](https://github.com/philipp94831))
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.3.0...1.4.0
+
+## [1.3.0](https://github.com/bakdata/kafka-error-handling/tree/1.3.0) - 2022-07-13
+### What's changed
+
+* Proto conversion for deadletter by @mkcode92 in [#13](https://github.com/bakdata/kafka-error-handling/pull/13)
+
+
+### New Contributors
+* @mkcode92 made their first contribution in [#13](https://github.com/bakdata/kafka-error-handling/pull/13)
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.2.5...1.3.0
+
+## [1.2.5](https://github.com/bakdata/kafka-error-handling/tree/1.2.5) - 2022-06-23
+### What's changed
+
+* Support exceptions with null message by @philipp94831 in [#15](https://github.com/bakdata/kafka-error-handling/pull/15)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.2.4...1.2.5
+
+## [1.2.4](https://github.com/bakdata/kafka-error-handling/tree/1.2.4) - 2022-05-11
+### What's changed
+
+* Fix OFFSET header name in ErrorHeaderTransformer by @patrickjkennedy in [#11](https://github.com/bakdata/kafka-error-handling/pull/11)
+
+
+### New Contributors
+* @patrickjkennedy made their first contribution in [#11](https://github.com/bakdata/kafka-error-handling/pull/11)
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.2.3...1.2.4
+
+## [1.2.3](https://github.com/bakdata/kafka-error-handling/tree/1.2.3) - 2022-05-02
+### What's changed
+
+* Add flat transformers by @philipp94831 in [#9](https://github.com/bakdata/kafka-error-handling/pull/9)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.2.2...1.2.3
+
+## [1.2.2](https://github.com/bakdata/kafka-error-handling/tree/1.2.2) - 2022-02-18
+### What's changed
+
+* Add factory methods for TransformerSuppliers by @philipp94831 in [#8](https://github.com/bakdata/kafka-error-handling/pull/8)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.2.1...1.2.2
+
+## [1.2.1](https://github.com/bakdata/kafka-error-handling/tree/1.2.1) - 2022-02-17
+### What's changed
+
+* Add error class to dead letter by @philipp94831 in [#7](https://github.com/bakdata/kafka-error-handling/pull/7)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.2.0...1.2.1
+
+## [1.2.0](https://github.com/bakdata/kafka-error-handling/tree/1.2.0) - 2022-02-15
+### What's changed
+
+* Add processing context to dead letters by @philipp94831 in [#6](https://github.com/bakdata/kafka-error-handling/pull/6)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.1.2...1.2.0
+
+## [1.1.2](https://github.com/bakdata/kafka-error-handling/tree/1.1.2) - 2021-12-10
+### What's changed
+
+* Update avro to 1.10 by @philipp94831 in [#4](https://github.com/bakdata/kafka-error-handling/pull/4)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.1.1...1.1.2
+
+## [1.1.1](https://github.com/bakdata/kafka-error-handling/tree/1.1.1) - 2021-12-10
+### What's changed
+
+* Update log4j to 2.15.0 by @philipp94831 in [#5](https://github.com/bakdata/kafka-error-handling/pull/5)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.1.0...1.1.1
+
+## [1.1.0](https://github.com/bakdata/kafka-error-handling/tree/1.1.0) - 2021-09-24
+### What's changed
+
+* Provide error details as header fields by @philipp94831 in [#2](https://github.com/bakdata/kafka-error-handling/pull/2)
+
+* Update dependencies by @philipp94831 in [#3](https://github.com/bakdata/kafka-error-handling/pull/3)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/1.0.0...1.1.0
+
+## [1.0.0](https://github.com/bakdata/kafka-error-handling/tree/1.0.0) - 2020-03-09
+### What's changed
+
+* Initial commit by @philipp94831
+
+* Create error handlers for Kafka Streams by @philipp94831 in [#1](https://github.com/bakdata/kafka-error-handling/pull/1)
+
+* Update file permissions of gradlew by @philipp94831
+
+
+### New Contributors
+* @bakdata-bot made their first contribution
+* @philipp94831 made their first contribution
+
+<!-- generated by git-cliff -->
