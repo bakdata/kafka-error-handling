@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.2](https://github.com/bakdata/kafka-error-handling/tree/2.1.2) - 2026-01-30
+### What's changed
+
+* Bump the ci-templates group with 2 updates by @dependabot[bot] in [#104](https://github.com/bakdata/kafka-error-handling/pull/104)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/2.1.1...2.1.2
+
 ## [2.1.1](https://github.com/bakdata/kafka-error-handling/tree/2.1.1) - 2026-01-30
 ### What's changed
 
