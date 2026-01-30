@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1](https://github.com/bakdata/kafka-error-handling/tree/2.1.1) - 2026-01-30
+### What's changed
+
+* Bump org.apache.commons:commons-lang3 from 3.18.0 to 3.20.0 by @dependabot[bot] in [#87](https://github.com/bakdata/kafka-error-handling/pull/87)
+
+* Bump jackson from 2.20.0 to 2.20.1 by @dependabot[bot] in [#81](https://github.com/bakdata/kafka-error-handling/pull/81)
+
+* Bump the protobuf group across 1 directory with 2 updates by @dependabot[bot] in [#88](https://github.com/bakdata/kafka-error-handling/pull/88)
+
+* Bump the plugins group with 3 updates by @dependabot[bot] in [#79](https://github.com/bakdata/kafka-error-handling/pull/79)
+
+* Bump the test-dependencies group across 1 directory with 4 updates by @dependabot[bot] in [#90](https://github.com/bakdata/kafka-error-handling/pull/90)
+
+* Bump bakdata/ci-templates/.github/workflows/java-gradle-release.yaml from 1.70.0 to 1.70.2 by @dependabot[bot] in [#85](https://github.com/bakdata/kafka-error-handling/pull/85)
+
+* Bump bakdata/ci-templates/.github/workflows/java-gradle-library.yaml from 1.70.0 to 1.70.2 by @dependabot[bot] in [#84](https://github.com/bakdata/kafka-error-handling/pull/84)
+
+* Update Dependabot config by @philipp94831 in [#91](https://github.com/bakdata/kafka-error-handling/pull/91)
+
+* Bump the ci-templates group with 2 updates by @dependabot[bot] in [#94](https://github.com/bakdata/kafka-error-handling/pull/94)
+
+* Bump org.apache.logging.log4j:log4j-slf4j2-impl from 2.25.2 to 2.25.3 in the log-dependencies group by @dependabot[bot] in [#96](https://github.com/bakdata/kafka-error-handling/pull/96)
+
+* Bump the plugins group with 3 updates by @dependabot[bot] in [#97](https://github.com/bakdata/kafka-error-handling/pull/97)
+
+* Bump com.google.protobuf:protobuf-java from 4.33.4 to 4.33.5 in the protobuf group by @dependabot[bot] in [#98](https://github.com/bakdata/kafka-error-handling/pull/98)
+
+* Bump io.freefair.lombok from 8.14 to 8.14.4 in the freefair-plugins group by @dependabot[bot] in [#99](https://github.com/bakdata/kafka-error-handling/pull/99)
+
+* Bump com.bakdata.kafka:kafka-bom from 1.3.0 to 1.3.1 in the kafka-dependencies group by @dependabot[bot] in [#95](https://github.com/bakdata/kafka-error-handling/pull/95)
+
+* Bump gradle-wrapper from 8.14.3 to 9.3.1 by @dependabot[bot] in [#101](https://github.com/bakdata/kafka-error-handling/pull/101)
+
+* Bump org.apache.avro:avro from 1.12.0 to 1.12.1 by @dependabot[bot] in [#100](https://github.com/bakdata/kafka-error-handling/pull/100)
+
+* Bump com.bakdata.fluent-kafka-streams-tests:fluent-kafka-streams-tests-junit5 from 3.5.0 to 3.5.1 in the kafka-dependencies group by @dependabot[bot] in [#102](https://github.com/bakdata/kafka-error-handling/pull/102)
+
+* Bump the ci-templates group with 2 updates by @dependabot[bot] in [#103](https://github.com/bakdata/kafka-error-handling/pull/103)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/2.1.0...2.1.1
+
 ## [2.1.0](https://github.com/bakdata/kafka-error-handling/tree/2.1.0) - 2025-11-11
 ### What's changed
 
