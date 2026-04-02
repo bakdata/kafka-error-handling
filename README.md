@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/bakdata/public/_apis/build/status/bakdata.kafka-error-handling?branchName=master)](https://dev.azure.com/bakdata/public/_build/latest?definitionId=23&branchName=master)
+[![Build and Publish](https://github.com/bakdata/kafka-error-handling/actions/workflows/build-and-publish.yaml/badge.svg)](https://github.com/bakdata/kafka-error-handling/actions/workflows/build-and-publish.yaml)
 [![Sonarcloud status](https://sonarcloud.io/api/project_badges/measure?project=com.bakdata.kafka%3Aerror-handling&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.bakdata.kafka%3Aerror-handling)
 [![Code coverage](https://sonarcloud.io/api/project_badges/measure?project=com.bakdata.kafka%3Aerror-handling&metric=coverage)](https://sonarcloud.io/dashboard?id=com.bakdata.kafka%3Aerror-handling)
 [![Maven](https://img.shields.io/maven-central/v/com.bakdata.kafka/error-handling-core.svg)](https://search.maven.org/search?q=g:com.bakdata.kafka%20AND%20a:error-handling-core&core=gav)
@@ -63,7 +63,7 @@ final KeyValueMapper<Integer, String, KeyValue<Double, Long>> mapper = …
 final KStream<Integer, String> input =
        builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Integer(), Serdes.String()));
 
-final KStream<Double, Long> mapped = input.map(mapper);
+final KStream<Double, Long> mapped = this.input.map(this.mapper);
 mapped.to(OUTPUT_TOPIC, Produced.with(Serdes.Double(), Serdes.Long()));
 ```
 
@@ -75,12 +75,12 @@ final KStream<Integer, String> input =
        builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Integer(), Serdes.String()));
 
 final KStream<Double, ProcessedKeyValue<Integer, String, Long>> mappedWithErrors =
-       input.map(captureErrors(mapper));
+        this.input.map(captureErrors(this.mapper));
 mappedWithErrors.flatMap(ProcessedKeyValue::getErrors)
        .processValues(AvroDeadLetterConverter.asProcessor("A good description where the pipeline broke"))
        .to(ERROR_TOPIC);
 
-final KStream<Double, Long> mapped = mappedWithErrors.flatMapValues(ProcessedKeyValue::getValues);
+final KStream<Double, Long> mapped = this.mappedWithErrors.flatMapValues(ProcessedKeyValue::getValues);
 mapped.to(OUTPUT_TOPIC, Produced.with(Serdes.Double(), Serdes.Long()));
 ```
 
