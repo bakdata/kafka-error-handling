@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2025 bakdata
+ * Copyright (c) 2026 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,12 @@ import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.common.config.ConfigDef.Type;
 
+/**
+ * Configuration for {@link DescribingProcessingExceptionHandler}. It offers configuration of the following properties:
+ * <ul>
+ *     <li>{@link #FILTER_CONFIG}</li>
+ * </ul>
+ */
 public class DescribingProcessingExceptionHandlerConfig extends AbstractConfig {
     public static final String PREFIX = "error.handling.";
     public static final String FILTER_CONFIG = PREFIX + "filter";
