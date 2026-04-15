@@ -24,6 +24,7 @@
 
 package com.bakdata.kafka;
 
+import static com.bakdata.kafka.DescribingProcessingExceptionHandler.HEADER_ERRORS_DESCRIPTION_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_EXCEPTION_MESSAGE_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_EXCEPTION_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_OFFSET_NAME;
@@ -48,6 +49,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.ValueMapper;
 import org.assertj.core.api.SoftAssertions;
@@ -63,7 +65,7 @@ import org.mockito.quality.Strictness;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 @ExtendWith(SoftAssertionsExtension.class)
-class ErrorFilterTopologyTest extends ErrorCaptureTopologyTest {
+class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopologyTest {
 
     private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
@@ -84,7 +86,7 @@ class ErrorFilterTopologyTest extends ErrorCaptureTopologyTest {
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC);
         final KStream<Integer, Long> mapped =
-                input.mapValues(this.mapper);
+                input.mapValues(this.mapper, Named.as("map"));
         mapped.to(OUTPUT_TOPIC, Produced.valueSerde(LONG_SERDE));
     }
 
@@ -94,7 +96,7 @@ class ErrorFilterTopologyTest extends ErrorCaptureTopologyTest {
         kafkaProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, StringSerde.class);
         kafkaProperties.put(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG, ERROR_TOPIC);
         kafkaProperties.put(StreamsConfig.PROCESSING_EXCEPTION_HANDLER_CLASS_CONFIG,
-                ErrorFilterProcessingExceptionHandler.class);
+                DescribingProcessingExceptionHandler.class);
         return kafkaProperties;
     }
 
@@ -168,6 +170,8 @@ class ErrorFilterTopologyTest extends ErrorCaptureTopologyTest {
                             .isEqualTo(INPUT_TOPIC);
                     this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_PARTITION_NAME)).isEqualTo("0");
                     this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_OFFSET_NAME)).isEqualTo("0");
+                    this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_DESCRIPTION_NAME))
+                            .isEqualTo("processor node: %s, taskId: %s", "map", "0_0");
                 });
     }
 

@@ -5,12 +5,15 @@ import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.bu
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.errors.ErrorHandlerContext;
 import org.apache.kafka.streams.errors.ProcessingExceptionHandler;
 import org.apache.kafka.streams.processor.api.Record;
 
-public class ErrorFilterProcessingExceptionHandler implements ProcessingExceptionHandler {
+public class DescribingProcessingExceptionHandler implements ProcessingExceptionHandler {
+    public static final String HEADER_ERRORS_DESCRIPTION_NAME = "__streams.errors.description";
     private String deadLetterQueueTopic = null;
     private ErrorFilter filter;
 
@@ -34,6 +37,11 @@ public class ErrorFilterProcessingExceptionHandler implements ProcessingExceptio
         final ProducerRecord<byte[], byte[]> dlqRecord =
                 buildDeadLetterQueueRecord(this.deadLetterQueueTopic, context.sourceRawKey(), context.sourceRawValue(),
                         context, exception);
+        try (final Serializer<String> serializer = new StringSerializer()) {
+            final String description =
+                    String.format("processor node: %s, taskId: %s", context.processorNodeId(), context.taskId());
+            dlqRecord.headers().add(HEADER_ERRORS_DESCRIPTION_NAME, serializer.serialize(null, description));
+        }
         return Response.resume(List.of(dlqRecord));
     }
 
