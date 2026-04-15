@@ -24,7 +24,8 @@
 
 package com.bakdata.kafka;
 
-import static com.bakdata.kafka.DescribingProcessingExceptionHandler.HEADER_ERRORS_DESCRIPTION_NAME;
+import static com.bakdata.kafka.DescribingProcessingExceptionHandler.HEADER_ERRORS_PROCESSOR_NODE_ID_NAME;
+import static com.bakdata.kafka.DescribingProcessingExceptionHandler.HEADER_ERRORS_TASK_ID_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_EXCEPTION_MESSAGE_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_EXCEPTION_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_OFFSET_NAME;
@@ -170,8 +171,9 @@ class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopol
                             .isEqualTo(INPUT_TOPIC);
                     this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_PARTITION_NAME)).isEqualTo("0");
                     this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_OFFSET_NAME)).isEqualTo("0");
-                    this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_DESCRIPTION_NAME))
-                            .isEqualTo("processor node: %s, taskId: %s", "map", "0_0");
+                    this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_PROCESSOR_NODE_ID_NAME))
+                            .isEqualTo("map");
+                    this.softly.assertThat(getDeserialized(headers, HEADER_ERRORS_TASK_ID_NAME)).isEqualTo("0_0");
                 });
     }
 

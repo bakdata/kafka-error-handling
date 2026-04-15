@@ -30,7 +30,7 @@ import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.common.config.ConfigDef.Type;
 
-public class ErrorFilterProcessingExceptionHandlerConfig extends AbstractConfig {
+public class DescribingProcessingExceptionHandlerConfig extends AbstractConfig {
     public static final String PREFIX = "error.handling.";
     public static final String FILTER_CONFIG = PREFIX + "filter";
     private static final ConfigDef config = baseConfigDef();
@@ -42,7 +42,7 @@ public class ErrorFilterProcessingExceptionHandlerConfig extends AbstractConfig 
      *
      * @param originals properties for configuring this config
      */
-    public ErrorFilterProcessingExceptionHandlerConfig(final Map<?, ?> originals) {
+    public DescribingProcessingExceptionHandlerConfig(final Map<?, ?> originals) {
         super(config, originals);
     }
 

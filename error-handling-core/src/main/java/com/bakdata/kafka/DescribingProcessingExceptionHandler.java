@@ -13,7 +13,8 @@ import org.apache.kafka.streams.errors.ProcessingExceptionHandler;
 import org.apache.kafka.streams.processor.api.Record;
 
 public class DescribingProcessingExceptionHandler implements ProcessingExceptionHandler {
-    public static final String HEADER_ERRORS_DESCRIPTION_NAME = "__streams.errors.description";
+    public static final String HEADER_ERRORS_PROCESSOR_NODE_ID_NAME = "__streams.errors.processor.node.id";
+    public static final String HEADER_ERRORS_TASK_ID_NAME = "__streams.errors.task.id";
     private String deadLetterQueueTopic = null;
     private ErrorFilter filter;
 
@@ -23,8 +24,8 @@ public class DescribingProcessingExceptionHandler implements ProcessingException
             this.deadLetterQueueTopic =
                     String.valueOf(configs.get(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG));
         }
-        final ErrorFilterProcessingExceptionHandlerConfig config =
-                new ErrorFilterProcessingExceptionHandlerConfig(configs);
+        final DescribingProcessingExceptionHandlerConfig config =
+                new DescribingProcessingExceptionHandlerConfig(configs);
         this.filter = config.getErrorFilter();
     }
 
@@ -38,9 +39,10 @@ public class DescribingProcessingExceptionHandler implements ProcessingException
                 buildDeadLetterQueueRecord(this.deadLetterQueueTopic, context.sourceRawKey(), context.sourceRawValue(),
                         context, exception);
         try (final Serializer<String> serializer = new StringSerializer()) {
-            final String description =
-                    String.format("processor node: %s, taskId: %s", context.processorNodeId(), context.taskId());
-            dlqRecord.headers().add(HEADER_ERRORS_DESCRIPTION_NAME, serializer.serialize(null, description));
+            dlqRecord.headers()
+                    .add(HEADER_ERRORS_PROCESSOR_NODE_ID_NAME, serializer.serialize(null, context.processorNodeId()));
+            dlqRecord.headers()
+                    .add(HEADER_ERRORS_TASK_ID_NAME, serializer.serialize(null, context.taskId().toString()));
         }
         return Response.resume(List.of(dlqRecord));
     }
