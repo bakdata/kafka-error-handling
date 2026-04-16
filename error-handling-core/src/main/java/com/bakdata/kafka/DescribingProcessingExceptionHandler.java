@@ -53,10 +53,8 @@ public class DescribingProcessingExceptionHandler implements ProcessingException
 
     @Override
     public void configure(final Map<String, ?> configs) {
-        if (configs.get(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG) != null) {
-            this.deadLetterQueueTopic =
-                    String.valueOf(configs.get(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG));
-        }
+        this.deadLetterQueueTopic =
+                String.valueOf(configs.get(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG));
         final DescribingProcessingExceptionHandlerConfig config =
                 new DescribingProcessingExceptionHandlerConfig(configs);
         this.filter = config.getErrorFilter();
