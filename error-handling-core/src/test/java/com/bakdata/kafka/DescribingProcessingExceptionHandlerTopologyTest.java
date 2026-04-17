@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2025 bakdata
+ * Copyright (c) 2026 bakdata
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,10 +49,12 @@ import org.apache.kafka.common.serialization.Serdes.StringSerde;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.errors.ErrorHandlerContext;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.ValueMapper;
+import org.apache.kafka.streams.processor.api.Record;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -86,8 +88,7 @@ class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopol
     @Override
     protected void buildTopology(final StreamsBuilder builder) {
         final KStream<Integer, String> input = builder.stream(INPUT_TOPIC);
-        final KStream<Integer, Long> mapped =
-                input.mapValues(this.mapper, Named.as("map"));
+        final KStream<Integer, Long> mapped = input.mapValues(this.mapper, Named.as("map"));
         mapped.to(OUTPUT_TOPIC, Produced.valueSerde(LONG_SERDE));
     }
 
@@ -98,12 +99,13 @@ class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopol
         kafkaProperties.put(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG, ERROR_TOPIC);
         kafkaProperties.put(StreamsConfig.PROCESSING_EXCEPTION_HANDLER_CLASS_CONFIG,
                 DescribingProcessingExceptionHandler.class);
+        kafkaProperties.put(DescribingProcessingExceptionHandlerConfig.FILTER_CONFIG, TestFilter.class);
         return kafkaProperties;
     }
 
     @Test
     void shouldForwardRecoverableException() {
-        final RuntimeException throwable = createRecoverableException();
+        final RuntimeException throwable = new IllegalStateException();
         when(this.mapper.apply("foo")).thenThrow(throwable);
         this.createTopology();
         final TestInput<Integer, String> input = this.topology.input();
@@ -245,4 +247,11 @@ class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopol
                 .isEmpty();
     }
 
+    public static class TestFilter implements ErrorFilter {
+
+        @Override
+        public boolean isRecoverable(final ErrorHandlerContext context, final Record<?, ?> record, final Exception exception) {
+            return exception instanceof IllegalStateException;
+        }
+    }
 }
