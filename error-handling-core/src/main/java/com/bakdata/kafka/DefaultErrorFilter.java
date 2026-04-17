@@ -28,14 +28,12 @@ import org.apache.kafka.streams.errors.ErrorHandlerContext;
 import org.apache.kafka.streams.processor.api.Record;
 
 /**
- * Default error filter for {@link DescribingProcessingExceptionHandler}.
- *
- * @see ErrorUtil#isRecoverable(Exception)
+ * Default error filter for {@link DescribingProcessingExceptionHandler}. No exception is classified as recoverable.
  */
 public class DefaultErrorFilter implements ErrorFilter {
     @Override
     public boolean isRecoverable(final ErrorHandlerContext context, final Record<?, ?> record,
             final Exception exception) {
-        return ErrorUtil.isRecoverable(exception);
+        return false;
     }
 }
