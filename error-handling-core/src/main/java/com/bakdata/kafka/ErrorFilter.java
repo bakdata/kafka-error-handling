@@ -28,12 +28,13 @@ import org.apache.kafka.streams.errors.ErrorHandlerContext;
 import org.apache.kafka.streams.processor.api.Record;
 
 /**
- * Classify processing errors as recoverable and thus transition the Kafka Streams instance into a error state.
+ * Classify processing errors as recoverable and thus transition the Kafka Streams instance into an error state.
  */
 @FunctionalInterface
 public interface ErrorFilter {
     /**
-     * Determine if a processing error is recoverable
+     * Determine if a processing error is recoverable. If a processing error is recoverable, it is thrown and not
+     * send to the dead letter queue.
      *
      * @param context Processing context metadata.
      * @param record Record where the exception occurred.

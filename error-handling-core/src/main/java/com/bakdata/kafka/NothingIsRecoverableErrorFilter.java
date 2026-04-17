@@ -28,9 +28,9 @@ import org.apache.kafka.streams.errors.ErrorHandlerContext;
 import org.apache.kafka.streams.processor.api.Record;
 
 /**
- * Default error filter for {@link DescribingProcessingExceptionHandler}. No exception is classified as recoverable.
+ * No exception is classified as recoverable.
  */
-public class DefaultErrorFilter implements ErrorFilter {
+public class NothingIsRecoverableErrorFilter implements ErrorFilter {
     @Override
     public boolean isRecoverable(final ErrorHandlerContext context, final Record<?, ?> record,
             final Exception exception) {

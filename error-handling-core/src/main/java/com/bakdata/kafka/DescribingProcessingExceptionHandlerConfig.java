@@ -54,7 +54,8 @@ public class DescribingProcessingExceptionHandlerConfig extends AbstractConfig {
 
     private static ConfigDef baseConfigDef() {
         return new ConfigDef()
-                .define(FILTER_CONFIG, Type.CLASS, DefaultErrorFilter.class, Importance.MEDIUM, FILTER_DOC);
+                .define(FILTER_CONFIG, Type.CLASS, NothingIsRecoverableErrorFilter.class, Importance.MEDIUM,
+                        FILTER_DOC);
     }
 
     public ErrorFilter getErrorFilter() {
