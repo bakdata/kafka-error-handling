@@ -31,24 +31,25 @@ import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.common.config.ConfigDef.Type;
 
 /**
- * Configuration for {@link DescribingProcessingExceptionHandler}. It offers configuration of the following properties:
+ * Configuration for {@link FilteringProcessingExceptionHandler}. It offers configuration of the following properties:
  * <ul>
  *     <li>{@link #FILTER_CONFIG}</li>
  * </ul>
  */
-public class DescribingProcessingExceptionHandlerConfig extends AbstractConfig {
+public class FilteringProcessingExceptionHandlerConfig extends AbstractConfig {
     public static final String PREFIX = "error.handling.";
     public static final String FILTER_CONFIG = PREFIX + "filter";
     private static final ConfigDef config = baseConfigDef();
     public static final String FILTER_DOC =
-            "Class implementing a filter for errors which should be thrown and not captured";
+            "Class implementing a filter for errors which should be thrown and not captured. By default, a dead "
+                    + "letter is produced for every exception";
 
     /**
      * Create a new configuration from the given properties
      *
      * @param originals properties for configuring this config
      */
-    public DescribingProcessingExceptionHandlerConfig(final Map<?, ?> originals) {
+    public FilteringProcessingExceptionHandlerConfig(final Map<?, ?> originals) {
         super(config, originals);
     }
 

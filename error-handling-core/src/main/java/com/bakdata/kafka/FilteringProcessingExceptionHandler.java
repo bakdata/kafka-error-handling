@@ -39,13 +39,13 @@ import org.apache.kafka.streams.processor.api.Record;
 
 /**
  * {@link ProcessingExceptionHandler} that sends records causing a processing exception to the dead letter queue. If an
- * exception is deemed recoverable by {@link DescribingProcessingExceptionHandlerConfig#FILTER_CONFIG} it will be
+ * exception is deemed recoverable by {@link FilteringProcessingExceptionHandlerConfig#FILTER_CONFIG} it will be
  * forwarded. In addition to the headers provided by
  * {@link org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils}, this handler also adds
  * {@link #HEADER_ERRORS_PROCESSOR_NODE_ID_NAME} and {@link #HEADER_ERRORS_TASK_ID_NAME}.
  */
 @NoArgsConstructor
-public class DescribingProcessingExceptionHandler implements ProcessingExceptionHandler {
+public class FilteringProcessingExceptionHandler implements ProcessingExceptionHandler {
     public static final String HEADER_ERRORS_PROCESSOR_NODE_ID_NAME = "__streams.errors.processor.node.id";
     public static final String HEADER_ERRORS_TASK_ID_NAME = "__streams.errors.task.id";
     private String deadLetterQueueTopic;
@@ -55,8 +55,8 @@ public class DescribingProcessingExceptionHandler implements ProcessingException
     public void configure(final Map<String, ?> configs) {
         this.deadLetterQueueTopic =
                 String.valueOf(configs.get(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG));
-        final DescribingProcessingExceptionHandlerConfig config =
-                new DescribingProcessingExceptionHandlerConfig(configs);
+        final FilteringProcessingExceptionHandlerConfig config =
+                new FilteringProcessingExceptionHandlerConfig(configs);
         this.filter = config.getErrorFilter();
     }
 

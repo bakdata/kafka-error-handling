@@ -24,8 +24,8 @@
 
 package com.bakdata.kafka;
 
-import static com.bakdata.kafka.DescribingProcessingExceptionHandler.HEADER_ERRORS_PROCESSOR_NODE_ID_NAME;
-import static com.bakdata.kafka.DescribingProcessingExceptionHandler.HEADER_ERRORS_TASK_ID_NAME;
+import static com.bakdata.kafka.FilteringProcessingExceptionHandler.HEADER_ERRORS_PROCESSOR_NODE_ID_NAME;
+import static com.bakdata.kafka.FilteringProcessingExceptionHandler.HEADER_ERRORS_TASK_ID_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_EXCEPTION_MESSAGE_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_EXCEPTION_NAME;
 import static org.apache.kafka.streams.errors.internals.ExceptionHandlerUtils.HEADER_ERRORS_OFFSET_NAME;
@@ -68,7 +68,7 @@ import org.mockito.quality.Strictness;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 @ExtendWith(SoftAssertionsExtension.class)
-class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopologyTest {
+class FilteringProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopologyTest {
 
     private static final String ERROR_TOPIC = "errors";
     private static final String OUTPUT_TOPIC = "output";
@@ -98,8 +98,8 @@ class DescribingProcessingExceptionHandlerTopologyTest extends ErrorCaptureTopol
         kafkaProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, StringSerde.class);
         kafkaProperties.put(StreamsConfig.ERRORS_DEAD_LETTER_QUEUE_TOPIC_NAME_CONFIG, ERROR_TOPIC);
         kafkaProperties.put(StreamsConfig.PROCESSING_EXCEPTION_HANDLER_CLASS_CONFIG,
-                DescribingProcessingExceptionHandler.class);
-        kafkaProperties.put(DescribingProcessingExceptionHandlerConfig.FILTER_CONFIG, TestFilter.class);
+                FilteringProcessingExceptionHandler.class);
+        kafkaProperties.put(FilteringProcessingExceptionHandlerConfig.FILTER_CONFIG, TestFilter.class);
         return kafkaProperties;
     }
 
