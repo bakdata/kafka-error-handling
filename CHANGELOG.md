@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0](https://github.com/bakdata/kafka-error-handling/tree/2.2.0) - 2026-04-27
+### What's changed
+
+* Bump jackson from 2.21.0 to 2.21.1 by @dependabot[bot] in [#108](https://github.com/bakdata/kafka-error-handling/pull/108)
+
+* Bump com.google.protobuf:protobuf-java from 4.33.5 to 4.34.0 in the protobuf group by @dependabot[bot] in [#107](https://github.com/bakdata/kafka-error-handling/pull/107)
+
+* Bump the test-dependencies group with 3 updates by @dependabot[bot] in [#106](https://github.com/bakdata/kafka-error-handling/pull/106)
+
+* Bump the ci-templates group with 2 updates by @dependabot[bot] in [#105](https://github.com/bakdata/kafka-error-handling/pull/105)
+
+* Use new Avro plugin by @philipp94831 in [#109](https://github.com/bakdata/kafka-error-handling/pull/109)
+
+* Setup multi-ecosystem Dependabot group by @philipp94831 in [#116](https://github.com/bakdata/kafka-error-handling/pull/116)
+
+* Add missing sonatype plugin to Dependabot multi-ecosystem group by @philipp94831 in [#119](https://github.com/bakdata/kafka-error-handling/pull/119)
+
+* Bump com.google.protobuf:protobuf-java from 4.34.0 to 4.34.1 in the protobuf group across 1 directory by @dependabot[bot] in [#115](https://github.com/bakdata/kafka-error-handling/pull/115)
+
+* Bump org.apache.logging.log4j:log4j-slf4j2-impl from 2.25.3 to 2.25.4 in the log-dependencies group across 1 directory by @dependabot[bot] in [#112](https://github.com/bakdata/kafka-error-handling/pull/112)
+
+* Bump the test-dependencies group across 1 directory with 2 updates by @dependabot[bot] in [#113](https://github.com/bakdata/kafka-error-handling/pull/113)
+
+* Bump com.bakdata.kafka:kafka-bom from 1.3.1 to 1.4.0 in the kafka-dependencies group across 1 directory by @dependabot[bot] in [#111](https://github.com/bakdata/kafka-error-handling/pull/111)
+
+* Bump jackson from 2.21.1 to 2.21.2 by @dependabot[bot] in [#120](https://github.com/bakdata/kafka-error-handling/pull/120)
+
+* Bump the "build" group with 1 update across multiple ecosystems by @dependabot[bot] in [#118](https://github.com/bakdata/kafka-error-handling/pull/118)
+
+* Add error filter for Kafka Streams built-in dead letter queue by @philipp94831 in [#121](https://github.com/bakdata/kafka-error-handling/pull/121)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/2.1.2...2.2.0
+
 ## [2.1.2](https://github.com/bakdata/kafka-error-handling/tree/2.1.2) - 2026-01-30
 ### What's changed
 
