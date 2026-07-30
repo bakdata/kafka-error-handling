@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0](https://github.com/bakdata/kafka-error-handling/tree/3.0.0) - 2026-07-30
+### What's changed
+
+* Bump com.google.protobuf from 0.9.6 to 0.10.0 in the protobuf group by @dependabot[bot] in [#122](https://github.com/bakdata/kafka-error-handling/pull/122)
+
+* Bump the "build" group with 2 updates across multiple ecosystems by @dependabot[bot] in [#123](https://github.com/bakdata/kafka-error-handling/pull/123)
+
+* Bump com.google.protobuf:protobuf-java from 4.34.1 to 4.35.0 in the protobuf group by @dependabot[bot] in [#126](https://github.com/bakdata/kafka-error-handling/pull/126)
+
+* Bump the "build" group with 1 update across multiple ecosystems by @dependabot[bot] in [#128](https://github.com/bakdata/kafka-error-handling/pull/128)
+
+* Bump jackson from 2.21.2 to 2.21.3 by @dependabot[bot] in [#127](https://github.com/bakdata/kafka-error-handling/pull/127)
+
+* Bump org.apache.logging.log4j:log4j-slf4j2-impl from 2.25.4 to 2.26.0 in the log-dependencies group by @dependabot[bot] in [#124](https://github.com/bakdata/kafka-error-handling/pull/124)
+
+* Bump org.junit.jupiter:junit-jupiter from 5.14.3 to 5.14.4 in the test-dependencies group across 1 directory by @dependabot[bot] in [#125](https://github.com/bakdata/kafka-error-handling/pull/125)
+
+* Bump the "build" group with 2 updates across multiple ecosystems by @dependabot[bot] in [#132](https://github.com/bakdata/kafka-error-handling/pull/132)
+
+* Bump com.google.protobuf:protobuf-java from 4.35.0 to 4.35.1 in the protobuf group by @dependabot[bot] in [#130](https://github.com/bakdata/kafka-error-handling/pull/130)
+
+* Bump com.bakdata.kafka:kafka-bom from 1.5.0 to 1.6.0 in the kafka-dependencies group by @dependabot[bot] in [#129](https://github.com/bakdata/kafka-error-handling/pull/129)
+
+* Bump jackson from 2.21.3 to 2.22.0 by @dependabot[bot] in [#131](https://github.com/bakdata/kafka-error-handling/pull/131)
+
+* Upgrade to Java 17 by @philipp94831 in [#134](https://github.com/bakdata/kafka-error-handling/pull/134)
+
+* Migrate to Jackson 3 by @philipp94831 in [#133](https://github.com/bakdata/kafka-error-handling/pull/133)
+
+* Bump org.junit.jupiter:junit-jupiter from 6.1.1 to 6.1.2 by @dependabot[bot] in [#138](https://github.com/bakdata/kafka-error-handling/pull/138)
+
+* Bump org.apache.logging.log4j:log4j-slf4j2-impl from 2.26.0 to 2.26.1 by @dependabot[bot] in [#140](https://github.com/bakdata/kafka-error-handling/pull/140)
+
+* Bump com.bakdata.kafka:kafka-bom from 1.6.0 to 1.6.1 by @dependabot[bot] in [#139](https://github.com/bakdata/kafka-error-handling/pull/139)
+
+* Bump gradle-wrapper from 9.6.0 to 9.6.1 in the build group by @dependabot[bot] in [#137](https://github.com/bakdata/kafka-error-handling/pull/137)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/2.2.0...3.0.0
+
 ## [2.2.0](https://github.com/bakdata/kafka-error-handling/tree/2.2.0) - 2026-04-27
 ### What's changed
 
