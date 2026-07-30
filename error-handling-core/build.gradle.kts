@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.avro)
     implementation(libs.jool)
     implementation(libs.commons.lang)
+    implementation(libs.jackson.databind)
 
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter)
@@ -20,9 +21,7 @@ dependencies {
     testImplementation(libs.log4j.slf4j2)
     testFixturesApi(libs.fluentKafkaStreamsTests)
     testFixturesImplementation(libs.junit.jupiter)
-    testFixturesImplementation(libs.jackson.core)
     testFixturesImplementation(libs.jackson.databind)
-    testFixturesImplementation(libs.jackson.datatype.jsr310)
 }
 
 avro {
