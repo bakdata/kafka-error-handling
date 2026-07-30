@@ -33,17 +33,17 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 public class TestDeadLetterSerde implements Serde<DeadLetterDescription> {
-    static final ObjectMapper objectMapper = JsonMapper.builder().build();
+    static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder().build();
     private static final Serializer<DeadLetterDescription> serializer = (topic, data) -> {
         try {
-            return objectMapper.writeValueAsBytes(data);
+            return OBJECT_MAPPER.writeValueAsBytes(data);
         } catch (final JacksonException e) {
             throw new SerializationException(e);
         }
     };
     private static final Deserializer<DeadLetterDescription> deserializer = (topic, data) -> {
         try {
-            return objectMapper.readValue(data, DeadLetterDescription.class);
+            return OBJECT_MAPPER.readValue(data, DeadLetterDescription.class);
         } catch (JacksonException e) {
             throw new SerializationException(e);
         }
