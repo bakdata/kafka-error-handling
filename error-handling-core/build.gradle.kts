@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.avro)
     implementation(libs.jool)
     implementation(libs.commons.lang)
+    implementation(libs.jackson.databind)
 
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter)
