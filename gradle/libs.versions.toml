@@ -1,7 +1,7 @@
 [versions]
 jackson = "3.2.2"
 junit = "6.1.2"
-mockito = "5.23.0"
+mockito = "5.24.0"
 
 [libraries]
 kafka-bom = { group = "com.bakdata.kafka", name = "kafka-bom", version = "2.0.1" }
