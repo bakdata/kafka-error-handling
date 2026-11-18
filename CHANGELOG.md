@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.1](https://github.com/bakdata/kafka-error-handling/tree/3.0.1) - 2026-11-18
+### What's changed
+
+* Upgrade to fluent-kafka 4.0 by @philipp94831 in [#141](https://github.com/bakdata/kafka-error-handling/pull/141)
+
+* Bump com.google.protobuf:protobuf-java from 4.35.1 to 4.36.0 in the protobuf group by @dependabot[bot] in [#143](https://github.com/bakdata/kafka-error-handling/pull/143)
+
+* Bump the "build" group with 1 update across multiple ecosystems by @dependabot[bot] in [#147](https://github.com/bakdata/kafka-error-handling/pull/147)
+
+* Bump tools.jackson.core:jackson-databind from 3.2.1 to 3.2.2 by @dependabot[bot] in [#146](https://github.com/bakdata/kafka-error-handling/pull/146)
+
+* Bump com.bakdata.gradle.avro from 2.0.0 to 2.0.1 by @dependabot[bot] in [#145](https://github.com/bakdata/kafka-error-handling/pull/145)
+
+* Bump com.bakdata.kafka:kafka-bom from 1.6.1 to 2.0.0 in the kafka-dependencies group by @dependabot[bot] in [#142](https://github.com/bakdata/kafka-error-handling/pull/142)
+
+* Pin workflows to SHA by @philipp94831 in [#148](https://github.com/bakdata/kafka-error-handling/pull/148)
+
+* Bump the "build" group with 2 updates across multiple ecosystems by @dependabot[bot] in [#153](https://github.com/bakdata/kafka-error-handling/pull/153)
+
+* Bump org.apache.commons:commons-lang3 from 3.20.0 to 3.21.0 by @dependabot[bot] in [#152](https://github.com/bakdata/kafka-error-handling/pull/152)
+
+* Bump com.bakdata.kafka:kafka-bom from 2.0.0 to 2.0.1 in the kafka-dependencies group by @dependabot[bot] in [#149](https://github.com/bakdata/kafka-error-handling/pull/149)
+
+* Bump the test-dependencies group with 2 updates by @dependabot[bot] in [#150](https://github.com/bakdata/kafka-error-handling/pull/150)
+
+* Bump com.google.protobuf:protobuf-java from 4.36.0 to 4.36.2 in the protobuf group by @dependabot[bot] in [#151](https://github.com/bakdata/kafka-error-handling/pull/151)
+
+* Do not capture SerializationExceptions by @philipp94831 in [#154](https://github.com/bakdata/kafka-error-handling/pull/154)
+
+
+**Full Changelog**: https://github.com/bakdata/kafka-error-handling/compare/3.0.0...3.0.1
+
 ## [3.0.0](https://github.com/bakdata/kafka-error-handling/tree/3.0.0) - 2026-07-30
 ### What's changed
 
