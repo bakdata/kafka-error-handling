@@ -53,9 +53,11 @@ public class ErrorUtil {
 
     private static final String ORG_APACHE_KAFKA_COMMON_ERRORS = "org.apache.kafka.common.errors";
     private static final String ORG_APACHE_KAFKA_STREAMS_ERRORS = "org.apache.kafka.streams.errors";
+    private static final String ORG_APACHE_KAFKA_STREAMS_ERRORS_INTERNALS = "org.apache.kafka.streams.errors.internals";
     private static final Set<String> RECOVERABLE_ERROR_PACKAGES = Set.of(
             ORG_APACHE_KAFKA_COMMON_ERRORS,
-            ORG_APACHE_KAFKA_STREAMS_ERRORS
+            ORG_APACHE_KAFKA_STREAMS_ERRORS,
+            ORG_APACHE_KAFKA_STREAMS_ERRORS_INTERNALS
     );
 
     /**
@@ -74,8 +76,9 @@ public class ErrorUtil {
     }
 
     /**
-     * Check if an exception is thrown by Kafka, i.e., located in package {@code org.apache.kafka.common.errors} or
-     * {@code org.apache.kafka.streams.errors}, and is recoverable.
+     * Check if an exception is thrown by Kafka, i.e., located in package {@code org.apache.kafka.common.errors},
+     * {@code org.apache.kafka.streams.errors}, or {@code org.apache.kafka.streams.errors.internals}, and is
+     * recoverable.
      * <p>Non-recoverable Kafka errors are:
      * <ul>
      *     <li>{@link RecordTooLargeException}

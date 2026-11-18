@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mock;
 import java.util.stream.Stream;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.streams.errors.StreamsException;
+import org.apache.kafka.streams.errors.internals.FailedProcessingException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -49,7 +50,8 @@ class ErrorUtilTest {
         return Stream.of(
                 Arguments.of(mock(Exception.class), false),
                 Arguments.of(new SerializationException(), true),
-                Arguments.of(new StreamsException("message"), true)
+                Arguments.of(new StreamsException("message"), true),
+                Arguments.of(new FailedProcessingException("processor", new RuntimeException()), true)
         );
     }
 
